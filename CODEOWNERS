@@ -1,0 +1,37 @@
+# CODEOWNERS file
+# This file defines code owners for different parts of the repository.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners - all files default to these owners
+* @Conductus-Labs/baton-framework-team
+
+# Documentation
+/docs/ @Conductus-Labs/baton-framework-team
+/docs/**/*.md @Conductus-Labs/baton-framework-team
+
+# Cognitive Patterns
+/src/core/cognitive/ @Conductus-Labs/baton-framework-team
+
+# RHYTHM Method
+/src/rhythm/ @Conductus-Labs/baton-framework-team
+/docs/rhythm/ @Conductus-Labs/baton-framework-team
+
+# CLI Tooling
+/src/cli/ @Conductus-Labs/baton-framework-team
+/docs/cli/ @Conductus-Labs/baton-framework-team
+
+# Core Framework Components
+/src/core/ @Conductus-Labs/baton-framework-team
+
+# Scripts and Build Tools
+/scripts/ @Conductus-Labs/baton-framework-team
+
+# Tests
+/tests/ @Conductus-Labs/baton-framework-team
+
+# Root Configuration Files
+/LICENSE @Conductus-Labs/baton-framework-team
+/README.md @Conductus-Labs/baton-framework-team
+/.gitignore @Conductus-Labs/baton-framework-team
+/CODEOWNERS @Conductus-Labs/baton-framework-team
+

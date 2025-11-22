@@ -1,0 +1,50 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  validate-pr-source:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (apt update && apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && apt update \
+          && apt install gh -y
+
+      - name: Authenticate GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GITHUB_TOKEN" | gh auth login --with-token
+
+      - name: Check if PR targets main branch
+        if: github.event.pull_request.base.ref == 'main'
+        run: |
+          SOURCE_BRANCH="${{ github.event.pull_request.head.ref }}"
+          if [ "$SOURCE_BRANCH" != "dev" ]; then
+            echo "❌ Error: Pull requests to 'main' branch must come from 'dev' branch."
+            echo "Current source branch: $SOURCE_BRANCH"
+            echo "Expected source branch: dev"
+            
+            gh pr comment ${{ github.event.pull_request.number }} --body "❌ **PR Validation Failed**
+            
+            Pull requests to \`main\` branch must come from \`dev\` branch.
+            
+            **Current source branch:** \`$SOURCE_BRANCH\`
+            **Required source branch:** \`dev\`
+            
+            Please create a new PR from the \`dev\` branch instead."
+            
+            gh pr close ${{ github.event.pull_request.number }} --comment "PR closed: Must come from dev branch"
+            exit 1
+          else
+            echo "✅ PR validation passed: Source branch is 'dev'"
+          fi
