@@ -35,6 +35,7 @@ Cognitive patterns define **how agents think**. Each pattern provides:
 - Optimized LLM parameters for that thinking style
 
 **Patterns include:**
+
 - Analytical, Critical, Strategic, Systems Thinking
 - Creative Problem Solving, Experimental Thinking
 - Meta-Cognitive, Adaptive Thinking
@@ -49,6 +50,7 @@ Cognitive patterns define **how agents think**. Each pattern provides:
 A project management methodology specifically designed for agents with human integration. RHYTHM Method is the **default methodology** for Baton Framework projects.
 
 **Key Features:**
+
 - **TEMPO**: Agents operate at fast computational speeds (hours, not weeks)
 - **Flow**: Continuous execution with dependency-driven prioritization
 - **Control**: Human-in-the-Loop checkpoints at critical decision points
@@ -82,6 +84,7 @@ baton init
 ```
 
 This will:
+
 1. Guide you through project setup
 2. Generate framework files into your project
 3. Configure agents and workflows
@@ -166,4 +169,4 @@ Baton Framework is developed by **Conductus Labs Ltd**, a UK-based AI applicatio
 
 ---
 
-**Built with ❤️ in Manchester, UK**
+**Built with ❤️ in the UK**
