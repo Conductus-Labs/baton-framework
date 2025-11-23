@@ -1,0 +1,149 @@
+# Wrap Up Command Template
+# Format: TOML (for Gemini Desktop)
+# Purpose: Updates agent context, commits and pushes all changes for {agent-name} agent
+
+[command]
+description = "Updates agent context, commits and pushes all changes for {agent-name} agent"
+name = "wrap-up"
+
+[command.metadata]
+version = "1.0.0"
+agent_name = "{agent-name}"
+created = "{YYYY-MM-DD}"
+
+[command.instructions]
+purpose = "Execute the session wrap-up workflow by syncing context, committing changes, and pushing to the remote repository."
+
+# Step 1: Sync Context File
+[command.steps.step1]
+name = "Sync Context File"
+description = "Update the context file with current session summary"
+reference = "Follow the sync-context command steps (see sync-context-template.toml)"
+
+[command.steps.step1.actions]
+update_context = ".baton/context/{agent-name}-context.md"
+add_session_summary = true
+use_date_command = true
+preserve_existing = true
+
+[command.steps.step1.date_command]
+bash_command = "date +\"%A, %d %B %Y - %H:%M\""
+note = "IMPORTANT: Use the bash date command to get the current date and time. Do not guess or hardcode the date."
+
+# Step 2: Check Git Status
+[command.steps.step2]
+name = "Check Git Status"
+description = "Check current git status to see what changes need to be committed"
+
+[command.steps.step2.command]
+bash_command = "git status"
+
+[command.steps.step2.review]
+items = [
+    "List of modified files",
+    "List of new files",
+    "List of deleted files",
+    "Any uncommitted changes"
+]
+
+# Step 3: Stage All Changes
+[command.steps.step3]
+name = "Stage All Changes"
+description = "Stage all changed files for commit"
+
+[command.steps.step3.command]
+bash_command = "git add ."
+
+[command.steps.step3.verify]
+confirm_staged = "Confirm all intended changes are staged"
+review_if_needed = "Review staged changes if needed"
+
+# Step 4: Generate and Execute Commit
+[command.steps.step4]
+name = "Generate and Execute Commit"
+description = "Create a meaningful commit message and commit changes"
+
+[command.steps.step4.commit_message_guidelines]
+be_concise = "1-2 sentences"
+focus = "Focus on the 'what' and 'why' of the changes"
+use_imperative = "Use imperative mood (e.g., 'Add agent templates' not 'Added agent templates')"
+include_agent = "Include agent name if relevant: '{Agent Name}: {description}'"
+
+[command.steps.step4.generate_based_on]
+sources = [
+    "Files changed",
+    "Session summary from context file",
+    "Main accomplishments"
+]
+
+[command.steps.step4.command]
+bash_command = "git commit -m \"{your generated message}\""
+
+[command.steps.step4.error_handling]
+if_fails = [
+    "Check error message",
+    "Resolve any issues (e.g., no changes to commit)",
+    "Inform user of the situation"
+]
+
+# Step 5: Push to Remote
+[command.steps.step5]
+name = "Push to Remote"
+description = "Push committed changes to the remote repository"
+
+[command.steps.step5.determine_branch]
+bash_command = "git branch --show-current"
+common_branches = ["main", "master", "develop"]
+
+[command.steps.step5.command]
+bash_command = "git push origin {branch-name}"
+
+[command.steps.step5.error_handling]
+if_fails = [
+    "Check error message",
+    "Verify remote is configured: git remote -v",
+    "Inform user of the error and suggest resolution"
+]
+
+# Step 6: Verify Push Success
+[command.steps.step6]
+name = "Verify Push Success"
+description = "Confirm push was successful"
+
+[command.steps.step6.command]
+bash_command = "git status"
+expected_output = "Your branch is up to date with 'origin/{branch-name}'"
+
+# Step 7: Confirmation Summary
+[command.steps.step7]
+name = "Confirmation Summary"
+response_template = """
+✓ Session wrapped up successfully
+
+**Context File**: .baton/context/{agent-name}-context.md
+  - Updated with session summary for {date/time}
+
+**Git Operations**:
+  - Files staged: {count}
+  - Commit message: "{commit message}"
+  - Branch: {branch-name}
+  - Push status: Success
+
+**Summary of Changes**:
+{List key changes committed}
+
+**Next Steps**:
+{Any follow-up items from session}
+"""
+
+[command.important_notes]
+notes = [
+    "DO NOT skip any steps",
+    "If any git operation fails, report the error to the user and stop",
+    "Use meaningful, descriptive commit messages based on actual changes made",
+    "Always check git status after pushing to confirm success",
+    "Always use the bash date command to get the current date/time",
+    "Never hardcode dates or times",
+    "Preserve all existing context when updating context file"
+]
+

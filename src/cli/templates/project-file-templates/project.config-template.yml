@@ -1,0 +1,90 @@
+# Project Configuration Template
+# Format: Pure YAML (no frontmatter)
+# Purpose: Project configuration file that agents use to understand available tools, resources, agents, workflows, and IDE settings
+# Location: .baton/project.config.yml
+
+version: 1.0.0
+
+# Project metadata
+project:
+  name: "{project-name}"
+  type: "{project-type}"  # e.g., "web-application", "api-service", "library"
+  initialized: "{YYYY-MM-DDTHH:MM:SSZ}"  # ISO 8601 format, use date command
+
+# Source control configuration
+source_control:
+  provider: "{provider}"  # e.g., "github", "gitlab", "bitbucket"
+  repository_url: "{repository-url}"
+  default_branch: "{branch-name}"  # e.g., "main", "master", "develop"
+
+# Project management configuration
+project_management:
+  type: "{methodology}"  # e.g., "baton-framework", "scrum", "agile", "waterfall", "kanban"
+  location: "{location-type}"  # e.g., "github-issues", "azure-devops", "jira", "local", "linear"
+  url: "{optional-url}"  # URL to project management system (if applicable)
+  # Examples:
+  #   For GitHub Issues:
+  #     location: "github-issues"
+  #     url: "https://github.com/org/repo/issues"
+  #   For Azure DevOps:
+  #     location: "azure-devops"
+  #     url: "https://dev.azure.com/org/project"
+  #   For Jira:
+  #     location: "jira"
+  #     url: "https://org.atlassian.net/jira"
+  #   For local files:
+  #     location: "local"
+  #     url: ""  # No URL needed
+
+# GenAI platform configurations
+gen_ai:
+  - name: "{platform-name}"  # e.g., "cursor", "claude", "gemini"
+    model: "{model-name}"  # e.g., "claude-sonnet-4", "gpt-4", "gemini-pro"
+    provider: "{provider}"  # e.g., "cursor", "anthropic", "google"
+    integration_type: "{integration-type}"  # e.g., "ide-native", "api", "mcp"
+    primary: {true/false}  # Is this the primary GenAI platform?
+
+# Enabled agents
+agents:
+  enabled:
+    - name: "{agent-name-1}"  # e.g., "backend-engineer", "frontend-engineer"
+      path: ".baton/agents/{agent-name-1}.md"
+    - name: "{agent-name-2}"
+      path: ".baton/agents/{agent-name-2}.md"
+    - name: "{agent-name-3}"
+      path: ".baton/agents/{agent-name-3}.md"
+
+# Installed knowledge files (tools, resources, technology)
+knowledge:
+  - name: "{tool-name}"  # e.g., "github-cli", "aws-cli", "npm"
+    provider: "{provider}"  # e.g., "github", "aws", "npm"
+    path: ".baton/knowledge/{tool-name}.md"  # or .baton/knowledge/tools/{tool-name}.md
+    integration_type: "{integration-type}"  # e.g., "cli-native", "api", "sdk"
+    primary: {true/false}  # Is this the primary tool for this provider?
+  
+  - name: "{resource-name}"  # e.g., "aws-account", "azure-subscription"
+    provider: "{provider}"  # e.g., "aws", "azure", "gcp"
+    path: ".baton/knowledge/{resource-name}.md"  # or .baton/knowledge/resources/{resource-name}.md
+    integration_type: "{integration-type}"  # e.g., "cloud", "infrastructure"
+    primary: {true/false}
+
+# Enabled workflows
+workflows:
+  enabled:
+    - name: "{workflow-name-1}"  # e.g., "feature-breakdown", "work-unit-creation"
+      path: ".baton/workflows/{workflow-name-1}.yml"
+    - name: "{workflow-name-2}"
+      path: ".baton/workflows/{workflow-name-2}.yml"
+
+# Agent preferences
+preferences:
+  auto_save_context: {true/false}  # Automatically save context after each session
+  verbose_logging: {true/false}  # Enable verbose logging for debugging
+  check_for_updates: {true/false}  # Check for Baton Framework updates
+
+# Creation metadata
+metadata:
+  created_by: "{creator}"  # e.g., "baton-cli", "manual"
+  cli_version: "{version}"  # Baton CLI version (if created by CLI)
+  last_updated: "{YYYY-MM-DDTHH:MM:SSZ}"  # ISO 8601 format, use date command
+

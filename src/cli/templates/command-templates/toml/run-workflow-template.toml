@@ -1,0 +1,182 @@
+# Run Workflow Command Template
+# Format: TOML (for Gemini Desktop)
+# Purpose: Execute the {workflow-name} workflow for {agent-name} agent
+
+[command]
+description = "Execute the {workflow-name} workflow for {agent-name} agent"
+argument_hint = "{optional: <workflow-parameters>}"
+name = "run-workflow"
+
+[command.metadata]
+version = "1.0.0"
+workflow_name = "{workflow-name}"
+agent_name = "{agent-name}"
+created = "{YYYY-MM-DD}"
+
+[command.instructions]
+purpose = "Execute the {workflow-name} workflow for the {agent-name} agent."
+
+# Step 1: Verify Agent Authorization
+[command.steps.step1]
+name = "Verify Agent Authorization"
+critical = true
+description = "Check if the current agent is authorized to execute this workflow"
+
+[command.steps.step1.actions]
+read_workflow = ".baton/workflows/{workflow-name}.yml"
+check_allowed_agents = "If allowed_agents field is present, verify current agent is in the list"
+check_boundaries = "Verify agent boundaries allow this workflow execution"
+
+[command.steps.step1.error_handling]
+unauthorized_message = "This workflow can only be executed by: {list of allowed agents}"
+action = "Stop execution and inform user of authorization requirement"
+
+# Step 2: Load Workflow Definition
+[command.steps.step2]
+name = "Load Workflow Definition"
+file = ".baton/workflows/{workflow-name}.yml"
+purpose = "Complete workflow definition with steps, error handling, and command references"
+
+[command.steps.step2.extract_fields]
+fields = [
+    "Workflow name and purpose",
+    "Prerequisites",
+    "Workflow steps",
+    "Error handling mechanisms",
+    "Command references"
+]
+
+# Step 3: Load Project Configuration and Manifest
+[command.steps.step3]
+name = "Load Project Configuration and Manifest"
+critical = true
+note = "CRITICAL: MUST READ - Workflows need project context to execute correctly."
+
+[command.steps.step3.files]
+project_config = ".baton/project.config.yml"
+project_manifest = ".baton/project.manifest"
+
+[command.steps.step3.project_config]
+purpose = "Understand available tools, resources, and workflows"
+extract = [
+    "Available tools (for workflow steps that require CLI tools) and their file paths",
+    "Available resources (for workflow steps that require cloud access)",
+    "Installed workflows (for workflow dependencies) with file paths",
+    "Project management methodology and location",
+    "Agent preferences (for workflow behavior customization)"
+]
+
+[command.steps.step3.project_manifest]
+purpose = "Understand project requirements and constraints"
+extract = [
+    "Project requirements (workflows must align with requirements)",
+    "Features (workflows may need to reference existing features)"
+]
+notes = [
+    "Architectural decisions are in knowledge/architecture-decisions.md (workflows should respect past decisions)",
+    "Technical and regulatory constraints are in .baton/boundaries/project-boundaries.md (workflows must respect limitations)"
+]
+
+[command.steps.step3.why_critical]
+reasons = [
+    "Workflows may need to use tools defined in project.config.yml",
+    "Workflows must respect project constraints from boundaries file",
+    "Workflows should align with project requirements",
+    "Workflows may need to reference past decisions in architecture-decisions.md to avoid conflicts"
+]
+
+# Step 4: Check Prerequisites
+[command.steps.step4]
+name = "Check Prerequisites"
+description = "Verify all prerequisites are met"
+
+[command.steps.step4.actions]
+review_prerequisites = "Review prerequisites section in workflow file"
+verify_each = [
+    "{Prerequisite 1}",
+    "{Prerequisite 2}",
+    "{Prerequisite 3}"
+]
+
+[command.steps.step4.error_handling]
+action = "Stop execution and inform user of missing prerequisites"
+
+# Step 5: Parse Workflow Parameters
+[command.steps.step5]
+name = "Parse Workflow Parameters"
+description = "Extract and validate workflow parameters from command arguments"
+optional = true
+
+[command.steps.step5.parameters]
+parameter1 = "{Description}"
+parameter2 = "{Description}"
+
+[command.steps.step5.validation]
+verify_required = "Verify required parameters are provided"
+validate_formats = "Validate parameter formats"
+set_defaults = "Set default values for optional parameters"
+
+# Step 6: Execute Workflow Steps
+[command.steps.step6]
+name = "Execute Workflow Steps"
+description = "Execute workflow steps in order"
+
+[command.steps.step6.for_each_step]
+actions = [
+    "Read step definition from workflow file",
+    "Execute step actions as specified",
+    "Handle decision points (evaluate conditions, follow if_true/if_false paths)",
+    "Check for errors and follow error handling from workflow file",
+    "Retry if specified (with max retries)",
+    "Use fallback strategy if retries exhausted",
+    "Verify step completion before proceeding to next step"
+]
+
+[command.steps.step6.parallel_execution]
+check_enabled = "If step has parallel_execution.enabled: true, execute parallel steps concurrently"
+wait_for_completion = "Wait for all parallel steps to complete before proceeding"
+
+# Step 7: Handle Errors
+[command.steps.step7]
+name = "Handle Errors"
+description = "Follow error handling strategy from workflow file"
+
+[command.steps.step7.retry_logic]
+check_global_retry = "If error_handling.global_retry.enabled: true, retry failed steps"
+backoff_strategies = ["exponential", "linear", "fixed"]
+respect_max_retries = true
+
+[command.steps.step7.error_types]
+handle_specific = "Handle specific error types as defined in workflow file"
+execute_recovery = "Execute recovery actions for each error type"
+notify_user = "Inform user of errors and recovery actions taken"
+
+# Step 8: Confirm Completion
+[command.steps.step8]
+name = "Confirm Completion"
+response_template = """
+✓ Workflow "{workflow-name}" Completed
+
+**Workflow**: {workflow-name}
+**Agent**: {agent-name}
+**Steps Executed**: {count}
+**Status**: {Success/Partial Success with warnings}
+**Duration**: {if applicable}
+
+**Results:**
+{Summary of workflow results}
+
+**Next Steps:**
+{Any follow-up actions required}
+"""
+
+[command.important_notes]
+notes = [
+    "Always verify agent authorization before executing workflow",
+    "Check prerequisites before starting workflow execution",
+    "Follow error handling strategies from workflow file",
+    "Respect parallel execution constraints",
+    "Log all workflow steps for debugging",
+    "Workflow file location: .baton/workflows/{workflow-name}.yml"
+]
+
