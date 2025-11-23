@@ -5,7 +5,7 @@ scope: project-setup # Required scope for agent to execute this command
 
 # Project Init Command
 
-Execute the project-initialisation workflow to initialize a project with Baton Framework by creating project.config.yml, project.manifest, and project-boundaries.md.
+Execute the project-initialisation workflow to initialize a project with Baton Framework by creating project.config.md, project.manifest, and project-boundaries.md.
 
 ## Instructions
 

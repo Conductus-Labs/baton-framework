@@ -1,6 +1,6 @@
 # Sub-Workflow: Load Project Configuration
 # Format: Pure YAML (no frontmatter)
-# Purpose: Load project configuration file (project.config.yml)
+# Purpose: Load project configuration file (project.config.md)
 #
 # CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
 # Sub-workflows are NOT standalone - they are modular components designed to be
@@ -12,7 +12,7 @@
 
 version: 1.0.0
 workflow_name: sub-flow-load-project-config
-purpose: Load project configuration file (project.config.yml)
+purpose: Load project configuration file (project.config.md)
 scope: project-config # Required scope for parent workflow to call this sub-flow
 created: 2025-11-23
 
@@ -22,7 +22,7 @@ created: 2025-11-23
 
 # Prerequisites
 prerequisites:
-  - Project configuration file must exist at `.baton/project.config.yml`
+  - Project configuration file must exist at `.baton/project.config.md`
 
 # Sub-Workflow Steps
 workflow_steps:
@@ -47,17 +47,17 @@ workflow_steps:
     name: Read Project Configuration File
     description: Read the project configuration YAML file
     actions:
-      - Read file: `.baton/project.config.yml`
+      - Read file: `.baton/project.config.md`
       - Parse YAML structure
       - Validate YAML syntax
     error_handling:
       retry: false
       error_messages:
         - type: Config File Read Error
-          message: "❌ Error: Cannot read project configuration file\n\nFile: .baton/project.config.yml\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid YAML format"
+          message: "❌ Error: Cannot read project configuration file\n\nFile: .baton/project.config.md\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid YAML format"
           action: Stop execution
         - type: YAML Parse Error
-          message: "❌ Error: Invalid YAML syntax in project configuration\n\nFile: .baton/project.config.yml\n\nPlease verify YAML syntax is correct"
+          message: "❌ Error: Invalid YAML syntax in project configuration\n\nFile: .baton/project.config.md\n\nPlease verify YAML syntax is correct"
           action: Stop execution
 
   - step: 3
@@ -94,7 +94,7 @@ error_handling:
 # Notes
 notes:
   - This sub-workflow is called whenever project configuration is needed
-  - Project configuration file location: `.baton/project.config.yml`
+  - Project configuration file location: `.baton/project.config.md`
   - Configuration provides agents with available tools, resources, agents, workflows
   - File paths for agents, knowledge, and workflows are included in configuration
   - This sub-flow will be heavily reused across multiple workflows

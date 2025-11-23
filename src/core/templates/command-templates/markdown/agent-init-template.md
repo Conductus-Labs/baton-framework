@@ -85,7 +85,7 @@ Please use an agent with the '{scope-name}' scope, or add this scope to the agen
 
 **Files to Read:**
 
-1. **Project Configuration**: `.baton/project.config.yml`
+1. **Project Configuration**: `.baton/project.config.md`
 
    - **Purpose**: Understand available tools, resources, agents, workflows, and project management settings
    - **Extract**:

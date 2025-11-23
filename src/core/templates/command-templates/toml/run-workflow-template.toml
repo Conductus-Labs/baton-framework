@@ -90,7 +90,7 @@ critical = true
 note = "CRITICAL: MUST READ - Workflows need project context to execute correctly."
 
 [command.steps.step4.files]
-project_config = ".baton/project.config.yml"
+project_config = ".baton/project.config.md"
 project_manifest = ".baton/project.manifest"
 
 [command.steps.step4.project_config]
@@ -116,7 +116,7 @@ notes = [
 
 [command.steps.step4.why_critical]
 reasons = [
-    "Workflows may need to use tools defined in project.config.yml",
+    "Workflows may need to use tools defined in project.config.md",
     "Workflows must respect project constraints from boundaries file",
     "Workflows should align with project requirements",
     "Workflows may need to reference past decisions in architecture-decisions.md to avoid conflicts"

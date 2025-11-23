@@ -4,7 +4,7 @@
 
 version: 1.0.0
 workflow_name: project-initialisation
-purpose: Initialize a project with Baton Framework by creating project.config.yml, project.manifest, and project-boundaries.md
+purpose: Initialize a project with Baton Framework by creating project.config.md, project.manifest, and project-boundaries.md
 associate_command: /project-init
 scope: project-setup # Required scope for agent to execute this workflow
 # Note: This workflow requires scopes to call sub-flows:
@@ -36,7 +36,7 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Insufficient Scope
-          message: "❌ Error: Insufficient scope to execute this workflow\n\nWorkflow: project-initialisation\nRequired scope: project-setup\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this workflow.\nOnly baton-agent can initialize projects. Please use baton-agent to run this workflow."
+          message_template: user-messages/workflows/project-initialisation/step-1-insufficient-scope-error.md
           action: Stop execution
 
   - step: 2
@@ -46,7 +46,7 @@ workflow_steps:
       - step: 1
         required: true
     actions:
-      - Check if `.baton/project.config.yml` exists
+      - Check if `.baton/project.config.md` exists
       - Check if `.baton/project.manifest` exists
       - Check if `.baton/boundaries/project-boundaries.md` exists
       - If files exist, check if they are in default/template state (compare with templates)
@@ -61,12 +61,12 @@ workflow_steps:
       retry: false
       warning_messages:
         - type: Project Already Initialized
-          message: "⚠️ Warning: Project appears to be already initialized with customized values\n\nFound customized files:\n- {list of customized files}\n\nReinitializing will overwrite existing files. Do you want to continue?"
+          message_template: user-messages/workflows/project-initialisation/step-2-project-already-initialized-warning.md
           action: Wait for user confirmation via HITL checkpoint
 
   - step: 3
     name: Scan Project for Configuration Values
-    description: Analyze project to estimate values for project.config.yml
+    description: Analyze project to estimate values for project.config.md
     dependencies:
       - step: 2
         required: true
@@ -77,9 +77,15 @@ workflow_steps:
       - Check for existing .baton/ directory structure to identify any existing agents/workflows
       - Check for project management files (package.json scripts, Makefile, etc.)
       - Identify GenAI platform from current context (Cursor, Claude, Gemini)
+      - **CRITICAL**: When provider is identified (e.g., "cursor"), set name to match provider (e.g., "cursor")
       - Generate current date/time for initialization timestamp
-      - Compile estimated values for project.config.yml
-      - Identify which values cannot be determined and need user input
+      - Compile estimated values for project.config.md
+      - Categorize fields as:
+          - Required fields (MUST be filled): project.name, project.type, project_management.type, project_management.location, gen_ai first entry name, gen_ai first entry model
+          - Optional fields (can be left empty): project_management.url, knowledge entries, agents beyond baton-agent
+          - Default values (already set): preferences section with auto_save_context true, verbose_logging false, check_for_updates true, send_feedback false
+      - Identify which required values cannot be determined and need user input
+      - For each required field that needs input, prepare guidance with examples
     error_handling:
       retry: false
       warning_messages:
@@ -89,42 +95,37 @@ workflow_steps:
 
   - step: 4
     name: HITL Checkpoint - Review and Complete Project Configuration
-    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.config.yml
+    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.config.md
     dependencies:
       - step: 3
         required: true
     actions:
-      - Load project.config.yml template (or existing file if in default state)
-      - Display estimated values from project scan
-      - Identify and highlight values that need user input
-      - Request user to review, validate, and complete all values
+      - Load project.config.md template (or existing file if in default state)
+      - Apply estimated values from project scan
+      - Identify required fields that still contain placeholders (e.g., {project-name}, {methodology}, {model-name})
+      - Identify optional fields that contain placeholders
+      - Identify fields with default values (preferences section)
+      - Categorize fields:
+          - Required with placeholders (MUST be filled)
+          - Optional with placeholders (can be left empty or filled)
+          - Default values (already set, can be changed)
+      - For each required field with placeholder, provide:
+          - Field name and path
+          - Example values or valid options
+          - Brief explanation of what the field is for
+      - Display configuration with clear indicators for each category
+      - Request user to review, validate, and complete all REQUIRED values
       - Wait for user decision (approve with values/reject/modify)
+      - **CRITICAL VALIDATION**: Before accepting "approve", check ALL required fields
+      - **CRITICAL VALIDATION**: If ANY required field contains a placeholder (e.g., "{methodology}", "{model-name}", "{location-type}"), REJECT the approval
+      - **CRITICAL VALIDATION**: Display error message listing all required fields that still have placeholders
+      - **CRITICAL VALIDATION**: Request user to provide values for missing required fields
+      - **CRITICAL VALIDATION**: Only accept "approve" if ALL required fields are filled (no placeholders remain)
+      - **CRITICAL VALIDATION**: If user says "approve" but required fields are missing, respond with error and ask for missing values (DO NOT proceed to step 5)
     hitl_checkpoint:
       type: specification_review
       required: true
-      checkpoint_message: |
-        🔍 HITL Checkpoint: Review and Complete Project Configuration
-
-        I've scanned your project and estimated the following values for project.config.yml:
-
-        **Estimated Values (from project scan):**
-        {Display estimated values with confidence indicators}
-
-        **Values Requiring Your Input:**
-        {Display list of values that need user input with explanations}
-
-        **Current Configuration:**
-        {Display current project.config.yml content with estimated values filled in}
-
-        **Action Required:**
-        - ✅ Approve: Use these values and create/update project.config.yml
-        - ❌ Reject: Cancel project initialization
-        - ✏️ Modify: Provide corrections or additional values
-
-        Please review the estimated values and provide any missing information.
-        For empty projects, you'll need to provide most values manually.
-
-        Respond with: approve, reject, or provide modifications/corrections.
+      checkpoint_message_template: user-messages/workflows/project-initialisation/step-4-hitl-checkpoint.md
       timeout: null # No timeout - wait for user response
       required_approvers: ["user"]
       decision_options:
@@ -132,39 +133,63 @@ workflow_steps:
         reject: "Stop execution with cancellation message"
         modify: "Apply modifications and re-present for approval"
     decision_points:
-      - condition: User approved
+      - condition: User responded with "approve"
+        if_true: |
+          **MANDATORY VALIDATION STEP - DO THIS FIRST:**
+          1. Check ALL required fields in the current configuration
+          2. Look for ANY placeholders in required fields (e.g., "{methodology}", "{model-name}", "{location-type}", "{project-name}", "{repository-url}", "{branch-name}")
+          3. If ANY required field contains a placeholder → REJECT approval, show error, ask for values, re-present checkpoint
+          4. If ALL required fields are filled (no placeholders) → Continue to step 5
+        if_false: User rejected or requested modifications
+      - condition: User approved AND all required fields are filled (no placeholders remain in required fields)
         if_true: Continue to step 5
+        if_false: |
+          **STOP - DO NOT PROCEED TO STEP 5**
+          Required fields still contain placeholders. Reject approval, display error message, request required field values, re-present checkpoint
+      - condition: User approved BUT required fields still contain placeholders
+        if_true: |
+          **REJECT APPROVAL - DO NOT PROCEED TO STEP 5**
+          Display error message (type: Required Fields Missing), request required field values, re-present checkpoint
         if_false: User rejected or requested modifications
       - condition: User requested modifications
-        if_true: Apply modifications, re-present checkpoint
+        if_true: Apply modifications, validate required fields (check for placeholders in required fields), re-present checkpoint
         if_false: User rejected - stop execution
     error_handling:
       retry: false
       error_messages:
         - type: User Rejected
-          message: "❌ Project initialization cancelled by user\n\nNo files were created/updated. You can run /project-init again when ready."
+          message_template: user-messages/workflows/project-initialisation/step-4-user-rejected-error.md
           action: Stop execution
+        - type: Required Fields Missing
+          message_template: user-messages/workflows/project-initialisation/step-4-required-fields-missing-error.md
+          action: **DO NOT PROCEED TO STEP 5** - Request required field values, re-present checkpoint
 
   - step: 5
     name: Create/Update Project Configuration File
-    description: Create or update project.config.yml with validated values from HITL checkpoint
+    description: Create or update project.config.md with validated values from HITL checkpoint
     dependencies:
       - step: 4
         required: true
     actions:
-      - Load project.config.yml template (or existing file if updating)
+      - Load project.config.md template (or existing file if updating)
       - Apply validated values from HITL checkpoint
+      - Final validation: Check that all required fields are filled (no placeholders remain in required fields)
       - Generate current date/time for initialization/update timestamp
-      - Create or update `.baton/project.config.yml` with populated values
+      - "Set default values for preferences section (auto_save_context true, verbose_logging false, check_for_updates true, send_feedback false)"
+      - Create or update `.baton/project.config.md` with populated values
       - Verify file was created/updated successfully
+      - Verify no required field placeholders remain in created file
     error_handling:
       retry: false
       error_messages:
         - type: File Creation Error
-          message: "❌ Error: Cannot create/update project.config.yml\n\nPlease verify:\n- Write permissions to .baton/ directory\n- Directory exists\n- Disk space available"
+          message_template: user-messages/workflows/project-initialisation/step-5-file-creation-error.md
           action: Stop execution
         - type: Template Not Found
-          message: "❌ Error: Project configuration template not found\n\nExpected location: baton-framework/src/core/templates/project-file-templates/project.config-template.yml\n\nPlease verify template file exists."
+          message_template: user-messages/workflows/project-initialisation/step-5-template-not-found-error.md
+          action: Stop execution
+        - type: Required Fields Still Missing
+          message_template: user-messages/workflows/project-initialisation/step-5-required-fields-still-missing-error.md
           action: Stop execution
 
   - step: 6
@@ -186,7 +211,7 @@ workflow_steps:
       retry: false
       warning_messages:
         - type: Empty Project Detected
-          message: "⚠️ Note: Project appears to be empty or new\n\nMost values will need to be provided by the user during the review checkpoint."
+          message_template: user-messages/workflows/project-initialisation/step-6-empty-project-warning.md
           action: Continue execution
 
   - step: 7
@@ -204,34 +229,12 @@ workflow_steps:
     hitl_checkpoint:
       type: specification_review
       required: true
-      checkpoint_message: |
-        🔍 HITL Checkpoint: Review and Complete Project Manifest
-
-        I've scanned your project and estimated the following values for project.manifest:
-
-        **Estimated Values (from project scan):**
-        {Display estimated values with confidence indicators}
-
-        **Values Requiring Your Input:**
-        {Display list of values that need user input with explanations}
-
-        **Current Manifest:**
-        {Display current project.manifest content with estimated values filled in}
-
-        **Action Required:**
-        - ✅ Approve: Use these values and create/update project.manifest
-        - ❌ Reject: Cancel project initialization (project.config.yml already created)
-        - ✏️ Modify: Provide corrections or additional values
-
-        Please review the estimated values and provide any missing information.
-        For empty projects, you'll need to provide most values manually (business objectives, technical requirements, success criteria, etc.).
-
-        Respond with: approve, reject, or provide modifications/corrections.
+      checkpoint_message_template: user-messages/workflows/project-initialisation/step-7-hitl-checkpoint.md
       timeout: null # No timeout - wait for user response
       required_approvers: ["user"]
       decision_options:
         approve: "Continue to step 8"
-        reject: "Stop execution (note: project.config.yml already created)"
+        reject: "Stop execution (note: project.config.md already created)"
         modify: "Apply modifications and re-present for approval"
     decision_points:
       - condition: User approved
@@ -244,12 +247,12 @@ workflow_steps:
       retry: false
       error_messages:
         - type: User Rejected
-          message: "❌ Project initialization cancelled by user\n\nNote: project.config.yml was already created. You can:\n- Manually delete it if needed\n- Run /project-init again to complete initialization"
+          message_template: user-messages/workflows/project-initialisation/step-7-user-rejected-error.md
           action: Stop execution
 
   - step: 8
     name: Create/Update Project Manifest File
-    description: Create or update project.manifest with validated values from HITL checkpoint
+    description: Create or update project.manifest.md with validated values from HITL checkpoint
     dependencies:
       - step: 7
         required: true
@@ -257,17 +260,24 @@ workflow_steps:
       - Load project.manifest template (or existing file if updating)
       - Apply validated values from HITL checkpoint
       - Generate current date for created and last_updated fields
-      - Create or update `.baton/project.manifest` with populated values
+      - Transform template content - Comment out feature links section (lines with feature links) as these link to GitHub issues which may not exist yet
+      - Transform template content - Replace commented feature links with HTML comment showing example format
+      - Transform template content - Add note after architecture-decisions.md reference explaining file will be created when knowledge files are installed
+      - Create or update .baton/project.manifest.md with populated values (note: file extension is .md, not just .manifest)
       - Verify file was created/updated successfully
     error_handling:
       retry: false
       error_messages:
         - type: File Creation Error
-          message: "❌ Error: Cannot create/update project.manifest\n\nPlease verify:\n- Write permissions to .baton/ directory\n- Directory exists\n- Disk space available"
+          message_template: user-messages/workflows/project-initialisation/step-8-file-creation-error.md
           action: Stop execution
         - type: Template Not Found
-          message: "❌ Error: Project manifest template not found\n\nExpected location: baton-framework/src/core/templates/project-file-templates/project-manifest-template.md\n\nPlease verify template file exists."
+          message_template: user-messages/workflows/project-initialisation/step-8-template-not-found-error.md
           action: Stop execution
+    notes:
+      - "File is created with .md extension: .baton/project.manifest.md"
+      - "Feature links section is commented out as examples (features link to GitHub issues which may not exist yet)"
+      - "Architecture decisions note added (file will be created when knowledge files are installed)"
 
   - step: 9
     name: HITL Checkpoint - Project Boundaries Review
@@ -283,26 +293,7 @@ workflow_steps:
     hitl_checkpoint:
       type: specification_review
       required: true
-      checkpoint_message: |
-        🔍 HITL Checkpoint: Review Project Boundaries Template
-
-        Before creating project-boundaries.md, please review the template:
-
-        {Display template content with placeholders}
-
-        This file will define:
-        - Always Do: Mandatory actions for all agents
-        - Ask First: Actions requiring human approval
-        - Never Do: Prohibited actions with consequences
-        - Scope definitions (files, directories, environments)
-        - Examples of allowed and blocked actions
-
-        **Action Required:**
-        - ✅ Approve: Create project-boundaries.md from template (you can edit it later)
-        - ❌ Reject: Skip boundaries file creation (project.config.yml and project.manifest already created)
-        - ✏️ Modify: Request specific changes before creation
-
-        Please respond with: approve, reject, or describe modifications needed.
+      checkpoint_message_template: user-messages/workflows/project-initialisation/step-9-hitl-checkpoint.md
       timeout: null # No timeout - wait for user response
       required_approvers: ["user"]
       decision_options:
@@ -320,7 +311,7 @@ workflow_steps:
       retry: false
       warning_messages:
         - type: User Rejected Boundaries
-          message: "⚠️ Note: Project boundaries file creation skipped\n\nYou can create it later manually or run /project-init again."
+          message_template: user-messages/workflows/project-initialisation/step-9-user-rejected-boundaries-warning.md
           action: Continue execution (skip to step 11)
 
   - step: 10
@@ -332,18 +323,23 @@ workflow_steps:
     actions:
       - Load project-boundaries template
       - Apply any user modifications from HITL checkpoint
+      - Transform template content - Comment out all sections containing placeholder text (Category Name, Specific action description, Files directories placeholders, etc.)
+      - Transform template content - Comment out placeholder examples sections (Allowed Actions and Blocked Actions examples)
+      - Transform template content - Add HTML header comment explaining this is a template to be populated
+      - Transform template content - Keep section headers (Always Do, Ask First, Never Do, etc.) but comment out the placeholder content within them
+      - Transform template content - Keep the structure and important notes (IMPORTANT warning, Boundary Hierarchy, Precedence Rules) as active content
       - Generate current date for created field
-      - Create `.baton/boundaries/project-boundaries.md` with populated values
+      - Create .baton/boundaries/project-boundaries.md with transformed content
       - Verify file was created successfully
       - Ensure boundaries directory exists
     error_handling:
       retry: false
       error_messages:
         - type: File Creation Error
-          message: "❌ Error: Cannot create project-boundaries.md\n\nPlease verify:\n- Write permissions to .baton/boundaries/ directory\n- Directory exists or can be created\n- Disk space available"
+          message_template: user-messages/workflows/project-initialisation/step-10-file-creation-error.md
           action: Stop execution
         - type: Template Not Found
-          message: "❌ Error: Project boundaries template not found\n\nExpected location: baton-framework/src/core/templates/boundaries-templates/project-boundaries-template.md\n\nPlease verify template file exists."
+          message_template: user-messages/workflows/project-initialisation/step-10-template-not-found-error.md
           action: Stop execution
 
   - step: 11
@@ -359,38 +355,7 @@ workflow_steps:
       - List all files created
       - Include next steps for user
       - Display formatted confirmation to user
-    confirmation_template: |
-      ✓ Project Initialization Complete
-
-      **Files Created:**
-      - ✅ `.baton/project.config.yml` - Project configuration
-      - ✅ `.baton/project.manifest` - Project requirements and success criteria
-      {if boundaries created: - ✅ `.baton/boundaries/project-boundaries.md` - Project boundaries and constraints}
-
-      **Next Steps:**
-      1. Review and customize the created files with your project-specific information
-      2. Update project.config.yml with:
-         - Project name and type
-         - Source control repository URL
-         - Project management settings
-         - GenAI platform configurations
-         - Enabled agents and workflows
-      3. Update project.manifest with:
-         - Business objectives
-         - Technical requirements
-         - Non-functional requirements
-         - Success criteria
-      {if boundaries created: 4. Update project-boundaries.md with your project-specific constraints and boundaries}
-
-      5. Run `/init-baton-agent` to initialize baton-agent (if not already done)
-      6. Initialize other agents as needed using their respective init commands
-
-      **Important:**
-      - Only baton-agent can create new files from templates
-      - All agents will respect the boundaries defined in project-boundaries.md
-      - Project configuration files provide essential context for all agents
-
-      Project is now ready for agent initialization!
+    confirmation_template: user-messages/workflows/project-initialisation/step-11-confirmation.md
 
 # Error Handling
 error_handling:
@@ -434,10 +399,10 @@ command_references:
 # Notes
 notes:
   - This workflow includes three HITL checkpoints:
-      - Review and complete project.config.yml values (step 4)
+      - Review and complete project.config.md values (step 4)
       - Review and complete project.manifest values (step 7)
       - Review project-boundaries.md template (step 9)
-  - The workflow scans the project to estimate values for project.config.yml and project.manifest
+  - The workflow scans the project to estimate values for project.config.md and project.manifest
   - Estimated values are validated with the user at HITL checkpoints
   - Users must provide values that cannot be determined from project scan
   - For empty projects, users will need to provide most values manually
@@ -451,3 +416,21 @@ notes:
   - Template files are loaded from baton-framework repository
   - All created/updated files can be edited manually after creation
   - Project initialization can be re-run to update values (future workflows will handle updates)
+  - Required fields for project.config.md (MUST be filled, cannot contain placeholders):
+      - project.name: Project name (e.g., "my-web-app", "api-service", "baton-framework")
+      - project.type: Project type (e.g., "web-application", "api-service", "library", "framework")
+      - project_management.type: Methodology (e.g., "baton-framework", "scrum", "agile", "waterfall", "kanban")
+      - project_management.location: Location type (e.g., "github-issues", "azure-devops", "jira", "local", "linear")
+      - gen_ai first entry name: Platform name (e.g., "cursor", "claude", "gemini")
+      - gen_ai first entry model: Model name (e.g., "auto" for Cursor, "claude-sonnet-4" for Claude, "gemini-pro" for Gemini)
+  - Optional fields (can be left empty or filled later):
+      - project_management.url: URL to project management system (only needed if not using "local")
+      - knowledge entries: Can be added later via baton install knowledge
+      - agents beyond baton-agent: Can be added later
+  - Default values (already set, can be modified):
+      - preferences.auto_save_context: true
+      - preferences.verbose_logging: false
+      - preferences.check_for_updates: true
+      - preferences.send_feedback: false
+  - The workflow MUST validate that all required fields are filled before accepting approval
+  - If user approves but required fields still have placeholders, the workflow must reject and request those values
