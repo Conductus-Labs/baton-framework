@@ -1,6 +1,7 @@
 ---
 description: Execute the {workflow-name} workflow for {agent-name} agent
 argument-hint: {optional: <workflow-parameters>}
+scope: workflow-execution # Required scope for agent to execute this command (must match agent's scope)
 ---
 
 # Run Workflow Command
@@ -11,7 +12,46 @@ Execute the {workflow-name} workflow for the {agent-name} agent.
 
 You are executing the run-workflow command. Follow these steps in order:
 
-### Step 1: Verify Agent Authorization
+### Step 1: Validate Agent Scope
+
+**CRITICAL PREREQUISITE:** This command requires the agent to have the `workflow-execution` scope. You MUST validate scope before proceeding.
+
+**Action:** Validate that the current agent has the required scope to execute this command.
+
+1. **Load Agent Definition:**
+   - Read the agent definition file to get the agent's scope array
+   - Agent file location: `.baton/agents/{agent-name}.md` (or from current agent context if already loaded)
+
+2. **Check Scope Match:**
+   - Extract the agent's `scope` array from the agent definition frontmatter
+   - Verify that the agent's scope array includes: `workflow-execution`
+   - This command requires scope: `workflow-execution`
+
+3. **If Scope Matches:**
+   - ✅ Continue to Step 2
+   - Agent has required scope, proceed with command execution
+
+4. **If Scope Does NOT Match:**
+   - ❌ **STOP EXECUTION IMMEDIATELY**
+   - Display error message and refuse to run the command
+   - Do not proceed with any further steps
+
+**Error Message (if scope mismatch):**
+```
+❌ Error: Insufficient scope to execute this command
+
+Command: run-workflow
+Required scope: workflow-execution
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'workflow-execution' scope, or add this scope to the agent's definition.
+```
+
+**Action:** Validate scope before proceeding. If scope does not match, stop execution and display error.
+
+### Step 2: Verify Agent Authorization
 
 **CRITICAL:** Check if the current agent is authorized to execute this workflow.
 

@@ -1,0 +1,107 @@
+# Sub-Workflow: Load Project Manifest
+# Format: Pure YAML (no frontmatter)
+# Purpose: Load project manifest file (project.manifest - Project Constitution)
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-load-project-manifest
+purpose: Load project manifest file (project.manifest - Project Constitution)
+scope: project-config # Required scope for parent workflow to call this sub-flow
+created: 2025-11-23
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - Project manifest file must exist at `.baton/project.manifest`
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
+    actions:
+      - Get agent scope array from parent workflow context (agent executing the parent workflow)
+      - Verify agent's scope array includes required scope: project-config
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-load-project-manifest\nRequired scope: project-config\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'project-config' scope."
+          action: Stop execution
+
+  - step: 2
+    name: Read Project Manifest File
+    description: Read the project manifest file (Markdown with YAML frontmatter)
+    actions:
+      - Read file: `.baton/project.manifest`
+      - Parse YAML frontmatter to extract metadata
+      - Read markdown content sections
+      - Validate frontmatter syntax
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Manifest File Read Error
+          message: "❌ Error: Cannot read project manifest file\n\nFile: .baton/project.manifest\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid frontmatter format"
+          action: Stop execution
+        - type: Frontmatter Parse Error
+          message: "❌ Error: Invalid frontmatter syntax in project manifest\n\nFile: .baton/project.manifest\n\nPlease verify frontmatter YAML syntax is correct"
+          action: Stop execution
+
+  - step: 3
+    name: Extract Manifest Information
+    description: Extract key information from project manifest
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Extract frontmatter metadata (version, project_name, created, last_updated)
+      - Extract Project Information section (name, description, organization, tech_stack)
+      - Extract Requirements section:
+        - Business objectives
+        - Technical requirements
+        - Non-functional requirements
+      - Extract Features section (links to feature files)
+      - Extract Success Criteria section (project goals)
+      - Note: Architectural decisions are in `knowledge/architecture-decisions.md` (not in manifest)
+      - Note: Technical/regulatory constraints are in `.baton/boundaries/project-boundaries.md` (not in manifest)
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+  
+  error_types:
+    - type: Manifest File Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+    
+    - type: Frontmatter Parse Error
+      handling: Stop execution with error message
+      recovery: Verify frontmatter YAML syntax is valid
+
+# Notes
+notes:
+  - This sub-workflow is called whenever project manifest is needed
+  - Project manifest is the "Project Constitution" - high-level project information
+  - Manifest file location: `.baton/project.manifest`
+  - Format: Markdown with YAML frontmatter
+  - Contains project context, requirements, features, and success criteria
+  - Architectural decisions are stored separately in `knowledge/architecture-decisions.md`
+  - Technical/regulatory constraints are in `.baton/boundaries/project-boundaries.md`
+  - This sub-flow will be heavily reused across multiple workflows
+

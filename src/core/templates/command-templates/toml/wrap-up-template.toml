@@ -5,6 +5,7 @@
 [command]
 description = "Updates agent context, commits and pushes all changes for {agent-name} agent"
 name = "wrap-up"
+scope = "context-management" # Required scope for agent to execute this command (must match agent's scope)
 
 [command.metadata]
 version = "1.0.0"
@@ -14,8 +15,44 @@ created = "{YYYY-MM-DD}"
 [command.instructions]
 purpose = "Execute the session wrap-up workflow by syncing context, committing changes, and pushing to the remote repository."
 
-# Step 1: Sync Context File
+# Step 1: Validate Agent Scope
 [command.steps.step1]
+name = "Validate Agent Scope"
+critical = true
+description = "CRITICAL PREREQUISITE: Validate that the current agent has the required scope to execute this command"
+
+[command.steps.step1.action]
+load_agent_definition = "Read the agent definition file to get the agent's scope array"
+agent_file = ".baton/agents/{agent-name}.md"
+note = "Or from current agent context if already loaded"
+
+[command.steps.step1.scope_validation]
+extract_agent_scope = "Extract the agent's scope array from the agent definition frontmatter"
+required_scope = "context-management"
+check_match = "Verify that the agent's scope array includes the required scope"
+
+[command.steps.step1.if_match]
+action = "Continue to Step 2"
+note = "Agent has required scope, proceed with command execution"
+
+[command.steps.step1.if_no_match]
+action = "STOP EXECUTION IMMEDIATELY"
+display_error = true
+error_message = """
+❌ Error: Insufficient scope to execute this command
+
+Command: wrap-up
+Required scope: context-management
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'context-management' scope, or add this scope to the agent's definition.
+"""
+note = "Do not proceed with any further steps"
+
+# Step 2: Sync Context File
+[command.steps.step2]
 name = "Sync Context File"
 description = "Update the context file with current session summary"
 reference = "Follow the sync-context command steps (see sync-context-template.toml)"

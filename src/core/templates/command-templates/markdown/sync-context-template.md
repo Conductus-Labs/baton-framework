@@ -1,5 +1,6 @@
 ---
 description: Updates the {agent-name} agent context file with a summary of the current chat session
+scope: context-management # Required scope for agent to execute this command (must match agent's scope)
 ---
 
 # Sync Context Command
@@ -10,7 +11,46 @@ Execute the context synchronization workflow by updating the `.baton/context/{ag
 
 You are executing the sync-context command. Follow these steps in order:
 
-### Step 1: Summarize the Current Chat Session
+### Step 1: Validate Agent Scope
+
+**CRITICAL PREREQUISITE:** This command requires the agent to have the `context-management` scope. You MUST validate scope before proceeding.
+
+**Action:** Validate that the current agent has the required scope to execute this command.
+
+1. **Load Agent Definition:**
+   - Read the agent definition file to get the agent's scope array
+   - Agent file location: `.baton/agents/{agent-name}.md` (or from current agent context if already loaded)
+
+2. **Check Scope Match:**
+   - Extract the agent's `scope` array from the agent definition frontmatter
+   - Verify that the agent's scope array includes: `context-management`
+   - This command requires scope: `context-management`
+
+3. **If Scope Matches:**
+   - ✅ Continue to Step 2
+   - Agent has required scope, proceed with command execution
+
+4. **If Scope Does NOT Match:**
+   - ❌ **STOP EXECUTION IMMEDIATELY**
+   - Display error message and refuse to run the command
+   - Do not proceed with any further steps
+
+**Error Message (if scope mismatch):**
+```
+❌ Error: Insufficient scope to execute this command
+
+Command: sync-context
+Required scope: context-management
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'context-management' scope, or add this scope to the agent's definition.
+```
+
+**Action:** Validate scope before proceeding. If scope does not match, stop execution and display error.
+
+### Step 2: Summarize the Current Chat Session
 
 **Action:** Review all tasks, changes, and discussions from this session.
 

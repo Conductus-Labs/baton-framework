@@ -26,19 +26,21 @@ This separation enables:
 
 **Format:** Frontmatter (YAML frontmatter + Markdown content)
 
-**Purpose:** Define agent identity, capabilities, cognitive patterns, and behavior guidelines.
+**Purpose:** Define agent identity, capabilities, cognitive patterns, and quality standards.
 
 **Key Sections:**
 
 - Agent Identity & Purpose
 - Cognitive Pattern Integration
 - Core Capabilities
-- Behavior Guidelines
 - Quality Standards
 - Boundaries Reference
-- Commands Reference (commands are loaded on-demand, not embedded)
 
-**Note:** Commands are NOT embedded in agent files. They are loaded on-demand from platform-specific directories (`.cursor/commands/`, `.claude/commands/`, `.gemini/commands/`).
+**Note:**
+
+- Commands are NOT embedded in agent files. They are loaded on-demand from platform-specific directories (`.cursor/commands/`, `.claude/commands/`, `.gemini/commands/`).
+- Behavior guidelines are handled by `project.manifest`, `project.config.yml`, boundaries, and workflows.
+- Workflow processes are defined in their own workflow files, not in agent files.
 
 **Usage:**
 
@@ -437,13 +439,18 @@ Each file type has required sections that must be included:
 
 **Agent Files (`agent-template.md`):**
 
-- ✅ Frontmatter (version, agent_name, agent_type, created, cognitive_patterns)
+- ✅ Frontmatter (version, agent_name, agent_short_name, agent_type, created, last_updated, cognitive_patterns)
 - ✅ Agent Identity & Purpose
 - ✅ Cognitive Pattern Integration
 - ✅ Core Capabilities
-- ✅ Behavior Guidelines
 - ✅ Quality Standards
 - ✅ Boundaries Reference (link to boundaries file, not inline)
+
+**Note:** Behavior guidelines, workflow processes, and commands are NOT included in agent files. They are handled by:
+
+- Behavior guidelines: `project.manifest`, `project.config.yml`, boundaries, and workflows
+- Workflow processes: Defined in separate workflow files (`.baton/workflows/`)
+- Commands: Loaded on-demand from platform-specific directories
 
 **Context Files (`context-template.md`):**
 
@@ -850,7 +857,7 @@ Use this command to do things.
 {command} {example-arguments}
 ```
 
-````
+`````
 
 ## Format Specifications
 
@@ -883,8 +890,10 @@ Use this command to do things.
 ---
 version: {semantic version}
 agent_name: {name}
+agent_short_name: {short-name}
 agent_type: {type}
 created: {YYYY-MM-DD}
+last_updated: {YYYY-MM-DD}
 cognitive_patterns:
   primary: [...]
   secondary: [...]
@@ -955,11 +964,15 @@ status: active
 
 - Reference cognitive patterns by path, don't embed
 - Link to boundaries file, don't duplicate
-- Put commands early in file
 - Use specialist persona (not general assistant)
+- Include `agent_short_name` and `last_updated` in frontmatter
+- Keep files lean and focused on identity, capabilities, and quality standards
 
 **Must Not:**
 
+- Include behavior guidelines (handled by project.manifest, project.config.yml, boundaries, workflows)
+- Include workflow processes (defined in separate workflow files)
+- Include commands (loaded on-demand from platform-specific directories)
 - Include enforcement code
 - Hardcode dates or times
 - Duplicate boundary definitions
@@ -1458,7 +1471,7 @@ argument_hint = "<required-arg> <optional: optional-arg>"
 ```bash
 date +"%A, %d %B %Y - %H:%M"
 ```
-````
+`````
 
 This will provide the date/time in the format: "Monday, 15 January 2024 - 14:30"
 
@@ -1551,4 +1564,3 @@ Before generating a command file from a template, verify:
 6. **Follow Format:** Use correct format (Markdown or TOML) for target platform
 
 **Remember:** Commands are executed by agents. Keep instructions clear, specific, and actionable.
-

@@ -6,6 +6,7 @@
 description = "Execute the {workflow-name} workflow for {agent-name} agent"
 argument_hint = "{optional: <workflow-parameters>}"
 name = "run-workflow"
+scope = "workflow-execution" # Required scope for agent to execute this command (must match agent's scope)
 
 [command.metadata]
 version = "1.0.0"
@@ -16,28 +17,64 @@ created = "{YYYY-MM-DD}"
 [command.instructions]
 purpose = "Execute the {workflow-name} workflow for the {agent-name} agent."
 
-# Step 1: Verify Agent Authorization
+# Step 1: Validate Agent Scope
 [command.steps.step1]
+name = "Validate Agent Scope"
+critical = true
+description = "CRITICAL PREREQUISITE: Validate that the current agent has the required scope to execute this command"
+
+[command.steps.step1.action]
+load_agent_definition = "Read the agent definition file to get the agent's scope array"
+agent_file = ".baton/agents/{agent-name}.md"
+note = "Or from current agent context if already loaded"
+
+[command.steps.step1.scope_validation]
+extract_agent_scope = "Extract the agent's scope array from the agent definition frontmatter"
+required_scope = "workflow-execution"
+check_match = "Verify that the agent's scope array includes the required scope"
+
+[command.steps.step1.if_match]
+action = "Continue to Step 2"
+note = "Agent has required scope, proceed with command execution"
+
+[command.steps.step1.if_no_match]
+action = "STOP EXECUTION IMMEDIATELY"
+display_error = true
+error_message = """
+❌ Error: Insufficient scope to execute this command
+
+Command: run-workflow
+Required scope: workflow-execution
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'workflow-execution' scope, or add this scope to the agent's definition.
+"""
+note = "Do not proceed with any further steps"
+
+# Step 2: Verify Agent Authorization
+[command.steps.step2]
 name = "Verify Agent Authorization"
 critical = true
 description = "Check if the current agent is authorized to execute this workflow"
 
-[command.steps.step1.actions]
+[command.steps.step2.actions]
 read_workflow = ".baton/workflows/{workflow-name}.yml"
 check_allowed_agents = "If allowed_agents field is present, verify current agent is in the list"
 check_boundaries = "Verify agent boundaries allow this workflow execution"
 
-[command.steps.step1.error_handling]
+[command.steps.step2.error_handling]
 unauthorized_message = "This workflow can only be executed by: {list of allowed agents}"
 action = "Stop execution and inform user of authorization requirement"
 
-# Step 2: Load Workflow Definition
-[command.steps.step2]
+# Step 3: Load Workflow Definition
+[command.steps.step3]
 name = "Load Workflow Definition"
 file = ".baton/workflows/{workflow-name}.yml"
 purpose = "Complete workflow definition with steps, error handling, and command references"
 
-[command.steps.step2.extract_fields]
+[command.steps.step3.extract_fields]
 fields = [
     "Workflow name and purpose",
     "Prerequisites",
@@ -46,17 +83,17 @@ fields = [
     "Command references"
 ]
 
-# Step 3: Load Project Configuration and Manifest
-[command.steps.step3]
+# Step 4: Load Project Configuration and Manifest
+[command.steps.step4]
 name = "Load Project Configuration and Manifest"
 critical = true
 note = "CRITICAL: MUST READ - Workflows need project context to execute correctly."
 
-[command.steps.step3.files]
+[command.steps.step4.files]
 project_config = ".baton/project.config.yml"
 project_manifest = ".baton/project.manifest"
 
-[command.steps.step3.project_config]
+[command.steps.step4.project_config]
 purpose = "Understand available tools, resources, and workflows"
 extract = [
     "Available tools (for workflow steps that require CLI tools) and their file paths",
@@ -66,7 +103,7 @@ extract = [
     "Agent preferences (for workflow behavior customization)"
 ]
 
-[command.steps.step3.project_manifest]
+[command.steps.step4.project_manifest]
 purpose = "Understand project requirements and constraints"
 extract = [
     "Project requirements (workflows must align with requirements)",
@@ -77,7 +114,7 @@ notes = [
     "Technical and regulatory constraints are in .baton/boundaries/project-boundaries.md (workflows must respect limitations)"
 ]
 
-[command.steps.step3.why_critical]
+[command.steps.step4.why_critical]
 reasons = [
     "Workflows may need to use tools defined in project.config.yml",
     "Workflows must respect project constraints from boundaries file",
@@ -85,12 +122,12 @@ reasons = [
     "Workflows may need to reference past decisions in architecture-decisions.md to avoid conflicts"
 ]
 
-# Step 4: Check Prerequisites
-[command.steps.step4]
+# Step 5: Check Prerequisites
+[command.steps.step5]
 name = "Check Prerequisites"
 description = "Verify all prerequisites are met"
 
-[command.steps.step4.actions]
+[command.steps.step5.actions]
 review_prerequisites = "Review prerequisites section in workflow file"
 verify_each = [
     "{Prerequisite 1}",
@@ -98,30 +135,30 @@ verify_each = [
     "{Prerequisite 3}"
 ]
 
-[command.steps.step4.error_handling]
+[command.steps.step5.error_handling]
 action = "Stop execution and inform user of missing prerequisites"
 
-# Step 5: Parse Workflow Parameters
-[command.steps.step5]
+# Step 6: Parse Workflow Parameters
+[command.steps.step6]
 name = "Parse Workflow Parameters"
 description = "Extract and validate workflow parameters from command arguments"
 optional = true
 
-[command.steps.step5.parameters]
+[command.steps.step6.parameters]
 parameter1 = "{Description}"
 parameter2 = "{Description}"
 
-[command.steps.step5.validation]
+[command.steps.step6.validation]
 verify_required = "Verify required parameters are provided"
 validate_formats = "Validate parameter formats"
 set_defaults = "Set default values for optional parameters"
 
-# Step 6: Execute Workflow Steps
-[command.steps.step6]
+# Step 7: Execute Workflow Steps
+[command.steps.step7]
 name = "Execute Workflow Steps"
 description = "Execute workflow steps in order"
 
-[command.steps.step6.for_each_step]
+[command.steps.step7.for_each_step]
 actions = [
     "Read step definition from workflow file",
     "Execute step actions as specified",
@@ -132,27 +169,27 @@ actions = [
     "Verify step completion before proceeding to next step"
 ]
 
-[command.steps.step6.parallel_execution]
+[command.steps.step7.parallel_execution]
 check_enabled = "If step has parallel_execution.enabled: true, execute parallel steps concurrently"
 wait_for_completion = "Wait for all parallel steps to complete before proceeding"
 
-# Step 7: Handle Errors
-[command.steps.step7]
+# Step 8: Handle Errors
+[command.steps.step8]
 name = "Handle Errors"
 description = "Follow error handling strategy from workflow file"
 
-[command.steps.step7.retry_logic]
+[command.steps.step8.retry_logic]
 check_global_retry = "If error_handling.global_retry.enabled: true, retry failed steps"
 backoff_strategies = ["exponential", "linear", "fixed"]
 respect_max_retries = true
 
-[command.steps.step7.error_types]
+[command.steps.step8.error_types]
 handle_specific = "Handle specific error types as defined in workflow file"
 execute_recovery = "Execute recovery actions for each error type"
 notify_user = "Inform user of errors and recovery actions taken"
 
-# Step 8: Confirm Completion
-[command.steps.step8]
+# Step 9: Confirm Completion
+[command.steps.step9]
 name = "Confirm Completion"
 response_template = """
 ✓ Workflow "{workflow-name}" Completed

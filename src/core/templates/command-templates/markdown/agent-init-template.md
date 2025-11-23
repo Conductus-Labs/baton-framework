@@ -1,27 +1,76 @@
 ---
 description: Initialize the {agent-name} agent for a new session
-argument-hint: { optional: <agent-short-name> }
+argument-hint: { optional: <agent-short-name> } # Remove this line if command takes no arguments
+scope: { scope-name } # Required scope for agent to execute this command (must match agent's scope)
 ---
 
 # Agent Initialization Command
 
-Execute the agent initialization workflow to load the {agent-name} agent definition, cognitive patterns, and context.
+**Note:** This template supports two approaches:
+
+- **Workflow-based**: Command calls an agent-initialisation workflow (simpler, recommended)
+- **Direct initialization**: Command performs all initialization steps directly (more detailed, use when workflow not available)
+
+Execute the agent initialization to load the {agent-name} agent definition, cognitive patterns, and context.
 
 ## Instructions
 
 You are executing the agent-init command. Follow these steps in order:
 
-### Step 1: Determine Agent to Initialize
+### Step 1: Validate Agent Scope
+
+**CRITICAL PREREQUISITE:** This command requires the agent to have the `{scope-name}` scope. You MUST validate scope before proceeding.
+
+**Action:** Validate that the current agent has the required scope to execute this command.
+
+1. **Load Agent Definition:**
+
+   - Read the agent definition file to get the agent's scope array
+   - Agent file location: `.baton/agents/{agent-name}.md` (or from current agent context if already loaded)
+
+2. **Check Scope Match:**
+
+   - Extract the agent's `scope` array from the agent definition frontmatter
+   - Verify that the agent's scope array includes: `{scope-name}`
+   - This command requires scope: `{scope-name}`
+
+3. **If Scope Matches:**
+
+   - ✅ Continue to Step 2
+   - Agent has required scope, proceed with command execution
+
+4. **If Scope Does NOT Match:**
+   - ❌ **STOP EXECUTION IMMEDIATELY**
+   - Display error message and refuse to run the command
+   - Do not proceed with any further steps
+
+**Error Message (if scope mismatch):**
+
+```text
+❌ Error: Insufficient scope to execute this command
+
+Command: {command-name}
+Required scope: {scope-name}
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the '{scope-name}' scope, or add this scope to the agent's definition.
+```
+
+**Action:** Validate scope before proceeding. If scope does not match, stop execution and display error.
+
+### Step 2: Determine Agent to Initialize
 
 {Choose one of the following approaches:}
 
-**Option A: Per-Agent Init (Each agent has dedicated init command)**
+#### Option A: Per-Agent Init (Each agent has dedicated init command)
 
 - This command is specific to the {agent-name} agent
 - Agent file: `.baton/agents/{agent-name}.md`
 - Context file: `.baton/context/{agent-name}-context.md`
 
-**Option B: Single Init with Short Name (Requires agent short-name parameter)**
+#### Option B: Single Init with Short Name (Requires agent short-name parameter)
 
 - **Parse Arguments**: Extract agent short-name from command arguments
   - If no argument provided, prompt user for agent short-name

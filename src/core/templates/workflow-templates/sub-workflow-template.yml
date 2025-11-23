@@ -1,0 +1,120 @@
+# Sub-Workflow Template
+# Format: Pure YAML (no frontmatter)
+# Purpose: Define reusable sub-workflows that are called by other workflows
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-{sub-workflow-name}
+purpose: {Brief description of sub-workflow purpose}
+scope: {scope-name} # Required scope for parent workflow to call this sub-flow (e.g., "context-management", "project-config", "boundaries")
+created: {YYYY-MM-DD}
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - {Requirement 1 - e.g., "Parent workflow must provide required context"}
+  - {Requirement 2 - e.g., "Required data must be passed from parent workflow"}
+  - {Requirement 3 - e.g., "Parent workflow must have completed prerequisite steps"}
+
+# Sub-Workflow Parameters (optional - only if sub-workflow accepts parameters)
+parameters:
+  {parameter_name}: { Required/Optional - Description of parameter }
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
+    actions:
+      - Get agent scope array from parent workflow context (agent executing the parent workflow)
+      - Verify agent's scope array includes required scope: {scope-name}
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-{sub-workflow-name}\nRequired scope: {scope-name}\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the '{scope-name}' scope."
+          action: Stop execution
+
+  - step: 2
+    name: {Step Name}
+    description: {What this step does}
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - {Action 1}
+      - {Action 2}
+    decision_points:
+      - condition: {Condition description}
+        if_true: {Action if condition is true}
+        if_false: {Action if condition is false}
+    error_handling:
+      retry: {true/false}
+      max_retries: {number}
+      fallback: {Fallback action if step fails}
+
+  - step: 3
+    name: {Step Name}
+    description: {What this step does}
+    actions:
+      - {Action 1}
+    parallel_execution:
+      enabled: {true/false}
+      steps: [{List of steps that can run in parallel}]
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: {true/false}
+    max_retries: {number}
+    backoff_strategy: {exponential/linear/fixed}
+  
+  error_types:
+    - type: {Error Type - e.g., "Network Error"}
+      handling: {How to handle this error}
+      recovery: {Recovery action}
+    
+    - type: {Error Type - e.g., "Validation Error"}
+      handling: {How to handle this error}
+      recovery: {Recovery action}
+
+# Command References
+command_references:
+  - command: {/{command-name}}
+    description: {What this command does}
+    when_to_use: {When to invoke this command}
+    example: "{/{command-name} {example-arguments}}"
+  
+  - command: {/{command-name}}
+    description: {What this command does}
+    when_to_use: {When to invoke this command}
+
+# Examples
+examples:
+  - name: {Example Name}
+    description: {What this example demonstrates}
+    input: {Example input or scenario}
+    expected_output: {Expected result}
+    workflow_path: {Steps that will be executed}
+
+# Notes
+notes:
+  - {Important note 1}
+  - {Important note 2}
+  - {Important note 3}
+
+

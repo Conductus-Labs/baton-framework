@@ -1,0 +1,128 @@
+# Workflow Template
+# Format: Pure YAML (no frontmatter)
+# Purpose: Define step-by-step processes executed by commands
+#
+# CRITICAL: All workflows MUST have associated command files in platform-specific
+# directories (.cursor/commands/, .claude/commands/, .gemini/commands/).
+# Workflows are ALWAYS executed via commands - they cannot be executed directly.
+# Command files are out of scope for this template but are REQUIRED for workflow execution.
+
+version: 1.0.0
+workflow_name: {workflow-name}
+purpose: {Brief description of workflow purpose}
+associate_command: {/{command-name}} # 1-to-1 match with command file (use parameter if workflow supports multiple agents/contexts)
+scope: {scope-name} # Required scope for agent to execute this workflow (e.g., "agent-initialisation", "context-management", "project-setup")
+created: {YYYY-MM-DD}
+
+# Prerequisites
+prerequisites:
+  - {Requirement 1 - e.g., "Agent must be initialized"}
+  - {Requirement 2 - e.g., "Required tools must be available"}
+  - {Requirement 3 - e.g., "Context file must exist"}
+
+# Workflow Parameters (optional - only if workflow accepts parameters)
+parameters:
+  {parameter_name}: { Required/Optional - Description of parameter }
+
+# Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
+    actions:
+      - Load agent definition to get agent's scope array
+      - Extract agent's scope array from agent definition frontmatter
+      - Verify agent's scope array includes required scope: {scope-name}
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message: "❌ Error: Insufficient scope to execute this workflow\n\nWorkflow: {workflow-name}\nRequired scope: {scope-name}\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this workflow.\nPlease use an agent with the '{scope-name}' scope, or add this scope to the agent's definition."
+          action: Stop execution
+
+  - step: 2
+    name: {Step Name}
+    description: {What this step does}
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - {Action 1}
+      - {Action 2}
+    decision_points:
+      - condition: {Condition description}
+        if_true: {Action if condition is true}
+        if_false: {Action if condition is false}
+    sub_flows:
+      - name: {Sub-flow Name}
+        file: sub-flows/{sub-flow-file-name}.yml
+        when: {Condition when to execute this sub-flow}
+        parameters:
+          {parameter_name}: { parameter value or reference }
+    error_handling:
+      retry: {true/false}
+      warning_messages:
+        - type: {Warning Type}
+          message: "{Warning message}"
+          action: {Continue execution/Stop execution}
+      error_messages:
+        - type: {Error Type}
+          message: "{Error message}"
+          action: {Stop execution/Continue execution}
+
+  - step: 3
+    name: {Step Name}
+    description: {What this step does}
+    actions:
+      - {Action 1}
+    parallel_execution:
+      enabled: {true/false}
+      steps: [{List of steps that can run in parallel}]
+    confirmation_template: |
+      {Confirmation message template with {placeholders}}
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: {true/false}
+    max_retries: {number}
+    backoff_strategy: {exponential/linear/fixed}
+  
+  error_types:
+    - type: {Error Type - e.g., "Network Error"}
+      handling: {How to handle this error}
+      recovery: {Recovery action}
+    
+    - type: {Error Type - e.g., "Validation Error"}
+      handling: {How to handle this error}
+      recovery: {Recovery action}
+
+# Command References
+command_references:
+  - command: {/{command-name}}
+    description: {What this command does}
+    when_to_use: {When to invoke this command}
+    example: "{/{command-name} {example-arguments}}"
+  
+  - command: {/{command-name}}
+    description: {What this command does}
+    when_to_use: {When to invoke this command}
+
+# Examples
+examples:
+  - name: {Example Name}
+    description: {What this example demonstrates}
+    input: {Example input or scenario}
+    expected_output: {Expected result}
+    workflow_path: {Steps that will be executed}
+
+# Notes
+notes:
+  - {Important note 1}
+  - {Important note 2}
+  - {Important note 3}
+
