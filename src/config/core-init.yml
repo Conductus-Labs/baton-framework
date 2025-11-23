@@ -1,0 +1,147 @@
+version: 1.0.0
+description: Files to install during baton init
+
+directories:
+  - path: .baton/agents
+  - path: .baton/boundaries
+  - path: .baton/cognitive
+  - path: .baton/context
+  - path: .baton/knowledge
+  - path: .baton/workflows/sub-flows
+  - path: .cursor/commands/baton # Platform-specific (Cursor)
+  - path: .claude/commands/baton # Platform-specific (Claude)
+  - path: .gemini/commands/baton # Platform-specific (Gemini)
+
+files:
+  # Agent files (fully populated)
+  - source: src/core/agents/baton-agent.md
+    destination: .baton/agents/baton-agent.md
+    type: exact_copy
+
+  # Workflow files (fully populated)
+  - source: src/core/workflows/agent-initialisation.yml
+    destination: .baton/workflows/agent-initialisation.yml
+    type: exact_copy
+  - source: src/core/workflows/project-initialisation.yml
+    destination: .baton/workflows/project-initialisation.yml
+    type: exact_copy
+
+  # Sub-flow files (fully populated)
+  - source: src/core/workflows/sub-flows/sub-flow-create-agent-context.yml
+    destination: .baton/workflows/sub-flows/sub-flow-create-agent-context.yml
+    type: exact_copy
+  - source: src/core/workflows/sub-flows/sub-flow-load-agent-boundaries.yml
+    destination: .baton/workflows/sub-flows/sub-flow-load-agent-boundaries.yml
+    type: exact_copy
+  - source: src/core/workflows/sub-flows/sub-flow-load-agent-context.yml
+    destination: .baton/workflows/sub-flows/sub-flow-load-agent-context.yml
+    type: exact_copy
+  - source: src/core/workflows/sub-flows/sub-flow-load-project-boundaries.yml
+    destination: .baton/workflows/sub-flows/sub-flow-load-project-boundaries.yml
+    type: exact_copy
+  - source: src/core/workflows/sub-flows/sub-flow-load-project-config.yml
+    destination: .baton/workflows/sub-flows/sub-flow-load-project-config.yml
+    type: exact_copy
+  - source: src/core/workflows/sub-flows/sub-flow-load-project-manifest.yml
+    destination: .baton/workflows/sub-flows/sub-flow-load-project-manifest.yml
+    type: exact_copy
+
+  # Command files - Cursor (Markdown, platform-specific, fully populated)
+  - source: src/core/commands/markdown/baton-agent/init-baton-agent.md
+    destination: .cursor/commands/baton/init-baton-agent.md
+    type: exact_copy
+    platform: cursor
+  - source: src/core/commands/markdown/baton-agent/project-init.md
+    destination: .cursor/commands/baton/project-init.md
+    type: exact_copy
+    platform: cursor
+
+  # Command files - Claude (Markdown, platform-specific, fully populated)
+  - source: src/core/commands/markdown/baton-agent/init-baton-agent.md
+    destination: .claude/commands/baton/init-baton-agent.md
+    type: exact_copy
+    platform: claude
+  - source: src/core/commands/markdown/baton-agent/project-init.md
+    destination: .claude/commands/baton/project-init.md
+    type: exact_copy
+    platform: claude
+
+  # Command files - Gemini (TOML, platform-specific, fully populated)
+  - source: src/core/commands/toml/baton-agent/init-baton-agent.toml
+    destination: .gemini/commands/baton/init-baton-agent.toml
+    type: exact_copy
+    platform: gemini
+  - source: src/core/commands/toml/baton-agent/project-init.toml
+    destination: .gemini/commands/baton/project-init.toml
+    type: exact_copy
+    platform: gemini
+
+  # Cognitive pattern files (fully populated, all 19)
+  - source: src/core/cognitive/adaptive-thinking.yml
+    destination: .baton/cognitive/adaptive-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/agile-thinking.yml
+    destination: .baton/cognitive/agile-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/analytical-thinking.yml
+    destination: .baton/cognitive/analytical-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/collaborative-thinking.yml
+    destination: .baton/cognitive/collaborative-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/computational-thinking.yml
+    destination: .baton/cognitive/computational-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/creative-problem-solving.yml
+    destination: .baton/cognitive/creative-problem-solving.yml
+    type: exact_copy
+  - source: src/core/cognitive/critical-thinking.yml
+    destination: .baton/cognitive/critical-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/design-thinking.yml
+    destination: .baton/cognitive/design-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/empathetic-thinking.yml
+    destination: .baton/cognitive/empathetic-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/ethical-thinking.yml
+    destination: .baton/cognitive/ethical-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/experimental-thinking.yml
+    destination: .baton/cognitive/experimental-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/growth-mindset.yml
+    destination: .baton/cognitive/growth-mindset.yml
+    type: exact_copy
+  - source: src/core/cognitive/lateral-thinking.yml
+    destination: .baton/cognitive/lateral-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/lean-thinking.yml
+    destination: .baton/cognitive/lean-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/meta-cognitive.yml
+    destination: .baton/cognitive/meta-cognitive.yml
+    type: exact_copy
+  - source: src/core/cognitive/resilience-thinking.yml
+    destination: .baton/cognitive/resilience-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/strategic-thinking.yml
+    destination: .baton/cognitive/strategic-thinking.yml
+    type: exact_copy
+  - source: src/core/cognitive/systematic-approach.yml
+    destination: .baton/cognitive/systematic-approach.yml
+    type: exact_copy
+  - source: src/core/cognitive/systems-thinking.yml
+    destination: .baton/cognitive/systems-thinking.yml
+    type: exact_copy
+
+  # Template files (with placeholders)
+  - source: src/core/templates/project-file-templates/project.config-template.yml
+    destination: .baton/project.config.yml
+    type: template
+  - source: src/core/templates/project-file-templates/project-manifest-template.md
+    destination: .baton/project.manifest
+    type: template
+  - source: src/core/templates/boundaries-templates/project-boundaries-template.md
+    destination: .baton/boundaries/project-boundaries.md
+    type: template

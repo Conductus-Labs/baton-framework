@@ -1,0 +1,453 @@
+# Project Initialisation Workflow
+# Format: Pure YAML (no frontmatter)
+# Purpose: Initialize a project with Baton Framework configuration files
+
+version: 1.0.0
+workflow_name: project-initialisation
+purpose: Initialize a project with Baton Framework by creating project.config.yml, project.manifest, and project-boundaries.md
+associate_command: /project-init
+scope: project-setup # Required scope for agent to execute this workflow
+# Note: This workflow requires scopes to call sub-flows:
+# - project-config (for sub-flow-load-project-config, sub-flow-load-project-manifest)
+# - boundaries (for sub-flow-load-project-boundaries)
+# The agent executing this workflow must have these scopes in addition to project-setup
+created: 2025-11-23
+
+# Prerequisites
+prerequisites:
+  - Agent must have project-setup scope (only baton-agent has this scope)
+  - Write access to `.baton/` directory
+  - Template files must be available in baton-framework repository
+
+# Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
+    actions:
+      - Load agent definition to get agent's scope array
+      - Extract agent's scope array from agent definition frontmatter
+      - Verify agent's scope array includes required scope: project-setup
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message: "❌ Error: Insufficient scope to execute this workflow\n\nWorkflow: project-initialisation\nRequired scope: project-setup\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this workflow.\nOnly baton-agent can initialize projects. Please use baton-agent to run this workflow."
+          action: Stop execution
+
+  - step: 2
+    name: Check Project Initialization Status
+    description: Check if project files exist and if they are in default/template state
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - Check if `.baton/project.config.yml` exists
+      - Check if `.baton/project.manifest` exists
+      - Check if `.baton/boundaries/project-boundaries.md` exists
+      - If files exist, check if they are in default/template state (compare with templates)
+    decision_points:
+      - condition: Files exist and are NOT in default state (customized)
+        if_true: Project already initialized - ask user if they want to reinitialize
+        if_false: Continue to step 3
+      - condition: Files exist and ARE in default state (template clones)
+        if_true: Continue to step 3 (will update with scanned values)
+        if_false: Files don't exist - continue to step 3 (will create new files)
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Project Already Initialized
+          message: "⚠️ Warning: Project appears to be already initialized with customized values\n\nFound customized files:\n- {list of customized files}\n\nReinitializing will overwrite existing files. Do you want to continue?"
+          action: Wait for user confirmation via HITL checkpoint
+
+  - step: 3
+    name: Scan Project for Configuration Values
+    description: Analyze project to estimate values for project.config.yml
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Scan project directory structure to determine project type
+      - Check for package.json, requirements.txt, Cargo.toml, etc. to identify technology stack
+      - Check for .git directory and remote URL to determine source control provider and repository URL
+      - Check for existing .baton/ directory structure to identify any existing agents/workflows
+      - Check for project management files (package.json scripts, Makefile, etc.)
+      - Identify GenAI platform from current context (Cursor, Claude, Gemini)
+      - Generate current date/time for initialization timestamp
+      - Compile estimated values for project.config.yml
+      - Identify which values cannot be determined and need user input
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Empty Project Detected
+          message: "⚠️ Note: Project appears to be empty or new\n\nMost values will need to be provided by the user during the review checkpoint."
+          action: Continue execution
+
+  - step: 4
+    name: HITL Checkpoint - Review and Complete Project Configuration
+    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.config.yml
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - Load project.config.yml template (or existing file if in default state)
+      - Display estimated values from project scan
+      - Identify and highlight values that need user input
+      - Request user to review, validate, and complete all values
+      - Wait for user decision (approve with values/reject/modify)
+    hitl_checkpoint:
+      type: specification_review
+      required: true
+      checkpoint_message: |
+        🔍 HITL Checkpoint: Review and Complete Project Configuration
+
+        I've scanned your project and estimated the following values for project.config.yml:
+
+        **Estimated Values (from project scan):**
+        {Display estimated values with confidence indicators}
+
+        **Values Requiring Your Input:**
+        {Display list of values that need user input with explanations}
+
+        **Current Configuration:**
+        {Display current project.config.yml content with estimated values filled in}
+
+        **Action Required:**
+        - ✅ Approve: Use these values and create/update project.config.yml
+        - ❌ Reject: Cancel project initialization
+        - ✏️ Modify: Provide corrections or additional values
+
+        Please review the estimated values and provide any missing information.
+        For empty projects, you'll need to provide most values manually.
+
+        Respond with: approve, reject, or provide modifications/corrections.
+      timeout: null # No timeout - wait for user response
+      required_approvers: ["user"]
+      decision_options:
+        approve: "Continue to step 5"
+        reject: "Stop execution with cancellation message"
+        modify: "Apply modifications and re-present for approval"
+    decision_points:
+      - condition: User approved
+        if_true: Continue to step 5
+        if_false: User rejected or requested modifications
+      - condition: User requested modifications
+        if_true: Apply modifications, re-present checkpoint
+        if_false: User rejected - stop execution
+    error_handling:
+      retry: false
+      error_messages:
+        - type: User Rejected
+          message: "❌ Project initialization cancelled by user\n\nNo files were created/updated. You can run /project-init again when ready."
+          action: Stop execution
+
+  - step: 5
+    name: Create/Update Project Configuration File
+    description: Create or update project.config.yml with validated values from HITL checkpoint
+    dependencies:
+      - step: 4
+        required: true
+    actions:
+      - Load project.config.yml template (or existing file if updating)
+      - Apply validated values from HITL checkpoint
+      - Generate current date/time for initialization/update timestamp
+      - Create or update `.baton/project.config.yml` with populated values
+      - Verify file was created/updated successfully
+    error_handling:
+      retry: false
+      error_messages:
+        - type: File Creation Error
+          message: "❌ Error: Cannot create/update project.config.yml\n\nPlease verify:\n- Write permissions to .baton/ directory\n- Directory exists\n- Disk space available"
+          action: Stop execution
+        - type: Template Not Found
+          message: "❌ Error: Project configuration template not found\n\nExpected location: baton-framework/src/core/templates/project-file-templates/project.config-template.yml\n\nPlease verify template file exists."
+          action: Stop execution
+
+  - step: 6
+    name: Scan Project for Manifest Values
+    description: Analyze project to estimate values for project.manifest
+    dependencies:
+      - step: 5
+        required: true
+    actions:
+      - Extract project name from directory name or package.json/README
+      - Analyze codebase structure to identify technology stack
+      - Check for README.md or documentation to extract project description
+      - Identify organization from git config or package.json
+      - Analyze dependencies to determine technical requirements
+      - Check for existing documentation about business objectives or requirements
+      - Compile estimated values for project.manifest
+      - Identify which values cannot be determined and need user input
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Empty Project Detected
+          message: "⚠️ Note: Project appears to be empty or new\n\nMost values will need to be provided by the user during the review checkpoint."
+          action: Continue execution
+
+  - step: 7
+    name: HITL Checkpoint - Review and Complete Project Manifest
+    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.manifest
+    dependencies:
+      - step: 6
+        required: true
+    actions:
+      - Load project.manifest template (or existing file if in default state)
+      - Display estimated values from project scan
+      - Identify and highlight values that need user input
+      - Request user to review, validate, and complete all values
+      - Wait for user decision (approve with values/reject/modify)
+    hitl_checkpoint:
+      type: specification_review
+      required: true
+      checkpoint_message: |
+        🔍 HITL Checkpoint: Review and Complete Project Manifest
+
+        I've scanned your project and estimated the following values for project.manifest:
+
+        **Estimated Values (from project scan):**
+        {Display estimated values with confidence indicators}
+
+        **Values Requiring Your Input:**
+        {Display list of values that need user input with explanations}
+
+        **Current Manifest:**
+        {Display current project.manifest content with estimated values filled in}
+
+        **Action Required:**
+        - ✅ Approve: Use these values and create/update project.manifest
+        - ❌ Reject: Cancel project initialization (project.config.yml already created)
+        - ✏️ Modify: Provide corrections or additional values
+
+        Please review the estimated values and provide any missing information.
+        For empty projects, you'll need to provide most values manually (business objectives, technical requirements, success criteria, etc.).
+
+        Respond with: approve, reject, or provide modifications/corrections.
+      timeout: null # No timeout - wait for user response
+      required_approvers: ["user"]
+      decision_options:
+        approve: "Continue to step 8"
+        reject: "Stop execution (note: project.config.yml already created)"
+        modify: "Apply modifications and re-present for approval"
+    decision_points:
+      - condition: User approved
+        if_true: Continue to step 8
+        if_false: User rejected or requested modifications
+      - condition: User requested modifications
+        if_true: Apply modifications, re-present checkpoint
+        if_false: User rejected - stop execution
+    error_handling:
+      retry: false
+      error_messages:
+        - type: User Rejected
+          message: "❌ Project initialization cancelled by user\n\nNote: project.config.yml was already created. You can:\n- Manually delete it if needed\n- Run /project-init again to complete initialization"
+          action: Stop execution
+
+  - step: 8
+    name: Create/Update Project Manifest File
+    description: Create or update project.manifest with validated values from HITL checkpoint
+    dependencies:
+      - step: 7
+        required: true
+    actions:
+      - Load project.manifest template (or existing file if updating)
+      - Apply validated values from HITL checkpoint
+      - Generate current date for created and last_updated fields
+      - Create or update `.baton/project.manifest` with populated values
+      - Verify file was created/updated successfully
+    error_handling:
+      retry: false
+      error_messages:
+        - type: File Creation Error
+          message: "❌ Error: Cannot create/update project.manifest\n\nPlease verify:\n- Write permissions to .baton/ directory\n- Directory exists\n- Disk space available"
+          action: Stop execution
+        - type: Template Not Found
+          message: "❌ Error: Project manifest template not found\n\nExpected location: baton-framework/src/core/templates/project-file-templates/project-manifest-template.md\n\nPlease verify template file exists."
+          action: Stop execution
+
+  - step: 9
+    name: HITL Checkpoint - Project Boundaries Review
+    description: Human-in-the-loop checkpoint before creating project-boundaries.md
+    dependencies:
+      - step: 8
+        required: true
+    actions:
+      - Load project-boundaries template from baton-framework repository
+      - Display template content to user for review
+      - Request user approval to proceed with creating project-boundaries.md
+      - Wait for user decision (approve/reject/modify)
+    hitl_checkpoint:
+      type: specification_review
+      required: true
+      checkpoint_message: |
+        🔍 HITL Checkpoint: Review Project Boundaries Template
+
+        Before creating project-boundaries.md, please review the template:
+
+        {Display template content with placeholders}
+
+        This file will define:
+        - Always Do: Mandatory actions for all agents
+        - Ask First: Actions requiring human approval
+        - Never Do: Prohibited actions with consequences
+        - Scope definitions (files, directories, environments)
+        - Examples of allowed and blocked actions
+
+        **Action Required:**
+        - ✅ Approve: Create project-boundaries.md from template (you can edit it later)
+        - ❌ Reject: Skip boundaries file creation (project.config.yml and project.manifest already created)
+        - ✏️ Modify: Request specific changes before creation
+
+        Please respond with: approve, reject, or describe modifications needed.
+      timeout: null # No timeout - wait for user response
+      required_approvers: ["user"]
+      decision_options:
+        approve: "Continue to step 10"
+        reject: "Skip boundaries creation, continue to step 11"
+        modify: "Apply modifications and re-present for approval"
+    decision_points:
+      - condition: User approved
+        if_true: Continue to step 10
+        if_false: User rejected or requested modifications
+      - condition: User requested modifications
+        if_true: Apply modifications, re-present checkpoint
+        if_false: User rejected - skip boundaries creation, continue to step 11
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: User Rejected Boundaries
+          message: "⚠️ Note: Project boundaries file creation skipped\n\nYou can create it later manually or run /project-init again."
+          action: Continue execution (skip to step 11)
+
+  - step: 10
+    name: Create Project Boundaries File
+    description: Create project-boundaries.md from template with user-provided or default values
+    dependencies:
+      - step: 9
+        required: true
+    actions:
+      - Load project-boundaries template
+      - Apply any user modifications from HITL checkpoint
+      - Generate current date for created field
+      - Create `.baton/boundaries/project-boundaries.md` with populated values
+      - Verify file was created successfully
+      - Ensure boundaries directory exists
+    error_handling:
+      retry: false
+      error_messages:
+        - type: File Creation Error
+          message: "❌ Error: Cannot create project-boundaries.md\n\nPlease verify:\n- Write permissions to .baton/boundaries/ directory\n- Directory exists or can be created\n- Disk space available"
+          action: Stop execution
+        - type: Template Not Found
+          message: "❌ Error: Project boundaries template not found\n\nExpected location: baton-framework/src/core/templates/boundaries-templates/project-boundaries-template.md\n\nPlease verify template file exists."
+          action: Stop execution
+
+  - step: 11
+    name: Present Initialization Confirmation
+    description: Display initialization confirmation message to user
+    dependencies:
+      - step: 10
+        required: false # Step 10 may be skipped if user rejected boundaries
+      - step: 8
+        required: true # Step 8 (manifest) is always completed if we reach step 11
+    actions:
+      - Generate initialization confirmation message
+      - List all files created
+      - Include next steps for user
+      - Display formatted confirmation to user
+    confirmation_template: |
+      ✓ Project Initialization Complete
+
+      **Files Created:**
+      - ✅ `.baton/project.config.yml` - Project configuration
+      - ✅ `.baton/project.manifest` - Project requirements and success criteria
+      {if boundaries created: - ✅ `.baton/boundaries/project-boundaries.md` - Project boundaries and constraints}
+
+      **Next Steps:**
+      1. Review and customize the created files with your project-specific information
+      2. Update project.config.yml with:
+         - Project name and type
+         - Source control repository URL
+         - Project management settings
+         - GenAI platform configurations
+         - Enabled agents and workflows
+      3. Update project.manifest with:
+         - Business objectives
+         - Technical requirements
+         - Non-functional requirements
+         - Success criteria
+      {if boundaries created: 4. Update project-boundaries.md with your project-specific constraints and boundaries}
+
+      5. Run `/init-baton-agent` to initialize baton-agent (if not already done)
+      6. Initialize other agents as needed using their respective init commands
+
+      **Important:**
+      - Only baton-agent can create new files from templates
+      - All agents will respect the boundaries defined in project-boundaries.md
+      - Project configuration files provide essential context for all agents
+
+      Project is now ready for agent initialization!
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Insufficient Scope
+      handling: Stop execution with error message
+      recovery: User must use baton-agent to run this workflow
+
+    - type: Project Already Initialized
+      handling: Display warning, wait for user confirmation via HITL
+      recovery: User can choose to reinitialize or cancel
+
+    - type: File Creation Error
+      handling: Stop execution with error message
+      recovery: Check file permissions and directory access
+
+    - type: Template Not Found
+      handling: Stop execution with error message
+      recovery: Verify template files exist in baton-framework repository
+
+    - type: User Rejected (HITL)
+      handling: Stop execution with cancellation message
+      recovery: User can run workflow again when ready
+
+# Command References
+command_references:
+  - command: /project-init
+    description: Initialize project with Baton Framework (calls this workflow)
+    when_to_use: First time setting up a project, or when reinitializing project files
+    example: "/project-init"
+
+  - command: /init-baton-agent
+    description: Initialize baton-agent after project initialization
+    when_to_use: After project initialization to load baton-agent
+    example: "/init-baton-agent"
+
+# Notes
+notes:
+  - This workflow includes three HITL checkpoints:
+      - Review and complete project.config.yml values (step 4)
+      - Review and complete project.manifest values (step 7)
+      - Review project-boundaries.md template (step 9)
+  - The workflow scans the project to estimate values for project.config.yml and project.manifest
+  - Estimated values are validated with the user at HITL checkpoints
+  - Users must provide values that cannot be determined from project scan
+  - For empty projects, users will need to provide most values manually
+  - Files may already exist in default/template state (created by baton-cli init)
+  - If files exist in default state, they will be updated with scanned and validated values
+  - If files exist with customized values, user will be warned before overwriting
+  - HITL checkpoints allow users to review, validate, and complete all values before file creation/update
+  - Users can approve, reject, or request modifications at each checkpoint
+  - If user rejects boundaries creation, workflow continues without creating boundaries file
+  - Only baton-agent has the project-setup scope required to execute this workflow
+  - Template files are loaded from baton-framework repository
+  - All created/updated files can be edited manually after creation
+  - Project initialization can be re-run to update values (future workflows will handle updates)
