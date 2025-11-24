@@ -1,0 +1,213 @@
+# Agent Initialization Command Template
+# Format: TOML (for Gemini Desktop)
+# Purpose: Initialize the {agent-name} agent for a new session
+#
+# Note: This template supports two approaches:
+# - Workflow-based: Command calls an agent-initialisation workflow (simpler, recommended)
+# - Direct initialization: Command performs all initialization steps directly (more detailed, use when workflow not available)
+
+[command]
+description = "Initialize the {agent-name} agent for a new session"
+argument_hint = "{optional: <agent-short-name>}"
+name = "agent-init"
+scope = "{scope-name}" # Required scope for agent to execute this command (must match agent's scope)
+
+[command.metadata]
+version = "1.0.0"
+agent_name = "{agent-name}"
+created = "{YYYY-MM-DD}"
+
+# Instructions for command execution
+[command.instructions]
+purpose = "Execute the agent initialization workflow to load the {agent-name} agent definition, cognitive patterns, and context."
+
+# Step 1: Validate Agent Scope
+[command.steps.step1]
+name = "Validate Agent Scope"
+critical = true
+description = "CRITICAL PREREQUISITE: Validate that the current agent has the required scope to execute this command"
+
+[command.steps.step1.action]
+load_agent_definition = "Read the agent definition file to get the agent's scope array"
+agent_file = ".baton/agents/{agent-name}.md"
+note = "Or from current agent context if already loaded"
+
+[command.steps.step1.scope_validation]
+extract_agent_scope = "Extract the agent's scope array from the agent definition frontmatter"
+required_scope = "{scope-name}"
+check_match = "Verify that the agent's scope array includes the required scope"
+
+[command.steps.step1.if_match]
+action = "Continue to Step 2"
+note = "Agent has required scope, proceed with command execution"
+
+[command.steps.step1.if_no_match]
+action = "STOP EXECUTION IMMEDIATELY"
+display_error = true
+error_message = """
+❌ Error: Insufficient scope to execute this command
+
+Command: {command-name}
+Required scope: {scope-name}
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the '{scope-name}' scope, or add this scope to the agent's definition.
+"""
+note = "Do not proceed with any further steps"
+
+# Step 2: Determine Agent to Initialize
+[command.steps.step2]
+name = "Determine Agent to Initialize"
+description = "Choose initialization approach"
+
+# Option A: Per-Agent Init (Each agent has dedicated init command)
+[command.steps.step1.option_a]
+type = "per_agent"
+agent_file = ".baton/agents/{agent-name}.md"
+context_file = ".baton/context/{agent-name}-context.md"
+note = "This command is specific to the {agent-name} agent"
+
+# Option B: Single Init with Short Name (Requires agent short-name parameter)
+[command.steps.step1.option_b]
+type = "single_with_short_name"
+requires_argument = true
+agent_file_template = ".baton/agents/{agent-short-name}.md"
+context_file_template = ".baton/context/{agent-short-name}-context.md"
+note = "Extract agent short-name from command arguments. If no argument provided, prompt user for agent short-name."
+
+# Step 2: Load Project Configuration and Manifest
+[command.steps.step2]
+name = "Load Project Configuration and Manifest"
+critical = true
+note = "CRITICAL: MUST READ - These files provide essential project context that agents need to operate correctly."
+
+[command.steps.step2.files]
+project_config = ".baton/project.config.md"
+project_manifest = ".baton/project.manifest"
+
+[command.steps.step2.project_config]
+purpose = "Understand available tools, resources, agents, workflows, and project management settings"
+extract = [
+    "Available tools (CLI tools, knowledge files) and their file paths",
+    "Available resources (cloud/infrastructure)",
+    "Installed agents (list with file paths)",
+    "Installed workflows (list with file paths)",
+    "Project management methodology and location",
+    "GenAI platform configurations",
+    "Agent preferences (auto-save context, verbose logging, etc.)"
+]
+
+[command.steps.step2.project_manifest]
+purpose = "Understand project context, requirements, and constraints"
+extract = [
+    "Project information (name, description, organization, tech stack)",
+    "Project requirements (business objectives, technical requirements, non-functional requirements)",
+    "Features (links to feature files)",
+    "Success criteria (project goals)"
+]
+notes = [
+    "Architectural decisions are in knowledge/architecture-decisions.md (not in manifest)",
+    "Technical and regulatory constraints are in .baton/boundaries/project-boundaries.md (not in manifest)"
+]
+
+[command.steps.step2.why_critical]
+reasons = [
+    "Agents cannot make informed decisions without understanding project context",
+    "Agents need to know what tools/workflows are available before attempting to use them",
+    "Agents must respect project constraints and requirements",
+    "Agents should reference past decisions to avoid repeating discussions",
+    "Agents need project information to provide context-appropriate responses"
+]
+
+# Step 3: Load Agent Definition
+[command.steps.step3]
+name = "Load Agent Definition"
+file = ".baton/agents/{agent-name}.md"
+purpose = "Complete agent definition with capabilities, cognitive patterns, and behavior guidelines"
+contents = [
+    "Agent identity and role",
+    "Cognitive pattern integration (primary and secondary patterns)",
+    "Core capabilities",
+    "Behavior guidelines and quality standards",
+    "Workflow processes",
+    "Boundaries reference"
+]
+
+# Step 4: Load Cognitive Pattern Files
+[command.steps.step4]
+name = "Load Cognitive Pattern Files"
+critical = true
+note = "CRITICAL: MUST READ - The agent definition file references cognitive pattern files that contain the complete thinking workflows, decision frameworks, communication patterns, and quality standards."
+
+[command.steps.step4.pattern_sources]
+primary = "Read all patterns listed in cognitive_patterns.primary from agent definition"
+secondary = "Read all patterns listed in cognitive_patterns.secondary from agent definition"
+location = "Pattern files are located at paths specified in agent definition frontmatter"
+
+[command.steps.step4.extract_fields]
+fields = [
+    "cognitive_identity - What the pattern is and how it thinks",
+    "thinking_workflow - Step-by-step workflow phases",
+    "decision_making_framework - How to make decisions using this pattern",
+    "communication_patterns - How to communicate when using this pattern",
+    "quality_standards - Quality criteria for this pattern",
+    "model_parameters - Temperature and other LLM parameters"
+]
+
+# Step 5: Load Agent Context
+[command.steps.step5]
+name = "Load Agent Context"
+file = ".baton/context/{agent-name}-context.md"
+purpose = "Track progress, decisions, learnings, and context from previous sessions"
+optional = true
+note = "If file doesn't exist, it will be created during first context sync"
+
+# Step 6: Load Boundaries
+[command.steps.step6]
+name = "Load Boundaries"
+files = [
+    ".baton/boundaries/project-boundaries.md",
+    ".baton/boundaries/{agent-name}-boundaries.md"
+]
+note = "Agent boundaries override project boundaries. Both should be loaded to understand full constraint set."
+
+# Step 7: Confirm Initialization
+[command.steps.step7]
+name = "Confirm Initialization"
+response_template = """
+✓ {Agent Name} Agent Initialized
+
+**Agent Definition**: Loaded from .baton/agents/{agent-name}.md
+**Cognitive Patterns**: {count} patterns loaded ({primary_count} primary, {secondary_count} secondary)
+**Agent Context**: {exists/created}
+**Boundaries**: {project and agent boundaries loaded/only project loaded}
+
+**Primary Cognitive Patterns:**
+{List primary patterns with temperatures}
+
+**Secondary Cognitive Patterns:**
+{List secondary patterns with temperatures}
+
+**Repository Status:**
+{From context file if available}
+
+**Current Priorities:**
+{From context file if available, or "Ready to assist with {agent-type} tasks"}
+
+**Ready to:**
+{List core capabilities from agent definition}
+
+What would you like me to help with?
+"""
+
+[command.important_notes]
+notes = [
+    "This command should be executed at the start of each new session",
+    "All cognitive pattern files must be read to understand how to apply patterns",
+    "Context file will be created if it doesn't exist",
+    "Always use system date commands, never hardcode dates",
+    "Boundaries must be loaded to understand agent constraints"
+]
+
