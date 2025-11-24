@@ -4,14 +4,14 @@
 
 **Files Created:**
 
-- ✅ `.baton/project.config.md` - Project configuration
+- ✅ `.baton/project.config.yml` - Project configuration
 - ✅ `.baton/project.manifest.md` - Project requirements and success criteria
   {if boundaries created: - ✅ `.baton/boundaries/project-boundaries.md` - Project boundaries and constraints (template with commented examples)}
 
 **Next Steps:**
 
 1. Review and customize the created files with your project-specific information
-2. Update project.config.md with:
+2. Update project.config.yml with:
    - Project name and type
    - Source control repository URL
    - Project management settings

@@ -20,7 +20,7 @@ This project has not been initialized yet. You **MUST** run the `/project-init` 
 
 **Required Action:**
 Run `/project-init` to initialize the project configuration files:
-- `.baton/project.config.md` - Project configuration
+- `.baton/project.config.yml` - Project configuration
 - `.baton/project.manifest.md` - Project requirements and success criteria
 - `.baton/boundaries/project-boundaries.md` - Project boundaries and constraints
 

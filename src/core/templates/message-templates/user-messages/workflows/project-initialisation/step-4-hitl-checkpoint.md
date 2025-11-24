@@ -2,7 +2,7 @@
 
 🔍 HITL Checkpoint: Review and Complete Project Configuration
 
-I've scanned your project and estimated the following values for project.config.md:
+I've scanned your project and estimated the following values for project.config.yml:
 
 **Estimated Values (from project scan):**
 {Display estimated values with confidence indicators - these are already filled in}
@@ -22,7 +22,7 @@ I've scanned your project and estimated the following values for project.config.
 {List fields with default values, e.g., preferences section}
 
 **Current Configuration Preview:**
-{Display current project.config.md content with estimated values filled in, highlighting required fields that still need input}
+{Display current project.config.yml content with estimated values filled in, highlighting required fields that still need input}
 
 **⚠️ IMPORTANT:**
 - You CANNOT approve until all REQUIRED fields are filled
@@ -30,7 +30,7 @@ I've scanned your project and estimated the following values for project.config.
 - Default values (like preferences) are already set and don't need input unless you want to change them
 
 **Action Required:**
-- ✅ Approve: Use these values and create/update project.config.md (ONLY if all required fields are filled)
+- ✅ Approve: Use these values and create/update project.config.yml (ONLY if all required fields are filled)
 - ❌ Reject: Cancel project initialization
 - ✏️ Modify: Provide corrections or additional values for required/optional fields
 

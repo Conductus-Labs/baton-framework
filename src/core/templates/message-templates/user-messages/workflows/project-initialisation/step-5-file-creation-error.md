@@ -1,6 +1,6 @@
 # Error: File Creation Error
 
-❌ Error: Cannot create/update project.config.md
+❌ Error: Cannot create/update project.config.yml
 
 Please verify:
 - Write permissions to .baton/ directory

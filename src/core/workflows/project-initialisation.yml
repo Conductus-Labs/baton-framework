@@ -4,7 +4,7 @@
 
 version: 1.0.0
 workflow_name: project-initialisation
-purpose: Initialize a project with Baton Framework by creating project.config.md, project.manifest, and project-boundaries.md
+purpose: Initialize a project with Baton Framework by creating project.config.yml, project.manifest, and project-boundaries.md
 associate_command: /project-init
 scope: project-setup # Required scope for agent to execute this workflow
 # Note: This workflow requires scopes to call sub-flows:
@@ -46,7 +46,7 @@ workflow_steps:
       - step: 1
         required: true
     actions:
-      - Check if `.baton/project.config.md` exists
+      - Check if `.baton/project.config.yml` exists
       - Check if `.baton/project.manifest` exists
       - Check if `.baton/boundaries/project-boundaries.md` exists
       - If files exist, check if they are in default/template state (compare with templates)
@@ -66,7 +66,7 @@ workflow_steps:
 
   - step: 3
     name: Scan Project for Configuration Values
-    description: Analyze project to estimate values for project.config.md
+    description: Analyze project to estimate values for project.config.yml
     dependencies:
       - step: 2
         required: true
@@ -79,7 +79,7 @@ workflow_steps:
       - Identify GenAI platform from current context (Cursor, Claude, Gemini)
       - **CRITICAL**: When provider is identified (e.g., "cursor"), set name to match provider (e.g., "cursor")
       - Generate current date/time for initialization timestamp
-      - Compile estimated values for project.config.md
+      - Compile estimated values for project.config.yml
       - Categorize fields as:
           - Required fields (MUST be filled): project.name, project.type, project_management.type, project_management.location, gen_ai first entry name, gen_ai first entry model
           - Optional fields (can be left empty): project_management.url, knowledge entries, agents beyond baton-agent
@@ -95,12 +95,12 @@ workflow_steps:
 
   - step: 4
     name: HITL Checkpoint - Review and Complete Project Configuration
-    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.config.md
+    description: Human-in-the-loop checkpoint to validate estimated values and collect missing values for project.config.yml
     dependencies:
       - step: 3
         required: true
     actions:
-      - Load project.config.md template (or existing file if in default state)
+      - Load project.config.yml template (or existing file if in default state)
       - Apply estimated values from project scan
       - Identify required fields that still contain placeholders (e.g., {project-name}, {methodology}, {model-name})
       - Identify optional fields that contain placeholders
@@ -166,17 +166,17 @@ workflow_steps:
 
   - step: 5
     name: Create/Update Project Configuration File
-    description: Create or update project.config.md with validated values from HITL checkpoint
+    description: Create or update project.config.yml with validated values from HITL checkpoint
     dependencies:
       - step: 4
         required: true
     actions:
-      - Load project.config.md template (or existing file if updating)
+      - Load project.config.yml template (or existing file if updating)
       - Apply validated values from HITL checkpoint
       - Final validation: Check that all required fields are filled (no placeholders remain in required fields)
       - Generate current date/time for initialization/update timestamp
       - "Set default values for preferences section (auto_save_context true, verbose_logging false, check_for_updates true, send_feedback false)"
-      - Create or update `.baton/project.config.md` with populated values
+      - Create or update `.baton/project.config.yml` with populated values
       - Verify file was created/updated successfully
       - Verify no required field placeholders remain in created file
     error_handling:
@@ -234,7 +234,7 @@ workflow_steps:
       required_approvers: ["user"]
       decision_options:
         approve: "Continue to step 8"
-        reject: "Stop execution (note: project.config.md already created)"
+        reject: "Stop execution (note: project.config.yml already created)"
         modify: "Apply modifications and re-present for approval"
     decision_points:
       - condition: User approved
@@ -399,10 +399,10 @@ command_references:
 # Notes
 notes:
   - This workflow includes three HITL checkpoints:
-      - Review and complete project.config.md values (step 4)
+      - Review and complete project.config.yml values (step 4)
       - Review and complete project.manifest values (step 7)
       - Review project-boundaries.md template (step 9)
-  - The workflow scans the project to estimate values for project.config.md and project.manifest
+  - The workflow scans the project to estimate values for project.config.yml and project.manifest
   - Estimated values are validated with the user at HITL checkpoints
   - Users must provide values that cannot be determined from project scan
   - For empty projects, users will need to provide most values manually
@@ -416,7 +416,7 @@ notes:
   - Template files are loaded from baton-framework repository
   - All created/updated files can be edited manually after creation
   - Project initialization can be re-run to update values (future workflows will handle updates)
-  - Required fields for project.config.md (MUST be filled, cannot contain placeholders):
+  - Required fields for project.config.yml (MUST be filled, cannot contain placeholders):
       - project.name: Project name (e.g., "my-web-app", "api-service", "baton-framework")
       - project.type: Project type (e.g., "web-application", "api-service", "library", "framework")
       - project_management.type: Methodology (e.g., "baton-framework", "scrum", "agile", "waterfall", "kanban")

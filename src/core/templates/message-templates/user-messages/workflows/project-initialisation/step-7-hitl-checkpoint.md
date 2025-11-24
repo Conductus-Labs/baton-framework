@@ -23,7 +23,7 @@ I've scanned your project and estimated the following values for project.manifes
 
 **Action Required:**
 - ✅ Approve: Use these values and create/update project.manifest
-- ❌ Reject: Cancel project initialization (project.config.md already created)
+- ❌ Reject: Cancel project initialization (project.config.yml already created)
 - ✏️ Modify: Provide corrections or additional values
 
 **⚠️ IMPORTANT:**

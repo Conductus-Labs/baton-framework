@@ -17,5 +17,5 @@ You can:
 1. Provide the values now (I'll update the configuration and re-present for approval)
 2. Or respond with 'reject' to cancel initialization
 
-**I will NOT proceed to create project.config.md until ALL required fields are filled.**
+**I will NOT proceed to create project.config.yml until ALL required fields are filled.**
 

@@ -45,9 +45,9 @@ workflow_steps:
 
   - step: 2
     name: Check Project Configuration Files
-    description: Verify project.config.md and project.manifest.md exist and are not in default/template state
+    description: Verify project.config.yml and project.manifest.md exist and are not in default/template state
     actions:
-      - Check if `.baton/project.config.md` exists
+      - Check if `.baton/project.config.yml` exists
       - Check if `.baton/project.manifest.md` exists
       - If both exist, verify they are not default/template state (check for placeholder values like {project-name}, {YYYY-MM-DD}, etc.)
       - Store project initialization status (initialized/not_initialized) for use in step 8
@@ -296,7 +296,7 @@ notes:
       - Confirming initialization (with different message if project not initialized)
   - If project is not initialized, agent will insist user run /project-init before showing capabilities
   - Sub-workflows used:
-      - sub-flow-load-project-config.yml (step 2 - loads project.config.md)
+      - sub-flow-load-project-config.yml (step 2 - loads project.config.yml)
       - sub-flow-load-project-manifest.yml (step 2 - loads project.manifest)
       - sub-flow-load-agent-context.yml (step 5 - when context file exists)
       - sub-flow-create-agent-context.yml (step 5 - when context file does not exist)

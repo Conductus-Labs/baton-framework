@@ -15,7 +15,7 @@ This file will define:
 
 **Action Required:**
 - ✅ Approve: Create project-boundaries.md from template (you can edit it later)
-- ❌ Reject: Skip boundaries file creation (project.config.md and project.manifest already created)
+- ❌ Reject: Skip boundaries file creation (project.config.yml and project.manifest already created)
 - ✏️ Modify: Request specific changes before creation
 
 Please respond with: approve, reject, or describe modifications needed.

@@ -35,7 +35,7 @@ else
     echo ""
     echo "Options:"
     echo "  --full              Complete reset: Delete everything and recreate from core"
-    echo "  --pre-project-init  Reset project files only: Reset project.config.md, project.manifest.md,"
+    echo "  --pre-project-init  Reset project files only: Reset project.config.yml, project.manifest.md,"
     echo "                      and project-boundaries.md to template state (keeps agent context,"
     echo "                      workflows, cognitive patterns, etc.)"
     echo ""
@@ -87,7 +87,7 @@ full_reset() {
     echo ""
     echo -e "${RED}This will permanently delete:${NC}"
     echo "  • All agent context files"
-    echo "  • All project configuration files (project.config.md, project.manifest.md, project-boundaries.md)"
+    echo "  • All project configuration files (project.config.yml, project.manifest.md, project-boundaries.md)"
     echo "  • Any custom boundaries or knowledge files"
     echo "  • Any other files in .baton/ directory"
     echo ""
@@ -254,7 +254,7 @@ full_reset() {
     echo -e "${YELLOW}Copying template files...${NC}"
 
 # Template files (with placeholders)
-copy_file "src/core/templates/project-file-templates/project.config-template.yml" ".baton/project.config.md" "template"
+copy_file "src/core/templates/project-file-templates/project.config-template.yml" ".baton/project.config.yml" "template"
 copy_file "src/core/templates/project-file-templates/project-manifest-template.md" ".baton/project.manifest.md" "template"
 copy_file "src/core/templates/boundaries-templates/project-boundaries-template.md" ".baton/boundaries/project-boundaries.md" "template"
 
@@ -267,7 +267,7 @@ copy_file "src/core/templates/boundaries-templates/project-boundaries-template.m
     workflow_count=$(find .baton/workflows -name "*.yml" -type f 2>/dev/null | wc -l)
     cognitive_count=$(find .baton/cognitive -name "*.yml" -type f 2>/dev/null | wc -l)
     command_count=$(find .cursor/commands/baton -type f 2>/dev/null | wc -l)
-    template_count=$(find .baton -name "project.config.md" -o -name "project.manifest.md" -o -name "project-boundaries.md" 2>/dev/null | wc -l)
+    template_count=$(find .baton -name "project.config.yml" -o -name "project.manifest.md" -o -name "project-boundaries.md" 2>/dev/null | wc -l)
 
     echo -e "${GREEN}✓ Agent files: $agent_count${NC}"
     echo -e "${GREEN}✓ Workflow files: $workflow_count${NC}"
@@ -291,7 +291,7 @@ pre_project_init_reset() {
 
     # Warning and confirmation
     echo -e "${YELLOW}This will reset project configuration files to template state:${NC}"
-    echo "  • .baton/project.config.md → template with placeholders"
+    echo "  • .baton/project.config.yml → template with placeholders"
     echo "  • .baton/project.manifest.md → template with placeholders"
     echo "  • .baton/boundaries/project-boundaries.md → template with placeholders"
     echo ""
@@ -318,7 +318,7 @@ pre_project_init_reset() {
     # Step 1: Reset project configuration files
     echo -e "${YELLOW}Step 1: Resetting project configuration files...${NC}"
     
-    copy_file "src/core/templates/project-file-templates/project.config-template.yml" ".baton/project.config.md" "template"
+    copy_file "src/core/templates/project-file-templates/project.config-template.yml" ".baton/project.config.yml" "template"
     copy_file "src/core/templates/project-file-templates/project-manifest-template.md" ".baton/project.manifest.md" "template"
     copy_file "src/core/templates/boundaries-templates/project-boundaries-template.md" ".baton/boundaries/project-boundaries.md" "template"
 

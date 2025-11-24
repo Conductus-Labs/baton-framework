@@ -53,6 +53,11 @@
       "type": "exact_copy"
     },
     {
+      "source": "src/core/workflows/context-synchronisation.yml",
+      "destination": ".baton/workflows/context-synchronisation.yml",
+      "type": "exact_copy"
+    },
+    {
       "source": "src/core/workflows/sub-flows/sub-flow-create-agent-context.yml",
       "destination": ".baton/workflows/sub-flows/sub-flow-create-agent-context.yml",
       "type": "exact_copy"
@@ -95,6 +100,12 @@
       "platform": "cursor"
     },
     {
+      "source": "src/core/commands/markdown/baton-agent/sync-context.md",
+      "destination": ".cursor/commands/baton/sync-context.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
       "source": "src/core/commands/markdown/baton-agent/init-baton-agent.md",
       "destination": ".claude/commands/baton/init-baton-agent.md",
       "type": "exact_copy",
@@ -107,6 +118,12 @@
       "platform": "claude"
     },
     {
+      "source": "src/core/commands/markdown/baton-agent/sync-context.md",
+      "destination": ".claude/commands/baton/sync-context.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
       "source": "src/core/commands/toml/baton-agent/init-baton-agent.toml",
       "destination": ".gemini/commands/baton/init-baton-agent.toml",
       "type": "exact_copy",
@@ -115,6 +132,12 @@
     {
       "source": "src/core/commands/toml/baton-agent/project-init.toml",
       "destination": ".gemini/commands/baton/project-init.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "src/core/commands/toml/baton-agent/sync-context.toml",
+      "destination": ".gemini/commands/baton/sync-context.toml",
       "type": "exact_copy",
       "platform": "gemini"
     },
@@ -215,7 +238,7 @@
     },
     {
       "source": "src/core/templates/project-file-templates/project.config-template.yml",
-      "destination": ".baton/project.config.md",
+      "destination": ".baton/project.config.yml",
       "type": "template"
     },
     {
@@ -386,6 +409,26 @@
     {
       "source": "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md",
       "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-1-insufficient-scope-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-1-insufficient-scope-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
       "type": "exact_copy"
     }
   ]

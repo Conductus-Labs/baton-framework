@@ -39,7 +39,7 @@ This separation enables:
 **Note:**
 
 - Commands are NOT embedded in agent files. They are loaded on-demand from platform-specific directories (`.cursor/commands/`, `.claude/commands/`, `.gemini/commands/`).
-- Behavior guidelines are handled by `project.manifest`, `project.config.md`, boundaries, and workflows.
+- Behavior guidelines are handled by `project.manifest`, `project.config.yml`, boundaries, and workflows.
 - Workflow processes are defined in their own workflow files, not in agent files.
 
 **Usage:**
@@ -289,7 +289,7 @@ baton init project
 **Example Output:**
 
 ```
-.baton/project.config.md
+.baton/project.config.yml
 ```
 
 **Note:** This file is loaded during agent initialization and workflow execution to provide project context. File paths are included for agents, knowledge files, and workflows so agents know where to load them.
@@ -372,7 +372,7 @@ baton generate knowledge architecture-decisions
 │   └── {agent-name}-boundaries.md  # Agent-specific overrides
 ├── context/
 │   └── {agent-name}-context.md  # Session tracking
-├── project.config.md           # Project configuration (tools, agents, workflows)
+├── project.config.yml           # Project configuration (tools, agents, workflows)
 └── project.manifest             # Project constitution (requirements, decisions, constraints)
 ```
 
@@ -382,7 +382,7 @@ baton generate knowledge architecture-decisions
 
 - Cognitive pattern files
 - Workflow files
-- Project config files (`.baton/project.config.md`)
+- Project config files (`.baton/project.config.yml`)
 - **NO frontmatter** (YAML is the format itself)
 
 ### Frontmatter (YAML frontmatter + Markdown)
@@ -448,7 +448,7 @@ Each file type has required sections that must be included:
 
 **Note:** Behavior guidelines, workflow processes, and commands are NOT included in agent files. They are handled by:
 
-- Behavior guidelines: `project.manifest`, `project.config.md`, boundaries, and workflows
+- Behavior guidelines: `project.manifest`, `project.config.yml`, boundaries, and workflows
 - Workflow processes: Defined in separate workflow files (`.baton/workflows/`)
 - Commands: Loaded on-demand from platform-specific directories
 
@@ -866,7 +866,7 @@ Use this command to do things.
 **Pure YAML (`.yml`):**
 - Cognitive pattern files
 - Workflow files
-- Project config files (`.baton/project.config.md`)
+- Project config files (`.baton/project.config.yml`)
 - **NO frontmatter** (YAML is the format itself)
 
 **Frontmatter (YAML frontmatter + Markdown content):**
@@ -970,7 +970,7 @@ status: active
 
 **Must Not:**
 
-- Include behavior guidelines (handled by project.manifest, project.config.md, boundaries, workflows)
+- Include behavior guidelines (handled by project.manifest, project.config.yml, boundaries, workflows)
 - Include workflow processes (defined in separate workflow files)
 - Include commands (loaded on-demand from platform-specific directories)
 - Include enforcement code
@@ -1296,7 +1296,7 @@ Before generating a file from a template, verify:
 - Load all referenced cognitive pattern files
 - Load agent context (create if missing)
 - Load boundaries (project and agent-specific)
-- Load project.config.md and project.manifest
+- Load project.config.yml and project.manifest
 - Provide initialization confirmation
 
 **Must Not:**
@@ -1312,7 +1312,7 @@ Before generating a file from a template, verify:
 
 - Verify agent authorization before execution
 - Check prerequisites from workflow file
-- Load project.config.md and project.manifest
+- Load project.config.yml and project.manifest
 - Execute workflow steps in order
 - Handle errors according to workflow definition
 - Support parallel execution when specified

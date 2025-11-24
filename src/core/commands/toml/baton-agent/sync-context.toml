@@ -1,0 +1,72 @@
+[command]
+name = "sync-context"
+description = "Updates the agent context file with a summary of the current chat session"
+workflow_name = "context-synchronisation"
+scope = "context-management" # Required scope for agent to execute this command
+created = "2025-11-24"
+
+[metadata]
+version = "1.0.0"
+command_type = "workflow-execution"
+platform = "baton-framework"
+
+[execution]
+workflow_file = ".baton/workflows/context-synchronisation.yml"
+execution_method = "workflow-steps"
+
+[steps]
+  [steps.step_1]
+  name = "Validate Agent Scope"
+  description = "CRITICAL PREREQUISITE - Validate that the agent executing this command has the required scope"
+  actions = [
+    "Load agent definition to get agent's scope array",
+    "Extract agent's scope array from agent definition frontmatter",
+    "Verify agent's scope array includes required scope: context-management"
+  ]
+  decision_points = [
+    { condition = "Agent scope includes required scope", if_true = "Continue to step 2", if_false = "Stop execution with error message" }
+  ]
+  error_handling = { retry = false }
+  error_messages = [
+    { type = "Insufficient Scope", message = "❌ Error: Insufficient scope to execute this command\n\nCommand: sync-context\nRequired scope: context-management\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this command.\nPlease use an agent with the 'context-management' scope, or add this scope to the agent's definition.", action = "Stop execution" }
+  ]
+
+  [steps.step_2]
+  name = "Load Workflow Definition"
+  description = "Read the context-synchronisation workflow file"
+  dependencies = [{ step = 1, required = true }]
+  actions = [
+    "Read workflow file: .baton/workflows/context-synchronisation.yml",
+    "Extract workflow steps, error handling, and command references",
+    "Understand workflow behavior and sub-flow usage"
+  ]
+
+  [steps.step_3]
+  name = "Execute Context Synchronisation Workflow"
+  description = "Execute the context-synchronisation workflow by following all steps defined in the workflow file"
+  dependencies = [{ step = 2, required = true }]
+  actions = [
+    "Follow each workflow step in order",
+    "Load or create context file using sub-flows",
+    "Collect session information",
+    "Update context file with new session entry",
+    "Display confirmation message"
+  ]
+
+  [steps.step_4]
+  name = "Confirm Completion"
+  description = "Provide completion summary from workflow execution"
+  dependencies = [{ step = 3, required = true }]
+  actions = [
+    "Display workflow completion message",
+    "Show context file location",
+    "Provide session summary information"
+  ]
+
+[notes]
+- This command executes the context-synchronisation workflow
+- Only agents with the context-management scope can execute this command
+- Always use system date commands, never hardcode dates
+- Context file location: .baton/context/{agent-name}-context.md
+- For workflow details, error handling, and message templates, refer to the workflow file
+

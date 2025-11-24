@@ -89,7 +89,7 @@ Please use an agent with the 'workflow-execution' scope, or add this scope to th
 
 **Files to Read:**
 
-1. **Project Configuration**: `.baton/project.config.md`
+1. **Project Configuration**: `.baton/project.config.yml`
 
    - **Purpose**: Understand available tools, resources, and workflows
    - **Extract**:
@@ -109,7 +109,7 @@ Please use an agent with the 'workflow-execution' scope, or add this scope to th
 
 **Why This Is Critical:**
 
-- Workflows may need to use tools defined in project.config.md
+- Workflows may need to use tools defined in project.config.yml
 - Workflows must respect project constraints from project.manifest
 - Workflows should align with project requirements
 - Workflows may need to reference past decisions to avoid conflicts

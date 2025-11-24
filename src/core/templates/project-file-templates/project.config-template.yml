@@ -1,7 +1,7 @@
 # Project Configuration Template
 # Format: Pure YAML (no frontmatter)
 # Purpose: Project configuration file that agents use to understand available tools, resources, agents, workflows, and IDE settings
-# Location: .baton/project.config.md
+# Location: .baton/project.config.yml
 
 version: 1.0.0
 
@@ -19,7 +19,7 @@ source_control:
 
 # Project management configuration
 project_management:
-  type: "{methodology}" # e.g., "baton-framework", "scrum", "agile", "waterfall", "kanban"
+  type: "{methodology}" # e.g., "RHYTHM-Method", "scrum", "agile", "waterfall", "kanban"
   location: "{location-type}" # e.g., "github-issues", "azure-devops", "jira", "local", "linear"
   url: "{optional-url}" # URL to project management system (if applicable)
   # Examples:

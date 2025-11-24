@@ -84,7 +84,7 @@ critical = true
 note = "CRITICAL: MUST READ - These files provide essential project context that agents need to operate correctly."
 
 [command.steps.step2.files]
-project_config = ".baton/project.config.md"
+project_config = ".baton/project.config.yml"
 project_manifest = ".baton/project.manifest"
 
 [command.steps.step2.project_config]
