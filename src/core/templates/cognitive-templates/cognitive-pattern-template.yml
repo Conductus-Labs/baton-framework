@@ -1,0 +1,110 @@
+# Cognitive Pattern Template
+# Format: Pure YAML (no frontmatter)
+# Purpose: Define structured thinking patterns for agents
+
+# Version & Metadata
+version: 1.0.0
+pattern_type: {analytical|critical|systems|meta-cognitive|experimental|adaptive}
+created: {YYYY-MM-DD}
+description: {Brief description of what this pattern does and how it thinks}
+
+# Model Parameters (sent to LLM)
+model_parameters:
+  temperature: {0.0-1.0}  # Optimized for this pattern type
+  top_p: {0.0-1.0}
+  repeat_penalty: {0.0-2.0}
+  max_tokens: {number}
+
+# Pattern Metadata (NOT sent to LLM, for framework use)
+pattern_metadata:
+  reasoning_depth: {shallow|moderate|deep}
+  context_window: {small|medium|large}
+  response_style: {concise|balanced|comprehensive}
+
+# Cognitive Identity
+cognitive_identity:
+  thinking_pattern: {How this pattern approaches problems}
+  approach_methodology: {Methodology used by this pattern}
+  reasoning_style: {Style of reasoning - e.g., "Systematic decomposition", "Evidence-based evaluation"}
+
+# Thinking Workflow
+thinking_workflow:
+  phases:
+    - phase: sensing
+      description: {How pattern perceives and gathers information}
+      actions:
+        - {Action 1}
+        - {Action 2}
+    
+    - phase: interpretation
+      description: {How pattern interprets and understands information}
+      actions:
+        - {Action 1}
+        - {Action 2}
+    
+    - phase: decision
+      description: {How pattern makes decisions}
+      actions:
+        - {Action 1}
+        - {Action 2}
+    
+    - phase: action
+      description: {How pattern executes actions}
+      actions:
+        - {Action 1}
+        - {Action 2}
+    
+    - phase: learning
+      description: {How pattern learns from outcomes}
+      actions:
+        - {Action 1}
+        - {Action 2}
+    
+    - phase: adaptation
+      description: {How pattern adapts based on feedback}
+      actions:
+        - {Action 1}
+        - {Action 2}
+
+# Decision Making Framework
+decision_making_framework:
+  approach: {Structured approach to decision-making}
+  criteria:
+    - {Criterion 1}
+    - {Criterion 2}
+    - {Criterion 3}
+  evaluation_steps:
+    - step: {Step description}
+      actions: [{Action 1}, {Action 2}]
+    - step: {Step description}
+      actions: [{Action 1}, {Action 2}]
+  decision_rules:
+    - rule: {Rule description}
+      condition: {When this rule applies}
+      action: {What to do}
+
+# Communication Patterns
+communication_patterns:
+  tone: {Communication tone - e.g., "Analytical", "Critical", "Exploratory"}
+  structure: {Message format - e.g., "Problem → Analysis → Conclusion"}
+  examples:
+    - example: {Example communication}
+      context: {When to use this example}
+    - example: {Example communication}
+      context: {When to use this example}
+
+# Quality Standards
+quality_standards:
+  criteria:
+    - {Quality criterion 1}
+    - {Quality criterion 2}
+    - {Quality criterion 3}
+  validation:
+    process: {How to validate output quality}
+    checks: [{Check 1}, {Check 2}]
+  metrics:
+    - metric: {Metric name}
+      target: {Target value}
+    - metric: {Metric name}
+      target: {Target value}
+

@@ -1,0 +1,101 @@
+# Sub-Workflow: Load Project Configuration
+# Format: Pure YAML (no frontmatter)
+# Purpose: Load project configuration file (project.config.md)
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-load-project-config
+purpose: Load project configuration file (project.config.md)
+scope: project-config # Required scope for parent workflow to call this sub-flow
+created: 2025-11-23
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - Project configuration file must exist at `.baton/project.config.md`
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
+    actions:
+      - Get agent scope array from parent workflow context (agent executing the parent workflow)
+      - Verify agent's scope array includes required scope: project-config
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-load-project-config\nRequired scope: project-config\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'project-config' scope."
+          action: Stop execution
+
+  - step: 2
+    name: Read Project Configuration File
+    description: Read the project configuration YAML file
+    actions:
+      - Read file: `.baton/project.config.md`
+      - Parse YAML structure
+      - Validate YAML syntax
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Config File Read Error
+          message: "❌ Error: Cannot read project configuration file\n\nFile: .baton/project.config.md\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid YAML format"
+          action: Stop execution
+        - type: YAML Parse Error
+          message: "❌ Error: Invalid YAML syntax in project configuration\n\nFile: .baton/project.config.md\n\nPlease verify YAML syntax is correct"
+          action: Stop execution
+
+  - step: 3
+    name: Extract Configuration Information
+    description: Extract key configuration sections from file
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Extract project metadata section (name, description, organization, tech_stack)
+      - Extract source_control section (repository info, branch strategy)
+      - Extract genai section (platform configurations, model preferences)
+      - Extract agents section (list of installed agents with file paths)
+      - Extract knowledge section (installed knowledge files with paths: tools/, resources/, technology/)
+      - Extract workflows section (installed workflows with file paths)
+      - Extract project_management section (type and location)
+      - Extract preferences section (auto-save context, verbose logging, etc.)
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+  
+  error_types:
+    - type: Config File Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+    
+    - type: YAML Parse Error
+      handling: Stop execution with error message
+      recovery: Verify YAML syntax is valid
+
+# Notes
+notes:
+  - This sub-workflow is called whenever project configuration is needed
+  - Project configuration file location: `.baton/project.config.md`
+  - Configuration provides agents with available tools, resources, agents, workflows
+  - File paths for agents, knowledge, and workflows are included in configuration
+  - This sub-flow will be heavily reused across multiple workflows
+

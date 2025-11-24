@@ -1,0 +1,102 @@
+# Init Baton Agent Command
+# Format: TOML (for Gemini Desktop)
+# Purpose: Initialize the baton-agent for a new session by executing the agent-initialisation workflow
+
+[command]
+description = "Initialize the baton-agent for a new session"
+name = "init-baton-agent"
+scope = "agent-initialisation" # Required scope for agent to execute this command
+
+[command.metadata]
+version = "1.0.0"
+agent_name = "baton-agent"
+workflow_name = "agent-initialisation"
+
+[command.instructions]
+purpose = "Execute the agent-initialisation workflow to initialize the baton-agent for a new session."
+
+# Step 1: Validate Agent Scope
+[command.steps.step1]
+name = "Validate Agent Scope"
+critical = true
+description = "CRITICAL PREREQUISITE: Validate that the current agent has the required scope to execute this command"
+
+[command.steps.step1.action]
+load_agent_definition = "Read the agent definition file to get the agent's scope array"
+agent_file = ".baton/agents/baton-agent.md"
+note = "Or from current agent context if already loaded"
+
+[command.steps.step1.scope_validation]
+extract_agent_scope = "Extract the agent's scope array from the agent definition frontmatter"
+required_scope = "agent-initialisation"
+check_match = "Verify that the agent's scope array includes the required scope"
+
+[command.steps.step1.if_match]
+action = "Continue to Step 2"
+note = "Agent has required scope, proceed with command execution"
+
+[command.steps.step1.if_no_match]
+action = "STOP EXECUTION IMMEDIATELY"
+display_error = true
+error_message = """
+❌ Error: Insufficient scope to execute this command
+
+Command: init-baton-agent
+Required scope: agent-initialisation
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'agent-initialisation' scope, or add this scope to the agent's definition.
+"""
+note = "Do not proceed with any further steps"
+
+# Step 2: Load Workflow Definition
+[command.steps.step2]
+name = "Load Workflow Definition"
+file = ".baton/workflows/agent-initialisation.yml"
+purpose = "Complete workflow definition with steps, error handling, and command references"
+
+[command.steps.step1.extract_fields]
+fields = [
+    "Workflow name and purpose",
+    "Prerequisites",
+    "Workflow steps",
+    "Error handling mechanisms",
+    "Command references"
+]
+
+# Step 3: Execute Agent Initialisation Workflow
+[command.steps.step3]
+name = "Execute Agent Initialisation Workflow"
+description = "Execute the agent-initialisation workflow with the agent short-name parameter set to baton-agent"
+
+[command.steps.step3.workflow_execution]
+workflow_file = ".baton/workflows/agent-initialisation.yml"
+parameter = "Pass agent-short-name: baton-agent to the workflow"
+execution_method = "Follow the workflow steps as defined in the workflow file"
+
+[command.steps.step3.workflow_steps]
+step1 = "Follow each step in the workflow file in order"
+step2 = "Pass the agent-short-name: baton-agent parameter to workflow steps that require it"
+step3 = "Execute actions as specified in each workflow step"
+step4 = "Handle decision points according to workflow definition"
+step5 = "Follow error handling strategies from workflow file"
+
+# Step 4: Confirm Completion
+[command.steps.step4]
+name = "Confirm Completion"
+description = "Provide completion summary from workflow execution"
+
+[command.steps.step4.action]
+display_message = "Display the workflow's completion message to the user"
+note = "The workflow will provide a confirmation message"
+
+[command.important_notes]
+notes = [
+    "This command executes the agent-initialisation workflow",
+    "The workflow handles all initialization steps",
+    "Agent short-name is always 'baton-agent' for this command",
+    "Always use system date commands, never hardcode dates",
+    "Workflow file location: .baton/workflows/agent-initialisation.yml"
+]

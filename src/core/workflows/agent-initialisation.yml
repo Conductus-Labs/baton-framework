@@ -1,0 +1,308 @@
+# Agent Initialisation Workflow
+# Format: Pure YAML (no frontmatter)
+# Purpose: Initialize an agent for a new session
+
+version: 1.0.0
+workflow_name: agent-initialisation
+purpose: Initialize an agent for a new session
+associate_command: init-{agent_short_name}
+scope: agent-initialisation # Required scope for agent to execute this workflow
+# Note: This workflow requires scopes to call sub-flows:
+# - project-config (for sub-flow-load-project-config, sub-flow-load-project-manifest)
+# - context-management (for sub-flow-load-agent-context, sub-flow-create-agent-context)
+# - boundaries (for sub-flow-load-project-boundaries, sub-flow-load-agent-boundaries)
+# The agent executing this workflow must have these scopes in addition to agent-initialisation
+created: 2025-11-23
+
+# Prerequisites
+prerequisites:
+  - Agent short-name parameter must be provided (passed from command)
+  - Write access to `.baton/` directory (for creating context file if needed)
+
+# Workflow Parameters
+parameters:
+  agent_short_name: { Required - Agent short-name to initialize }
+
+# Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Agent Scope
+    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
+    actions:
+      - Load agent definition to get agent's scope array
+      - Extract agent's scope array from agent definition frontmatter
+      - Verify agent's scope array includes required scope: agent-initialisation
+    decision_points:
+      - condition: Agent scope includes required scope
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message_template: user-messages/workflows/agent-initialisation/step-1-insufficient-scope-error.md
+          action: Stop execution
+
+  - step: 2
+    name: Check Project Configuration Files
+    description: Verify project.config.md and project.manifest.md exist and are not in default/template state
+    actions:
+      - Check if `.baton/project.config.md` exists
+      - Check if `.baton/project.manifest.md` exists
+      - If both exist, verify they are not default/template state (check for placeholder values like {project-name}, {YYYY-MM-DD}, etc.)
+      - Store project initialization status (initialized/not_initialized) for use in step 8
+    decision_points:
+      - condition: Both files exist and are NOT in default/template state (project is initialized)
+        if_true: Continue to step 3 (project is initialized)
+        if_false: Evaluate missing/uninitialized files condition
+      - condition: Files not found OR are in default/template state AND agent_short_name is 'baton-agent'
+        if_true: Continue to step 3 (baton-agent can initialize, but flag project as not initialized)
+        if_false: Files not found OR are in default/template state AND agent_short_name is NOT 'baton-agent'
+      - condition: Files not found OR are in default/template state AND agent_short_name is NOT 'baton-agent'
+        if_true: ERROR - Display error message and stop execution
+        if_false: Continue to step 3
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Project Not Initialized (other agent)
+          message_template: user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md
+          action: Stop execution
+      warning_messages:
+        - type: Project Not Initialized (baton-agent)
+          message_template: user-messages/workflows/agent-initialisation/step-2-project-not-initialized-warning.md
+          action: Continue execution (flag project as not initialized for step 8)
+
+  - step: 3
+    name: Load Project Configuration and Manifest
+    description: Load project configuration and manifest files using sub-flows (only if project is initialized)
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Check project initialization status from step 2
+      - If project IS initialized:
+          - Execute sub-flow: sub-flow-load-project-config.yml
+          - Execute sub-flow: sub-flow-load-project-manifest.yml
+      - If project is NOT initialized:
+          - Skip loading project files (they don't exist or are in default/template state)
+          - Continue to step 4
+    sub_flows:
+      - name: Load Project Configuration
+        file: sub-flows/sub-flow-load-project-config.yml
+        when: Project is initialized AND project configuration file exists (from step 2 check)
+      - name: Load Project Manifest
+        file: sub-flows/sub-flow-load-project-manifest.yml
+        when: Project is initialized AND project manifest file exists (from step 2 check)
+    error_handling:
+      retry: false
+      error_messages:
+        - type: File Read Error
+          message_template: user-messages/workflows/agent-initialisation/step-3-file-read-error.md
+          action: Stop execution
+
+  - step: 4
+    name: Load Agent Definition
+    description: Read agent definition file and extract cognitive pattern references
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - "Read agent definition file: .baton/agents/{agent_short_name}.md"
+      - Parse YAML frontmatter to extract:
+          - agent_name
+          - agent_short_name
+          - agent_type
+          - cognitive_patterns (primary and secondary with paths)
+      - Extract agent identity, capabilities, and quality standards from markdown content
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Agent File Not Found
+          message_template: user-messages/workflows/agent-initialisation/step-4-agent-file-not-found-error.md
+          action: Stop execution
+        - type: Invalid Agent File
+          message_template: user-messages/workflows/agent-initialisation/step-4-invalid-agent-file-error.md
+          action: Stop execution
+
+  - step: 5
+    name: Load Cognitive Pattern Files
+    description: Read all cognitive pattern files referenced in agent definition
+    dependencies:
+      - step: 4
+        required: true
+    actions:
+      - Extract all cognitive pattern paths from agent definition frontmatter
+      - For each pattern in cognitive_patterns.primary:
+          - Read pattern file at path specified in agent definition
+          - Extract cognitive_identity, thinking_workflow, decision_making_framework, communication_patterns, quality_standards, model_parameters
+      - For each pattern in cognitive_patterns.secondary:
+          - Read pattern file at path specified in agent definition
+          - Extract cognitive_identity, thinking_workflow, decision_making_framework, communication_patterns, quality_standards, model_parameters
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Cognitive Pattern File Not Found
+          message_template: user-messages/workflows/agent-initialisation/step-5-cognitive-pattern-not-found-error.md
+          action: Stop execution
+
+  - step: 6
+    name: Check Agent Context File
+    description: Check if agent context file exists, load if found, create if not found
+    dependencies:
+      - step: 5
+        required: true
+    actions:
+      - Check if `.baton/context/{agent_short_name}-context.md` exists
+    decision_points:
+      - condition: Context file exists
+        if_true: Load context file (step 5.1)
+        if_false: Create default context file (step 5.2)
+    sub_flows:
+      - name: Load Existing Context
+        file: sub-flows/sub-flow-load-agent-context.yml
+        when: Context file exists
+        parameters:
+          agent_short_name: { agent_short_name }
+      - name: Create Default Context
+        file: sub-flows/sub-flow-create-agent-context.yml
+        when: Context file does not exist
+        parameters:
+          agent_short_name: { agent_short_name }
+          agent_name: { from step 4 }
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Context File Read Error
+          message_template: user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md
+          action: Create default context file
+        - type: Context File Creation Error
+          message_template: user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md
+          action: Stop execution
+
+  - step: 7
+    name: Load Boundaries
+    description: Check for and load project and agent boundary files (only if project is initialized)
+    dependencies:
+      - step: 6
+        required: true
+    actions:
+      - Check project initialization status from step 2
+      - If project IS initialized:
+          - Check if `.baton/boundaries/project-boundaries.md` exists
+          - Check if `.baton/boundaries/{agent_short_name}-boundaries.md` exists
+      - If project is NOT initialized:
+          - Skip loading boundaries (project not initialized)
+          - Continue to step 8
+    decision_points:
+      - condition: Project is NOT initialized
+        if_true: Skip boundaries loading, continue to step 8
+        if_false: Check for boundaries files
+      - condition: Project boundaries file not found (but project is initialized)
+        if_true: WARN user that baton-agent needs to create this, continue
+        if_false: Load project boundaries file
+      - condition: Agent boundaries file found (and project is initialized)
+        if_true: Load agent boundaries file
+        if_false: Continue (agent boundaries are optional)
+    sub_flows:
+      - name: Load Project Boundaries
+        file: sub-flows/sub-flow-load-project-boundaries.yml
+        when: Project boundaries file exists
+      - name: Load Agent Boundaries
+        file: sub-flows/sub-flow-load-agent-boundaries.yml
+        when: Agent boundaries file exists
+        parameters:
+          agent_short_name: { agent_short_name }
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Project Boundaries Not Found
+          message_template: user-messages/workflows/agent-initialisation/step-7-project-boundaries-not-found-warning.md
+          action: Continue execution
+      error_messages:
+        - type: Boundaries File Read Error
+          message_template: user-messages/workflows/agent-initialisation/step-7-boundaries-file-read-warning.md
+          action: Continue execution
+
+  - step: 8
+    name: Present Initialization Confirmation
+    description: Display initialization confirmation message to user, checking project initialization status
+    dependencies:
+      - step: 7
+        required: true
+    actions:
+      - Check project initialization status from step 2
+      - If project is NOT initialized:
+          - Generate message insisting user run /project-init
+          - Do NOT show "Ready to:" capabilities
+          - Do NOT show repository status or priorities
+      - If project IS initialized:
+          - Generate full initialization confirmation message
+          - Include agent name, cognitive patterns loaded, context status, boundaries status
+          - Include repository status and priorities
+          - Include "Ready to:" capabilities
+      - If context file was created (from step 6), include note in confirmation
+      - Display formatted confirmation to user
+    confirmation_template_initialized: user-messages/workflows/agent-initialisation/step-8-confirmation-initialized.md
+    confirmation_template_not_initialized: user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Project Not Initialized (baton-agent)
+      handling: Display warning, continue execution, flag project as not initialized
+      recovery: User MUST run /project-init command after baton-agent is initialized
+
+    - type: Project Not Initialized (other agent)
+      handling: Stop execution with error message
+      recovery: User must initialize baton-agent and run /project-init command first
+
+    - type: Agent File Not Found
+      handling: Stop execution with error message
+      recovery: Verify agent short-name and file location
+
+    - type: Cognitive Pattern File Not Found
+      handling: Stop execution with error message
+      recovery: Verify pattern file paths in agent definition
+
+    - type: Context File Creation Error
+      handling: Stop execution with error message
+      recovery: Check file permissions and directory access
+
+# Command References
+command_references:
+  - command: /init-baton-agent
+    description: Initialize baton-agent (calls this workflow)
+    when_to_use: At the start of a new session with baton-agent
+    example: "/init-baton-agent"
+
+  - command: /project-init
+    description: Initialize project configuration
+    when_to_use: Before initializing agents if project not yet initialized
+    example: "/project-init"
+
+# Notes
+notes:
+  - The workflow will handle:
+      - Checking project initialization status
+      - Loading project configuration and manifest (if project is initialized)
+      - Loading agent definition
+      - Loading cognitive pattern files
+      - Loading agent context
+      - Loading boundaries (if project is initialized)
+      - Confirming initialization (with different message if project not initialized)
+  - If project is not initialized, agent will insist user run /project-init before showing capabilities
+  - Sub-workflows used:
+      - sub-flow-load-project-config.yml (step 2 - loads project.config.md)
+      - sub-flow-load-project-manifest.yml (step 2 - loads project.manifest)
+      - sub-flow-load-agent-context.yml (step 5 - when context file exists)
+      - sub-flow-create-agent-context.yml (step 5 - when context file does not exist)
+      - sub-flow-load-project-boundaries.yml (step 6 - when project boundaries exist)
+      - sub-flow-load-agent-boundaries.yml (step 6 - when agent boundaries exist)
+  - Agent short-name parameter is passed from command (hardcoded as 'baton-agent' for init-baton-agent command)
+  - Project files check has different behavior for baton-agent vs other agents
+  - Context file creation is flagged for inclusion in confirmation message
+  - Sub-flows for project config and manifest are reusable across other workflows

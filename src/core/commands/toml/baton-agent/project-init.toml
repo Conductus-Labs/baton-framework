@@ -1,0 +1,69 @@
+[command]
+name = "project-init"
+description = "Initialize a project with Baton Framework configuration files"
+workflow_name = "project-initialisation"
+scope = "project-setup" # Required scope for agent to execute this command
+created = "2025-11-23"
+
+[metadata]
+version = "1.0.0"
+command_type = "workflow-execution"
+platform = "baton-framework"
+
+[execution]
+workflow_file = ".baton/workflows/project-initialisation.yml"
+execution_method = "workflow-steps"
+
+[steps]
+  [steps.step_1]
+  name = "Validate Agent Scope"
+  description = "CRITICAL PREREQUISITE - Validate that the agent executing this command has the required scope"
+  actions = [
+    "Load agent definition to get agent's scope array",
+    "Extract agent's scope array from agent definition frontmatter",
+    "Verify agent's scope array includes required scope: project-setup"
+  ]
+  decision_points = [
+    { condition = "Agent scope includes required scope", if_true = "Continue to step 2", if_false = "Stop execution with error message" }
+  ]
+  error_handling = { retry = false }
+  error_messages = [
+    { type = "Insufficient Scope", message = "❌ Error: Insufficient scope to execute this command\n\nCommand: project-init\nRequired scope: project-setup\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this command.\nOnly baton-agent can initialize projects. Please use baton-agent to run this command.", action = "Stop execution" }
+  ]
+
+  [steps.step_2]
+  name = "Load Workflow Definition"
+  description = "Read the project-initialisation workflow file"
+  dependencies = [{ step = 1, required = true }]
+  actions = [
+    "Read workflow file: .baton/workflows/project-initialisation.yml",
+    "Extract workflow steps, HITL checkpoints, error handling, and command references",
+    "Understand HITL checkpoint behavior and user interaction requirements"
+  ]
+
+  [steps.step_3]
+  name = "Execute Project Initialisation Workflow"
+  description = "Execute the project-initialisation workflow by following all steps defined in the workflow file"
+  dependencies = [{ step = 2, required = true }]
+  actions = [
+    "Follow each workflow step in order",
+    "Handle HITL checkpoints according to workflow definition",
+    "Process user decisions and continue or stop based on workflow definition"
+  ]
+
+  [steps.step_4]
+  name = "Confirm Completion"
+  description = "Provide completion summary from workflow execution"
+  dependencies = [{ step = 3, required = true }]
+  actions = [
+    "Display workflow completion message",
+    "List all files created",
+    "Provide next steps for customization and agent initialization"
+  ]
+
+[notes]
+- This command executes the project-initialisation workflow
+- Only baton-agent has the project-setup scope required to execute this command
+- Always use system date commands, never hardcode dates
+- For workflow details, HITL checkpoint behavior, and error handling, refer to the workflow file
+

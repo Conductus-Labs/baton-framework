@@ -1,0 +1,142 @@
+# Sync Context Command Template
+# Format: TOML (for Gemini Desktop)
+# Purpose: Updates the {agent-name} agent context file with a summary of the current chat session
+
+[command]
+description = "Updates the {agent-name} agent context file with a summary of the current chat session"
+name = "sync-context"
+scope = "context-management" # Required scope for agent to execute this command (must match agent's scope)
+
+[command.metadata]
+version = "1.0.0"
+agent_name = "{agent-name}"
+created = "{YYYY-MM-DD}"
+
+[command.instructions]
+purpose = "Execute the context synchronization workflow by updating the .baton/context/{agent-name}-context.md file with a summary of the current session."
+
+# Step 1: Validate Agent Scope
+[command.steps.step1]
+name = "Validate Agent Scope"
+critical = true
+description = "CRITICAL PREREQUISITE: Validate that the current agent has the required scope to execute this command"
+
+[command.steps.step1.action]
+load_agent_definition = "Read the agent definition file to get the agent's scope array"
+agent_file = ".baton/agents/{agent-name}.md"
+note = "Or from current agent context if already loaded"
+
+[command.steps.step1.scope_validation]
+extract_agent_scope = "Extract the agent's scope array from the agent definition frontmatter"
+required_scope = "context-management"
+check_match = "Verify that the agent's scope array includes the required scope"
+
+[command.steps.step1.if_match]
+action = "Continue to Step 2"
+note = "Agent has required scope, proceed with command execution"
+
+[command.steps.step1.if_no_match]
+action = "STOP EXECUTION IMMEDIATELY"
+display_error = true
+error_message = """
+❌ Error: Insufficient scope to execute this command
+
+Command: sync-context
+Required scope: context-management
+Agent: {agent_name}
+Agent scopes: {agent_scopes_list}
+
+This agent does not have the required scope to execute this command.
+Please use an agent with the 'context-management' scope, or add this scope to the agent's definition.
+"""
+note = "Do not proceed with any further steps"
+
+# Step 2: Summarize Current Session
+[command.steps.step2]
+name = "Summarize the Current Chat Session"
+description = "Review all tasks, changes, and discussions from this session"
+
+[command.steps.step1.review_items]
+items = [
+    "All tasks completed or in progress",
+    "All files that were created, modified, or deleted",
+    "Important decisions made",
+    "Key discussions or insights",
+    "Follow-up items or next steps",
+    "Any errors encountered and how they were resolved"
+]
+
+[command.steps.step1.action]
+create_summary = "Create a concise but comprehensive summary of what was accomplished in this session"
+
+# Step 2: Get Current Date and Time
+[command.steps.step2]
+name = "Get Current Date and Time"
+critical = true
+description = "IMPORTANT: Use the bash date command to get the current date and time. Do not guess or hardcode the date."
+
+[command.steps.step2.command]
+bash_command = "date +\"%A, %d %B %Y - %H:%M\""
+output_format = "Monday, 15 January 2024 - 14:30"
+
+# Step 3: Read Current Context File
+[command.steps.step3]
+name = "Read Current Context File"
+file = ".baton/context/{agent-name}-context.md"
+purpose = "Preserve all existing session summaries and historical context"
+create_if_missing = true
+note = "If file doesn't exist, create it with proper frontmatter and initial structure"
+
+# Step 4: Update Context File
+[command.steps.step4]
+name = "Update Context File"
+description = "Append the new session summary to the context file"
+
+[command.steps.step4.format]
+entry_template = """
+## Session Summary - {date/time from bash date command}
+
+{Detailed summary of the session activities including:
+- What was accomplished
+- Key changes made to files (list specific files)
+- Important decisions or discussions
+- Any follow-up items or next steps
+- Errors encountered and resolutions}
+"""
+
+[command.steps.step4.requirements]
+preserve_all_content = true
+append_only = true
+use_actual_datetime = true
+be_specific = "Include specific file paths"
+include_context = "Include context for decisions made"
+
+# Step 5: Update Last Updated Timestamp
+[command.steps.step5]
+name = "Update Last Updated Timestamp"
+field = "last_updated"
+format = "{YYYY-MM-DD HH:MM}"
+source = "Use date/time from Step 2"
+
+# Step 6: Confirm Completion
+[command.steps.step6]
+name = "Confirm Completion"
+response_template = """
+✓ Context synchronized
+
+**Context File**: .baton/context/{agent-name}-context.md
+**Session Summary**: Added for {date/time}
+**Status**: Updated successfully
+"""
+
+[command.important_notes]
+notes = [
+    "DO NOT skip any steps",
+    "Always use the bash date command to get the current date/time",
+    "Preserve all existing content in the context file",
+    "The summary should be comprehensive but concise",
+    "Include specific file names and changes when relevant",
+    "Context file location: .baton/context/{agent-name}-context.md",
+    "Never hardcode dates or times"
+]
+
