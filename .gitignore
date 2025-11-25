@@ -1,6 +1,46 @@
 # Baton workspace files
 .baton/
+.test/
 
 # Cursor IDE files
 .cursor/
+
+# Node.js / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# Vite / Vitest
+.vite/
+coverage/
+build/
+*.js.map
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.local
+.env.*.local
 
