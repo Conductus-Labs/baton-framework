@@ -1,0 +1,297 @@
+# Manage Boundary Rule Workflow
+# Format: Pure YAML (no frontmatter)
+# Purpose: Add, update, or delete a rule in project or agent boundaries file
+
+version: 1.0.0
+workflow_name: manage-boundary-rule
+purpose: Add, update, or delete a rule in project or agent boundaries file
+associate_command: /manage-project-rules, /manage-agent-rules
+requires_permission_check: false  # All agents can manage boundary rules
+created: 2025-11-25
+
+# Prerequisites
+prerequisites:
+  - Command arguments must be validated (operation, boundary_type, agent_name if agent, rule_name, rule_description if add/update)
+  - Write access to `.baton/boundaries/` directory
+  - Agent boundaries template must exist if creating new agent boundaries file
+
+# Workflow Parameters
+parameters:
+  operation: { Required - Either "add", "update", or "delete" }
+  boundary_type: { Required - Either "project" or "agent" }
+  agent_name: { Required if boundary_type is "agent" - Agent short name }
+  rule_name: { Required - Name of the rule to add/update/delete }
+  rule_description: { Required if operation is "add" or "update" - Description of the rule }
+
+# Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Parameters
+    description: Validate that all required parameters are provided
+    actions:
+      - Verify operation is either "add", "update", or "delete"
+      - Verify boundary_type is either "project" or "agent"
+      - If boundary_type is "agent", verify agent_name is provided
+      - Verify rule_name is provided and not empty
+      - If operation is "add" or "update", verify rule_description is provided and not empty
+    decision_points:
+      - condition: All required parameters are valid
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Invalid Parameters
+          message_template: user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md
+          action: Stop execution
+
+  - step: 2
+    name: Determine Boundaries File Path
+    description: Determine which boundaries file to modify based on boundary_type
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - If boundary_type is "project":
+          - Set boundaries_file_path to `.baton/boundaries/project-boundaries.md`
+      - If boundary_type is "agent":
+          - Set boundaries_file_path to `.baton/boundaries/{agent_name}-boundaries.md`
+          - Verify agent_name matches agent short name format
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Invalid Agent Name
+          message_template: user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md
+          action: Stop execution
+
+  - step: 3
+    name: Check Boundaries File Exists
+    description: Check if the boundaries file exists, create from template if agent boundaries and file doesn't exist
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Check if boundaries file exists at determined path
+      - If file exists: Continue to step 4
+      - If file does NOT exist:
+          - If boundary_type is "project": Display error (project boundaries must exist)
+          - If boundary_type is "agent" AND operation is "add": Create file from template (step 3.1)
+          - If boundary_type is "agent" AND operation is "update" or "delete": Display error (file must exist)
+    decision_points:
+      - condition: Boundaries file exists
+        if_true: Continue to step 4
+        if_false: Evaluate file creation condition
+      - condition: File does not exist AND boundary_type is "project"
+        if_true: ERROR - Display error message and stop execution
+        if_false: File does not exist AND boundary_type is "agent" AND operation is "add"
+      - condition: File does not exist AND boundary_type is "agent" AND operation is "add"
+        if_true: Create file from template (step 3.1), then continue to step 4
+        if_false: File does not exist AND boundary_type is "agent" AND (operation is "update" or "delete")
+      - condition: File does not exist AND boundary_type is "agent" AND (operation is "update" or "delete")
+        if_true: ERROR - Display error message and stop execution
+        if_false: Continue to step 4
+    sub_flows:
+      - name: Create Agent Boundaries File
+        file: sub-flows/sub-flow-create-agent-boundaries.yml
+        when: Agent boundaries file does not exist AND operation is "add"
+        parameters:
+          agent_name: { agent_name - will be loaded from agent definition in sub-flow }
+          agent_short_name: { agent_name }
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Project Boundaries Not Found
+          message_template: user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md
+          action: Stop execution
+        - type: Agent Boundaries Not Found
+          message_template: user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md
+          action: Stop execution
+        - type: Agent Boundaries Creation Error
+          message_template: user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md
+          action: Stop execution
+
+  - step: 4
+    name: Load Boundaries File
+    description: Read the boundaries file to prepare for rule operation
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - Read boundaries file at determined path
+      - Parse YAML frontmatter to extract metadata
+      - Read markdown content sections
+      - Identify "Always Do" section location
+      - Search for existing rule with matching rule_name (for update/delete operations)
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Boundaries File Read Error
+          message_template: user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md
+          action: Stop execution
+
+  - step: 5
+    name: Perform Rule Operation
+    description: Add, update, or delete the rule in the "Always Do" section of the boundaries file
+    dependencies:
+      - step: 4
+        required: true
+    actions:
+      - Locate "Always Do" section in the boundaries file
+      - If operation is "add":
+          - Check if rule with same name already exists
+          - If rule exists: Display error (rule already exists, use update instead)
+          - If rule does not exist:
+              - Format the new rule as a markdown list item under a category
+              - Add new category with rule name as category heading
+              - Add rule description as list item
+              - Format rule entry:
+                ```
+                ### {rule_name}
+
+                - **Action:** {rule_description}
+                  - **Scope:** {To be determined by agent or left for user to fill}
+                  - **Trigger:** {To be determined by agent or left for user to fill}
+                ```
+              - Insert formatted rule into "Always Do" section
+      - If operation is "update":
+          - Search for existing rule with matching rule_name
+          - If rule not found: Display error (rule does not exist, use add instead)
+          - If rule found:
+              - Locate the rule category and action item
+              - Update the rule description in the action item
+              - Preserve other fields (Scope, Trigger, Example) if they exist
+      - If operation is "delete":
+          - Search for existing rule with matching rule_name
+          - If rule not found: Display error (rule does not exist)
+          - If rule found:
+              - Remove the entire rule category (heading and all action items under it)
+              - If category becomes empty, remove the category heading as well
+      - Write updated boundaries file
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Rule Already Exists
+          message_template: user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md
+          action: Stop execution
+        - type: Rule Not Found
+          message_template: user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md
+          action: Stop execution
+        - type: Rule Operation Error
+          message_template: user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md
+          action: Stop execution
+        - type: File Write Error
+          message_template: user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md
+          action: Stop execution
+
+  - step: 6
+    name: Present Confirmation
+    description: Display confirmation message to user
+    dependencies:
+      - step: 5
+        required: true
+    actions:
+      - Generate confirmation message with:
+          - Operation performed (add/update/delete)
+          - Boundary type (project or agent)
+          - Agent name (if agent boundaries)
+          - Rule name
+          - Boundaries file path
+          - Note if file was created
+      - Display formatted confirmation to user
+    confirmation_template: user-messages/workflows/manage-boundary-rule/step-6-confirmation.md
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Invalid Parameters
+      handling: Stop execution with error message
+      recovery: Verify all required parameters are provided correctly
+
+    - type: Project Boundaries Not Found
+      handling: Stop execution with error message
+      recovery: Project boundaries file must exist before managing rules. Run /project-init first.
+
+    - type: Agent Boundaries Not Found
+      handling: Stop execution with error message
+      recovery: Agent boundaries file must exist for update/delete operations. Use add operation to create file.
+
+    - type: Agent Boundaries Creation Error
+      handling: Stop execution with error message
+      recovery: Check file permissions and template availability
+
+    - type: Boundaries File Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+
+    - type: Rule Already Exists
+      handling: Stop execution with error message
+      recovery: Use update operation to modify existing rule
+
+    - type: Rule Not Found
+      handling: Stop execution with error message
+      recovery: Verify rule name is correct or use add operation to create new rule
+
+    - type: Rule Operation Error
+      handling: Stop execution with error message
+      recovery: Verify boundaries file structure is valid
+
+    - type: File Write Error
+      handling: Stop execution with error message
+      recovery: Check file permissions and disk space
+
+# Command References
+command_references:
+  - command: /manage-project-rules show
+    description: Show all rules in project boundaries
+    when_to_use: When viewing current project-wide rules
+    example: '/manage-project-rules show'
+
+  - command: /manage-project-rules add <RULE-NAME> "<RULE-DESCRIPTION>"
+    description: Add a rule to project boundaries
+    when_to_use: When adding a project-wide rule that applies to all agents
+    example: '/manage-project-rules add "Version Management" "Update version numbers following semantic versioning"'
+
+  - command: /manage-project-rules update <RULE-NAME> "<RULE-DESCRIPTION>"
+    description: Update an existing rule in project boundaries
+    when_to_use: When modifying an existing project-wide rule
+    example: '/manage-project-rules update "Version Management" "Update version numbers following semantic versioning when modifying files"'
+
+  - command: /manage-project-rules delete <RULE-NAME>
+    description: Delete a rule from project boundaries
+    when_to_use: When removing a project-wide rule
+    example: '/manage-project-rules delete "Version Management"'
+
+  - command: /manage-agent-rules show <agent-name>
+    description: Show all rules in agent boundaries
+    when_to_use: When viewing current agent-specific rules
+    example: '/manage-agent-rules show baton-agent'
+
+  - command: /manage-agent-rules add <agent-name> <RULE-NAME> "<RULE-DESCRIPTION>"
+    description: Add a rule to agent-specific boundaries
+    when_to_use: When adding a rule specific to a particular agent
+    example: '/manage-agent-rules add baton-agent "Scope Validation" "Validate scope before executing commands"'
+
+  - command: /manage-agent-rules update <agent-name> <RULE-NAME> "<RULE-DESCRIPTION>"
+    description: Update an existing rule in agent boundaries
+    when_to_use: When modifying an existing agent-specific rule
+    example: '/manage-agent-rules update baton-agent "Scope Validation" "Validate agent scope before executing any command or workflow"'
+
+  - command: /manage-agent-rules delete <agent-name> <RULE-NAME>
+    description: Delete a rule from agent boundaries
+    when_to_use: When removing an agent-specific rule
+    example: '/manage-agent-rules delete baton-agent "Scope Validation"'
+
+# Notes
+notes:
+  - Rules are managed in the "Always Do" section
+  - If agent boundaries file doesn't exist and operation is "add", it will be created from template
+  - Project boundaries file must exist before managing rules
+  - Rule format follows boundaries file structure with category heading and action list item
+  - Agent must have write access to `.baton/boundaries/` directory
+  - Update operation preserves existing Scope, Trigger, and Example fields if they exist
+  - Delete operation removes the entire rule category
+

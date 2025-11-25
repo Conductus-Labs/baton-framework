@@ -1,7 +1,6 @@
 ---
 description: Initialize any agent for a new session (lists available agents or initializes specified agent)
 argument-hint: <optional: agent-short-name | -list>
-scope: agent-initialisation # Required scope for agent to execute this command
 ---
 
 # Init Agent Command
@@ -12,50 +11,7 @@ Execute the agent-initialisation workflow to initialize any agent for a new sess
 
 You are executing the init-agent command. Follow these steps in order:
 
-### Step 1: Validate Agent Scope
-
-**CRITICAL PREREQUISITE:** This command requires the agent to have the `agent-initialisation` scope. You MUST validate scope before proceeding.
-
-**Action:** Validate that the current agent has the required scope to execute this command.
-
-1. **Load Agent Definition:**
-
-   - Read the agent definition file to get the agent's scope array
-   - Agent file location: `.baton/agents/{agent-name}.md` (or from current agent context if already loaded)
-
-2. **Check Scope Match:**
-
-   - Extract the agent's `scope` array from the agent definition frontmatter
-   - Verify that the agent's scope array includes: `agent-initialisation`
-   - This command requires scope: `agent-initialisation`
-
-3. **If Scope Matches:**
-
-   - ✅ Continue to Step 2
-   - Agent has required scope, proceed with command execution
-
-4. **If Scope Does NOT Match:**
-   - ❌ **STOP EXECUTION IMMEDIATELY**
-   - Display error message and refuse to run the command
-   - Do not proceed with any further steps
-
-**Error Message (if scope mismatch):**
-
-```
-❌ Error: Insufficient scope to execute this command
-
-Command: init-agent
-Required scope: agent-initialisation
-Agent: {agent_name}
-Agent scopes: {agent_scopes_list}
-
-This agent does not have the required scope to execute this command.
-Please use an agent with the 'agent-initialisation' scope, or add this scope to the agent's definition.
-```
-
-**Action:** Validate scope before proceeding. If scope does not match, stop execution and display error.
-
-### Step 2: Load Project Configuration
+### Step 1: Load Project Configuration
 
 **Action:** Read the project configuration file to get the list of available agents.
 
@@ -89,7 +45,7 @@ Please use an agent with the 'agent-initialisation' scope, or add this scope to 
 
 **Action:** Read project.config.yml and extract the agents.enabled array. If file doesn't exist or agents list is empty, display error and stop execution.
 
-### Step 3: Parse Command Arguments
+### Step 2: Parse Command Arguments
 
 **Action:** Parse command arguments to determine behavior.
 
@@ -104,7 +60,7 @@ Please use an agent with the 'agent-initialisation' scope, or add this scope to 
 
 **Action:** Parse arguments and determine next step based on argument value.
 
-### Step 4: List Available Agents (Conditional)
+### Step 3: List Available Agents (Conditional)
 
 **Action:** Display list of available agents from project.config.yml.
 
@@ -128,7 +84,7 @@ Available Agents:
 
 **Action:** If listing agents, display the formatted list and exit. Do not proceed to workflow execution.
 
-### Step 5: Validate Agent Short Name (Conditional)
+### Step 4: Validate Agent Short Name (Conditional)
 
 **Action:** Validate that the provided agent short name exists in project.config.yml.
 
@@ -170,7 +126,7 @@ Available Agents:
 
 **Action:** Validate agent short name exists in config and agent file exists. If validation fails, display error and exit. If validation succeeds, continue to Step 6.
 
-### Step 6: Load Workflow Definition
+### Step 5: Load Workflow Definition
 
 **Action:** Read the agent-initialisation workflow file.
 
@@ -185,7 +141,7 @@ Available Agents:
 
 **Action:** Read and understand the complete workflow definition.
 
-### Step 7: Execute Agent Initialisation Workflow
+### Step 6: Execute Agent Initialisation Workflow
 
 **Action:** Execute the agent-initialisation workflow with the validated agent short-name parameter.
 
@@ -205,7 +161,7 @@ Available Agents:
 
 **Action:** Execute the workflow with the validated agent short name parameter.
 
-### Step 8: Confirm Completion
+### Step 7: Confirm Completion
 
 **Action:** Provide completion summary from workflow execution.
 

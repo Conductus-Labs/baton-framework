@@ -13,7 +13,6 @@
 version: 1.0.0
 workflow_name: sub-flow-load-project-config
 purpose: Load project configuration file (project.config.yml)
-scope: project-config # Required scope for parent workflow to call this sub-flow
 created: 2025-11-23
 
 # CRITICAL: This sub-workflow MUST be called from within another workflow

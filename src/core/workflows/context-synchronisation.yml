@@ -6,10 +6,7 @@ version: 1.0.0
 workflow_name: context-synchronisation
 purpose: Synchronize agent context with current session information
 associate_command: /sync-context
-scope: context-management # Required scope for agent to execute this workflow
-# Note: This workflow requires scopes to call sub-flows:
-# - context-management (for sub-flow-load-agent-context, sub-flow-create-agent-context)
-# The agent executing this workflow must have the context-management scope
+requires_permission_check: false  # All agents can synchronize their context
 created: 2025-11-24
 
 # Prerequisites
@@ -24,61 +21,40 @@ parameters:
 # Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
-    actions:
-      - Load agent definition to get agent's scope array
-      - Extract agent's scope array from agent definition frontmatter
-      - Verify agent's scope array includes required scope: context-management
-    decision_points:
-      - condition: Agent scope includes required scope
-        if_true: Continue to step 2
-        if_false: Stop execution with error message
-    error_handling:
-      retry: false
-      error_messages:
-        - type: Insufficient Scope
-          message_template: user-messages/workflows/context-synchronisation/step-1-insufficient-scope-error.md
-          action: Stop execution
-
-  - step: 2
     name: Get Agent Information
     description: Extract agent short name from command or context
-    dependencies:
-      - step: 1
-        required: true
     actions:
       - Extract agent_short_name from command parameters (if provided)
       - If not provided, extract from current agent context
       - Load agent definition file to get agent_name if needed
       - Store agent_short_name and agent_name for use in subsequent steps
 
-  - step: 3
+  - step: 2
     name: Check Context File
     description: Determine if context file exists
     dependencies:
-      - step: 2
+      - step: 1
         required: true
     actions:
       - Check if `.baton/context/{agent_short_name}-context.md` exists
       - Store context file existence status for use in step 4
 
-  - step: 4
+  - step: 3
     name: Load or Create Context
     description: Load existing context file or create new one using sub-flows
     dependencies:
-      - step: 3
+      - step: 2
         required: true
     actions:
-      - Check context file existence status from step 3
+      - Check context file existence status from step 2
       - If context file exists:
           - Execute sub-flow: sub-flow-load-agent-context.yml
       - If context file does NOT exist:
           - Execute sub-flow: sub-flow-create-agent-context.yml
     decision_points:
       - condition: Context file exists
-        if_true: Load context file (step 4.1)
-        if_false: Create context file (step 4.2)
+        if_true: Load context file (step 3.1)
+        if_false: Create context file (step 3.2)
     sub_flows:
       - name: Load Existing Context
         file: sub-flows/sub-flow-load-agent-context.yml
@@ -90,22 +66,22 @@ workflow_steps:
         when: Context file does not exist
         parameters:
           agent_short_name: { agent_short_name }
-          agent_name: { from step 2 }
+          agent_name: { from step 1 }
     error_handling:
       retry: false
       error_messages:
         - type: Context File Read Error
-          message_template: user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-3-context-file-read-error.md
           action: Stop execution
         - type: Context File Creation Error
-          message_template: user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-3-context-file-creation-error.md
           action: Stop execution
 
-  - step: 5
+  - step: 4
     name: Collect Session Information
     description: Gather current session data for context update
     dependencies:
-      - step: 4
+      - step: 3
         required: true
     actions:
       - Review all tasks completed or in progress during current session
@@ -124,11 +100,11 @@ workflow_steps:
           - Ongoing projects (if applicable)
           - Future priorities (if applicable)
 
-  - step: 6
+  - step: 5
     name: Get Current Date and Time
     description: Get current date and time from system for context file update
     dependencies:
-      - step: 5
+      - step: 4
         required: true
     actions:
       - "Execute system command: date +\"%Y-%m-%d %H:%M\" (Unix/Git Bash) or equivalent Windows command"
@@ -141,17 +117,17 @@ workflow_steps:
           message: "❌ Error: Cannot get current date/time from system\n\nPlease verify system date command is available"
           action: Stop execution
 
-  - step: 7
+  - step: 6
     name: Update Context File
     description: Append new session entry to context file following template structure
     dependencies:
-      - step: 6
+      - step: 5
         required: true
     actions:
-      - Read existing context file content (from step 4)
+      - Read existing context file content (from step 3)
       - Parse all existing sections (Current Status, Recent Work, Key Learnings, Ongoing Projects, Future Priorities)
       - Create new session entry in "Recent Work" section following template format:
-          - Format: `### Session: {YYYY-MM-DD HH:MM}` (using date/time from step 6)
+          - Format: `### Session: {YYYY-MM-DD HH:MM}` (using date/time from step 5)
           - Include Summary section with session summary
           - Include Key Actions section with list of actions
           - Include Decisions Made section with decisions and rationale
@@ -169,22 +145,22 @@ workflow_steps:
           message_template: user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md
           action: Stop execution
 
-  - step: 8
+  - step: 7
     name: Update Frontmatter
     description: Update last_updated timestamp in context file frontmatter
     dependencies:
-      - step: 7
+      - step: 6
         required: true
     actions:
-      - Update `last_updated` field in YAML frontmatter to {current_datetime} from step 6
+      - Update `last_updated` field in YAML frontmatter to {current_datetime} from step 5
       - Preserve all other frontmatter fields (version, agent, created)
       - Ensure frontmatter format is valid YAML
 
-  - step: 9
+  - step: 8
     name: Write Updated Context File
     description: Write updated context file to disk
     dependencies:
-      - step: 8
+      - step: 7
         required: true
     actions:
       - Write updated context content to `.baton/context/{agent_short_name}-context.md`
@@ -196,14 +172,14 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Context File Write Error
-          message_template: user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-8-context-file-write-error.md
           action: Stop execution
 
-  - step: 10
+  - step: 9
     name: Confirm Completion
     description: Display success confirmation message to user
     dependencies:
-      - step: 9
+      - step: 8
         required: true
     actions:
       - Load confirmation message template
@@ -218,10 +194,6 @@ error_handling:
     max_retries: 0
 
   error_types:
-    - type: Insufficient Scope
-      handling: Stop execution with error message
-      recovery: User must use agent with context-management scope
-
     - type: Context File Read Error
       handling: Stop execution with error message
       recovery: Verify file exists and has read permissions
@@ -248,7 +220,6 @@ command_references:
 # Notes
 notes:
   - The workflow will handle:
-      - Validating agent scope
       - Loading or creating context file using sub-flows
       - Collecting session information
       - Updating context file with new session entry

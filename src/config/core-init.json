@@ -58,6 +58,11 @@
       "type": "exact_copy"
     },
     {
+      "source": "src/core/workflows/manage-boundary-rule.yml",
+      "destination": ".baton/workflows/manage-boundary-rule.yml",
+      "type": "exact_copy"
+    },
+    {
       "source": "src/core/workflows/sub-flows/sub-flow-create-agent-context.yml",
       "destination": ".baton/workflows/sub-flows/sub-flow-create-agent-context.yml",
       "type": "exact_copy"
@@ -88,6 +93,16 @@
       "type": "exact_copy"
     },
     {
+      "source": "src/core/workflows/sub-flows/sub-flow-create-agent-boundaries.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-create-agent-boundaries.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/workflows/sub-flows/sub-flow-validate-workflow-permission.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-validate-workflow-permission.yml",
+      "type": "exact_copy"
+    },
+    {
       "source": "src/core/commands/markdown/baton-agent/init-baton-agent.md",
       "destination": ".cursor/commands/baton/init-baton-agent.md",
       "type": "exact_copy",
@@ -106,6 +121,18 @@
       "platform": "cursor"
     },
     {
+      "source": "src/core/commands/markdown/baton-agent/manage-project-rules.md",
+      "destination": ".cursor/commands/baton/manage-project-rules.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "src/core/commands/markdown/baton-agent/manage-agent-rules.md",
+      "destination": ".cursor/commands/baton/manage-agent-rules.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
       "source": "src/core/commands/markdown/baton-agent/init-baton-agent.md",
       "destination": ".claude/commands/baton/init-baton-agent.md",
       "type": "exact_copy",
@@ -120,6 +147,18 @@
     {
       "source": "src/core/commands/markdown/baton-agent/sync-context.md",
       "destination": ".claude/commands/baton/sync-context.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "src/core/commands/markdown/baton-agent/manage-project-rules.md",
+      "destination": ".claude/commands/baton/manage-project-rules.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "src/core/commands/markdown/baton-agent/manage-agent-rules.md",
+      "destination": ".claude/commands/baton/manage-agent-rules.md",
       "type": "exact_copy",
       "platform": "claude"
     },
@@ -242,6 +281,16 @@
       "type": "template"
     },
     {
+      "source": "src/core/permissions/workflow-permissions.yml",
+      "destination": ".baton/workflows/workflow-permissions.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/permissions/sub-flow-dependencies.yml",
+      "destination": ".baton/workflows/sub-flow-dependencies.yml",
+      "type": "exact_copy"
+    },
+    {
       "source": "src/core/templates/project-file-templates/project-manifest-template.md",
       "destination": ".baton/project.manifest",
       "type": "template"
@@ -252,8 +301,8 @@
       "type": "template"
     },
     {
-      "source": "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-1-insufficient-scope-error.md",
-      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-1-insufficient-scope-error.md",
+      "source": "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md",
       "type": "exact_copy"
     },
     {
@@ -347,11 +396,6 @@
       "type": "exact_copy"
     },
     {
-      "source": "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-1-insufficient-scope-error.md",
-      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-1-insufficient-scope-error.md",
-      "type": "exact_copy"
-    },
-    {
       "source": "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md",
       "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md",
       "type": "exact_copy"
@@ -412,8 +456,8 @@
       "type": "exact_copy"
     },
     {
-      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-1-insufficient-scope-error.md",
-      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-1-insufficient-scope-error.md",
+      "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md",
       "type": "exact_copy"
     },
     {
@@ -429,6 +473,66 @@
     {
       "source": "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
       "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/show-rules.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/show-rules.md",
       "type": "exact_copy"
     }
   ]

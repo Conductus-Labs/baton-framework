@@ -6,37 +6,38 @@ version: 1.0.0
 workflow_name: project-initialisation
 purpose: Initialize a project with Baton Framework by creating project.config.yml, project.manifest, and project-boundaries.md
 associate_command: /project-init
-scope: project-setup # Required scope for agent to execute this workflow
-# Note: This workflow requires scopes to call sub-flows:
-# - project-config (for sub-flow-load-project-config, sub-flow-load-project-manifest)
-# - boundaries (for sub-flow-load-project-boundaries)
-# The agent executing this workflow must have these scopes in addition to project-setup
+requires_permission_check: true  # Permission check required - see workflow-permissions.yml
 created: 2025-11-23
 
 # Prerequisites
 prerequisites:
-  - Agent must have project-setup scope (only baton-agent has this scope)
+  - Permission check required (validated in Step 1)
   - Write access to `.baton/` directory
   - Template files must be available in baton-framework repository
 
 # Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
+    name: Validate Workflow Permission
+    description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has permission
     actions:
-      - Load agent definition to get agent's scope array
-      - Extract agent's scope array from agent definition frontmatter
-      - Verify agent's scope array includes required scope: project-setup
+      - Execute permission check sub-flow to validate agent has permission to execute this workflow
+    sub_flows:
+      - name: Validate Workflow Permission
+        file: sub-flows/sub-flow-validate-workflow-permission.yml
+        when: Always execute (permission check is required)
+        parameters:
+          workflow_name: project-initialisation
+          agent_short_name: { Extract from agent definition or context }
     decision_points:
-      - condition: Agent scope includes required scope
+      - condition: Permission check passes
         if_true: Continue to step 2
         if_false: Stop execution with error message
     error_handling:
       retry: false
       error_messages:
-        - type: Insufficient Scope
-          message_template: user-messages/workflows/project-initialisation/step-1-insufficient-scope-error.md
+        - type: Insufficient Permission
+          message_template: user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md
           action: Stop execution
 
   - step: 2

@@ -1,11 +1,8 @@
 ---
 version: 1.0.0
 agent_name: cli-engineer-agent
-agent_short_name: cli-engineer
+agent_short_name: cli-agent
 agent_type: specialized_engineer
-scope:
-  - agent-initialisation
-  - context-management
 created: 2025-11-24
 last_updated: 2025-11-24
 cognitive_patterns:

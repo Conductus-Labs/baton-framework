@@ -1,0 +1,143 @@
+# Sub-Workflow: Validate Workflow Permission
+# Format: Pure YAML (no frontmatter)
+# Purpose: Validate that the agent executing a workflow has permission to do so
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-validate-workflow-permission
+purpose: Validate that the agent executing a workflow has permission to do so
+created: 2025-11-25
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - Parent workflow must provide workflow_name and agent_short_name parameters
+  - Workflow permissions matrix must exist at `.baton/workflows/workflow-permissions.yml`
+  - Agent definition file must exist for the agent being validated
+
+# Sub-Workflow Parameters
+parameters:
+  workflow_name: { Required - Name of the workflow being executed }
+  agent_short_name: { Required - Short name of the agent executing the workflow }
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Load Workflow Permissions Matrix
+    description: Load the workflow permissions matrix file
+    actions:
+      - Read permissions matrix file: `.baton/workflows/workflow-permissions.yml`
+      - Parse YAML structure
+      - Extract permissions section
+      - Locate workflow entry for {workflow_name}
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Permissions File Not Found
+          message: "❌ Error: Workflow permissions matrix not found\n\nFile: .baton/workflows/workflow-permissions.yml\n\nPlease verify the permissions file exists."
+          action: Stop execution
+        - type: Permissions File Read Error
+          message: "❌ Error: Cannot read workflow permissions matrix\n\nFile: .baton/workflows/workflow-permissions.yml\n\nPlease verify the file exists and has read permissions."
+          action: Stop execution
+
+  - step: 2
+    name: Get Agent Short Name
+    description: Get the short name of the agent executing this workflow
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - If agent_short_name parameter is provided: Use provided value
+      - If agent_short_name parameter is NOT provided:
+          - Load agent definition file: `.baton/agents/{agent_short_name}.md`
+          - Extract agent_short_name from frontmatter
+      - Store agent_short_name for permission check
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Agent Short Name Not Found
+          message: "❌ Error: Cannot determine agent short name\n\nPlease verify agent definition exists or provide agent_short_name parameter."
+          action: Stop execution
+
+  - step: 3
+    name: Check Workflow Permission
+    description: Check if agent is in the allowed_agents list for this workflow
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Locate workflow entry in permissions matrix: `permissions.{workflow_name}`
+      - If workflow entry does NOT exist:
+          - Apply default behavior: DENY (default_behavior: "deny")
+          - Permission check fails
+      - If workflow entry exists:
+          - Extract `allowed_agents` array from workflow entry
+          - Check if {agent_short_name} is in the `allowed_agents` array
+          - If agent is in list: Permission granted
+          - If agent is NOT in list: Permission denied
+    decision_points:
+      - condition: Workflow entry exists AND agent is in allowed_agents list
+        if_true: Permission granted - Continue to step 4
+        if_false: Permission denied - Stop execution with error
+      - condition: Workflow entry does NOT exist
+        if_true: Permission denied (default deny) - Stop execution with error
+        if_false: Evaluate agent in list condition
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Permission
+          message_template: user-messages/workflows/{workflow_name}/step-1-insufficient-permission-error.md
+          action: Stop execution
+
+  - step: 4
+    name: Permission Granted
+    description: Permission check passed, workflow can continue
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - Permission check successful
+      - Agent has permission to execute workflow
+      - Return success to parent workflow
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Permissions File Not Found
+      handling: Stop execution with error message
+      recovery: Verify permissions file exists at `.baton/workflows/workflow-permissions.yml`
+
+    - type: Permissions File Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+
+    - type: Agent Short Name Not Found
+      handling: Stop execution with error message
+      recovery: Verify agent definition exists or provide agent_short_name parameter
+
+    - type: Insufficient Permission
+      handling: Stop execution with error message
+      recovery: Add agent to allowed_agents list in workflow-permissions.yml or use a different agent
+
+# Notes
+notes:
+  - This sub-workflow checks the permission matrix to determine if an agent can execute a workflow
+  - Default behavior is DENY if workflow is not in permission matrix
+  - Agent must be explicitly listed in allowed_agents array to be granted permission
+  - This replaces the old scope-based authorization system
+  - Parent workflow should call this sub-flow in Step 1 if requires_permission_check: true
+

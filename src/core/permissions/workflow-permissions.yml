@@ -1,0 +1,40 @@
+# Workflow Permissions Matrix
+# Format: Pure YAML (no frontmatter)
+# Purpose: Define which agents are allowed to execute which workflows
+# Location: .baton/workflows/workflow-permissions.yml
+#
+# IMPORTANT: This file replaces the scope system entirely.
+# If an agent/workflow combination is not explicitly listed here, access is DENIED by default.
+
+version: 1.0.0
+description: Workflow execution permissions matrix - replaces scope system
+created: 2025-11-25
+last_updated: 2025-11-25
+
+# Permission Rules
+rules:
+  default_behavior: "deny" # Deny access by default if not explicitly allowed
+  note: "Only explicitly listed agent/workflow combinations are allowed"
+
+# Workflow Permissions
+# Format: workflow_name -> list of allowed agent short names
+
+# The following workflows can be called by all agents:
+# agent-initialisation (all agents can initialize themselves)
+# context-synchronisation (all agents can sync their context)
+# manage-boundary-rule (all agents can manage boundary rules)
+
+permissions:
+  # Project Initialisation Workflow
+  project-initialisation:
+    allowed_agents:
+      - baton-agent
+    description: "Initialize a new project"
+
+# Notes
+notes:
+  - This file completely replaces the scope-based authorization system
+  - Only agents explicitly listed under a workflow's `allowed_agents` can execute that workflow
+  - If an agent/workflow combination is not listed, access is denied
+  - This file should be manually edited to manage permissions
+  - When adding new workflows, add them to this file with appropriate agent permissions

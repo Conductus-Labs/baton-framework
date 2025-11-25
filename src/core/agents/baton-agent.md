@@ -3,12 +3,6 @@ version: 1.0.0
 agent_name: baton-framework-agent
 agent_short_name: baton-agent
 agent_type: meta_framework_expert
-scope:
-  - agent-initialisation
-  - context-management
-  - project-setup
-  - framework-development
-  - workflow-management
 created: 2025-11-23
 last_updated: 2025-11-23
 cognitive_patterns:

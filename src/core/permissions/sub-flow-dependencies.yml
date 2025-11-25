@@ -1,0 +1,79 @@
+# Sub-Flow to Workflow Dependencies Matrix
+# Format: Pure YAML (no frontmatter)
+# Purpose: Track which workflows depend on which sub-flows for CLI workflow management
+# Location: .baton/workflows/sub-flow-dependencies.yml
+#
+# IMPORTANT: This file is used by the CLI to:
+# - Install all required sub-flows when a workflow is installed
+# - Only remove a sub-flow when no workflows depend on it (when a workflow is removed)
+# - Track dependencies to prevent orphaned sub-flows
+
+version: 1.0.0
+description: Sub-flow to workflow dependencies matrix for CLI workflow management
+created: 2025-11-25
+last_updated: 2025-11-25
+
+# Dependency Matrix
+# Format: sub_flow_name -> list of workflows that depend on it
+# When a workflow is removed, check this matrix to see if its sub-flows are still needed
+dependencies:
+  # Permission Validation Sub-Flow
+  sub-flow-validate-workflow-permission:
+    dependent_workflows:
+      - project-initialisation
+    description: "Validates workflow execution permissions - used by workflows requiring permission checks"
+
+  # Project Configuration Sub-Flows
+  sub-flow-load-project-config:
+    dependent_workflows:
+      - agent-initialisation
+    description: "Loads project configuration file - used during agent initialization"
+
+  sub-flow-load-project-manifest:
+    dependent_workflows:
+      - agent-initialisation
+    description: "Loads project manifest file - used during agent initialization"
+
+  sub-flow-load-project-boundaries:
+    dependent_workflows:
+      - agent-initialisation
+    description: "Loads project boundaries file - used during agent initialization"
+
+  # Agent Context Sub-Flows
+  sub-flow-load-agent-context:
+    dependent_workflows:
+      - agent-initialisation
+      - context-synchronisation
+    description: "Loads existing agent context file - used during initialization and sync"
+
+  sub-flow-create-agent-context:
+    dependent_workflows:
+      - agent-initialisation
+      - context-synchronisation
+    description: "Creates new agent context file - used when context file doesn't exist"
+
+  # Agent Boundaries Sub-Flows
+  sub-flow-load-agent-boundaries:
+    dependent_workflows:
+      - agent-initialisation
+    description: "Loads agent-specific boundaries file - used during agent initialization"
+
+  sub-flow-create-agent-boundaries:
+    dependent_workflows:
+      - manage-boundary-rule
+    description: "Creates agent boundaries file from template - used when adding rules to new agent boundaries"
+
+# Dependency Rules
+rules:
+  install_behavior: "install_all"  # When installing a workflow, install all its sub-flows
+  remove_behavior: "check_dependencies"  # When removing a workflow, only remove sub-flows if no other workflows depend on them
+  orphan_prevention: true  # Prevent removing sub-flows that are still needed by other workflows
+
+# Notes
+notes:
+  - This file must be manually updated when workflows or sub-flows are added/removed
+  - The CLI uses this file to determine which sub-flows to install/remove
+  - Sub-flows are only removed if their dependent_workflows list becomes empty
+  - When adding a new workflow, add all its sub-flow dependencies to this file
+  - When removing a workflow, the CLI will check this file and only remove sub-flows that are no longer needed
+
