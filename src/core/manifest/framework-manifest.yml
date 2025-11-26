@@ -1,0 +1,1212 @@
+# Unified Framework Manifest
+# Format: Pure YAML (no frontmatter)
+# Purpose: Complete inventory of all framework components (agents, workflows, knowledge, dependencies)
+# Location: src/core/manifest/framework-manifest.yml
+# Installed to: .baton/framework-manifest.yml
+#
+# This manifest provides a single source of truth for:
+# - All available agents, workflows, and knowledge files
+# - Component dependencies (agent→workflow/knowledge, workflow→workflow/knowledge, sub-flows)
+# - Platform-specific command mappings
+# - Installation rules and core status
+# - Version tracking and migration support
+
+version: 1.0.0
+description: Complete inventory of all Baton Framework components
+created: 2025-01-27
+last_updated: 2025-01-27
+
+# Core Framework Components
+components:
+  # Agents: All agents available in the framework
+  agents:
+    - name: "baton-agent"
+      short_name: "baton-agent"
+      path: "src/core/agents/baton-agent.md"
+      destination: ".baton/agents/baton-agent.md"
+      core: true
+      description: "Main orchestrator agent for Baton Framework"
+      version: "1.0.0"
+      # All agents are available on all platforms (cursor, claude, gemini)
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "automated-test-engineer-agent"
+      short_name: "autotest-agent"
+      path: "src/core/agents/automated-test-engineer-agent.md"
+      destination: ".baton/agents/automated-test-engineer-agent.md"
+      core: false
+      description: "Automated testing specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "backend-engineer-agent"
+      short_name: "backend-agent"
+      path: "src/core/agents/backend-engineer-agent.md"
+      destination: ".baton/agents/backend-engineer-agent.md"
+      core: false
+      description: "Backend engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "business-analyst-agent"
+      short_name: "ba-agent"
+      path: "src/core/agents/business-analyst-agent.md"
+      destination: ".baton/agents/business-analyst-agent.md"
+      core: false
+      description: "Business analysis specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "cli-engineer-agent"
+      short_name: "cli-agent"
+      path: "src/core/agents/cli-engineer-agent.md"
+      destination: ".baton/agents/cli-engineer-agent.md"
+      core: false
+      description: "CLI engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "code-review-agent"
+      short_name: "review-agent"
+      path: "src/core/agents/code-review-agent.md"
+      destination: ".baton/agents/code-review-agent.md"
+      core: false
+      description: "Code review specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "content-strategist-agent"
+      short_name: "content-agent"
+      path: "src/core/agents/content-strategist-agent.md"
+      destination: ".baton/agents/content-strategist-agent.md"
+      core: false
+      description: "Content strategy specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "data-science-engineer-agent"
+      short_name: "ds-agent"
+      path: "src/core/agents/data-science-engineer-agent.md"
+      destination: ".baton/agents/data-science-engineer-agent.md"
+      core: false
+      description: "Data science engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "database-engineer-agent"
+      short_name: "db-agent"
+      path: "src/core/agents/database-engineer-agent.md"
+      destination: ".baton/agents/database-engineer-agent.md"
+      core: false
+      description: "Database engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "devops-engineer-agent"
+      short_name: "devops-agent"
+      path: "src/core/agents/devops-engineer-agent.md"
+      destination: ".baton/agents/devops-engineer-agent.md"
+      core: false
+      description: "DevOps engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "frontend-engineer-agent"
+      short_name: "frontend-agent"
+      path: "src/core/agents/frontend-engineer-agent.md"
+      destination: ".baton/agents/frontend-engineer-agent.md"
+      core: false
+      description: "Frontend engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "project-manager-agent"
+      short_name: "pm-agent"
+      path: "src/core/agents/project-manager-agent.md"
+      destination: ".baton/agents/project-manager-agent.md"
+      core: false
+      description: "Project management specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "quality-assurance-agent"
+      short_name: "qa-agent"
+      path: "src/core/agents/quality-assurance-agent.md"
+      destination: ".baton/agents/quality-assurance-agent.md"
+      core: false
+      description: "Quality assurance specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "research-assistant-agent"
+      short_name: "research-agent"
+      path: "src/core/agents/research-assistant-agent.md"
+      destination: ".baton/agents/research-assistant-agent.md"
+      core: false
+      description: "Research and analysis specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "rhythm-expert-agent"
+      short_name: "rhythm-agent"
+      path: "src/core/agents/rhythm-expert-agent.md"
+      destination: ".baton/agents/rhythm-expert-agent.md"
+      core: false
+      description: "RHYTHM Method specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "security-engineer-agent"
+      short_name: "security-agent"
+      path: "src/core/agents/security-engineer-agent.md"
+      destination: ".baton/agents/security-engineer-agent.md"
+      core: false
+      description: "Security engineering specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "software-architect-agent"
+      short_name: "architect-agent"
+      path: "src/core/agents/software-architect-agent.md"
+      destination: ".baton/agents/software-architect-agent.md"
+      core: false
+      description: "Software architecture specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "technical-writer-agent"
+      short_name: "tech-writer-agent"
+      path: "src/core/agents/technical-writer-agent.md"
+      destination: ".baton/agents/technical-writer-agent.md"
+      core: false
+      description: "Technical writing specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "ui-ux-design-agent"
+      short_name: "ui-ux-agent"
+      path: "src/core/agents/ui-ux-design-agent.md"
+      destination: ".baton/agents/ui-ux-design-agent.md"
+      core: false
+      description: "UI/UX design specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+  # Workflows: Main workflows that can be executed directly
+  workflows:
+    - name: "project-initialisation"
+      path: "src/core/workflows/project-initialisation.yml"
+      destination: ".baton/workflows/project-initialisation.yml"
+      core: true
+      description: "Initializes a new Baton Framework project"
+      version: "1.0.0"
+      required_commands:
+        - "/project-init"
+      sub_flows:
+        - "sub-flow-validate-workflow-permission"
+      dependencies:
+        workflows: []
+        knowledge: []
+        messages:
+          - "step-1-insufficient-permission-error"
+          - "step-2-project-already-initialized-warning"
+          - "step-3-empty-project-warning"
+          - "step-4-hitl-checkpoint"
+          - "step-4-user-rejected-error"
+          - "step-4-required-fields-missing-error"
+          - "step-5-file-creation-error"
+          - "step-5-template-not-found-error"
+          - "step-5-required-fields-still-missing-error"
+          - "step-6-empty-project-warning"
+          - "step-7-hitl-checkpoint"
+          - "step-7-user-rejected-error"
+          - "step-8-file-creation-error"
+          - "step-8-template-not-found-error"
+          - "step-9-hitl-checkpoint"
+          - "step-9-user-rejected-boundaries-warning"
+          - "step-10-file-creation-error"
+          - "step-10-template-not-found-error"
+          - "step-11-confirmation"
+
+    - name: "agent-initialisation"
+      path: "src/core/workflows/agent-initialisation.yml"
+      destination: ".baton/workflows/agent-initialisation.yml"
+      core: true
+      description: "Initializes an agent for a new session"
+      version: "1.0.0"
+      required_commands:
+        - "init-{agent_short_name}"
+      sub_flows:
+        - "sub-flow-load-project-config"
+        - "sub-flow-load-project-manifest"
+        - "sub-flow-load-project-boundaries"
+        - "sub-flow-load-agent-context"
+        - "sub-flow-create-agent-context"
+        - "sub-flow-load-agent-boundaries"
+      dependencies:
+        workflows:
+          - "project-initialisation"
+        knowledge: []
+        messages:
+          - "step-2-project-not-initialized-error"
+          - "step-2-project-not-initialized-warning"
+          - "step-3-file-read-error"
+          - "step-4-agent-file-not-found-error"
+          - "step-4-invalid-agent-file-error"
+          - "step-5-cognitive-pattern-not-found-error"
+          - "step-6-context-file-read-warning"
+          - "step-6-context-file-creation-error"
+          - "step-7-project-boundaries-not-found-warning"
+          - "step-7-boundaries-file-read-warning"
+          - "step-8-confirmation-initialized"
+          - "step-8-confirmation-not-initialized"
+
+    - name: "context-synchronisation"
+      path: "src/core/workflows/context-synchronisation.yml"
+      destination: ".baton/workflows/context-synchronisation.yml"
+      core: true
+      description: "Synchronizes agent context with current session information"
+      version: "1.0.0"
+      required_commands:
+        - "/sync-context"
+      sub_flows:
+        - "sub-flow-load-agent-context"
+        - "sub-flow-create-agent-context"
+      dependencies:
+        workflows: []
+        knowledge: []
+        messages:
+          - "step-5-context-file-read-error"
+          - "step-6-context-file-write-error"
+          - "step-9-confirmation"
+
+    - name: "manage-boundary-rule"
+      path: "src/core/workflows/manage-boundary-rule.yml"
+      destination: ".baton/workflows/manage-boundary-rule.yml"
+      core: true
+      description: "Add, update, or delete a rule in project or agent boundaries file"
+      version: "1.0.0"
+      required_commands:
+        - "/manage-project-rules"
+        - "/manage-agent-rules"
+      sub_flows:
+        - "sub-flow-create-agent-boundaries"
+      dependencies:
+        workflows: []
+        knowledge: []
+        messages:
+          - "step-1-invalid-parameters-error"
+          - "step-2-invalid-agent-name-error"
+          - "step-3-project-boundaries-not-found-error"
+          - "step-3-agent-boundaries-not-found-error"
+          - "step-3-agent-boundaries-creation-error"
+          - "step-4-boundaries-file-read-error"
+          - "step-5-rule-already-exists-error"
+          - "step-5-rule-not-found-error"
+          - "step-5-rule-operation-error"
+          - "step-5-file-write-error"
+          - "step-6-confirmation"
+          - "show-rules"
+
+  # Sub-Flows: Reusable workflow components (cannot be executed directly)
+  sub_flows:
+    - name: "sub-flow-validate-workflow-permission"
+      path: "src/core/workflows/sub-flows/sub-flow-validate-workflow-permission.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-validate-workflow-permission.yml"
+      core: true
+      description: "Validates workflow execution permissions"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-load-project-config"
+      path: "src/core/workflows/sub-flows/sub-flow-load-project-config.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-load-project-config.yml"
+      core: true
+      description: "Loads project configuration file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-load-project-manifest"
+      path: "src/core/workflows/sub-flows/sub-flow-load-project-manifest.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-load-project-manifest.yml"
+      core: true
+      description: "Loads project manifest file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-load-project-boundaries"
+      path: "src/core/workflows/sub-flows/sub-flow-load-project-boundaries.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-load-project-boundaries.yml"
+      core: true
+      description: "Loads project boundaries file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-load-agent-context"
+      path: "src/core/workflows/sub-flows/sub-flow-load-agent-context.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-load-agent-context.yml"
+      core: true
+      description: "Loads existing agent context file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+        - "context-synchronisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-create-agent-context"
+      path: "src/core/workflows/sub-flows/sub-flow-create-agent-context.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-create-agent-context.yml"
+      core: true
+      description: "Creates new agent context file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+        - "context-synchronisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-load-agent-boundaries"
+      path: "src/core/workflows/sub-flows/sub-flow-load-agent-boundaries.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-load-agent-boundaries.yml"
+      core: true
+      description: "Loads agent-specific boundaries file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "sub-flow-create-agent-boundaries"
+      path: "src/core/workflows/sub-flows/sub-flow-create-agent-boundaries.yml"
+      destination: ".baton/workflows/sub-flows/sub-flow-create-agent-boundaries.yml"
+      core: true
+      description: "Creates agent boundaries file from template"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+  # Knowledge: Framework knowledge files (currently empty - users install via CLI)
+  knowledge: []
+    # Knowledge files are installed by users via `baton install knowledge <name>`
+    # They are not part of the core framework installation
+    # Examples:
+    #   - name: "github-cli"
+    #     path: "src/core/knowledge/tools/github-cli.md"
+    #     destination: ".baton/knowledge/github-cli.md"
+    #     core: false
+    #     description: "GitHub CLI tool documentation"
+    #     version: "1.0.0"
+    #     dependencies:
+    #       workflows: []
+    #       knowledge: []
+
+  # Messages: User-facing message templates for workflows and commands
+  messages:
+    # Project Initialisation Workflow Messages
+    - name: "step-1-insufficient-permission-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md"
+      core: true
+      description: "Error message for insufficient permission to execute project-initialisation"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-2-project-already-initialized-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-2-project-already-initialized-warning.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-2-project-already-initialized-warning.md"
+      core: true
+      description: "Warning message when project is already initialized"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-3-empty-project-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-3-empty-project-warning.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-3-empty-project-warning.md"
+      core: true
+      description: "Warning message for empty project"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-4-hitl-checkpoint"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-4-hitl-checkpoint.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-4-hitl-checkpoint.md"
+      core: true
+      description: "HITL checkpoint message for step 4"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-4-user-rejected-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-4-user-rejected-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-4-user-rejected-error.md"
+      core: true
+      description: "Error message when user rejects step 4"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-4-required-fields-missing-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-4-required-fields-missing-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-4-required-fields-missing-error.md"
+      core: true
+      description: "Error message for missing required fields in step 4"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-5-file-creation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-5-file-creation-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-5-file-creation-error.md"
+      core: true
+      description: "Error message for file creation failure in step 5"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-5-template-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-5-template-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-5-template-not-found-error.md"
+      core: true
+      description: "Error message when template not found in step 5"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-5-required-fields-still-missing-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-5-required-fields-still-missing-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-5-required-fields-still-missing-error.md"
+      core: true
+      description: "Error message when required fields still missing after step 5"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-6-empty-project-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-6-empty-project-warning.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-6-empty-project-warning.md"
+      core: true
+      description: "Warning message for empty project in step 6"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-7-hitl-checkpoint"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-7-hitl-checkpoint.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-7-hitl-checkpoint.md"
+      core: true
+      description: "HITL checkpoint message for step 7"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-7-user-rejected-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-7-user-rejected-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-7-user-rejected-error.md"
+      core: true
+      description: "Error message when user rejects step 7"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-8-file-creation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-8-file-creation-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-8-file-creation-error.md"
+      core: true
+      description: "Error message for file creation failure in step 8"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-8-template-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-8-template-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-8-template-not-found-error.md"
+      core: true
+      description: "Error message when template not found in step 8"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-9-hitl-checkpoint"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-9-hitl-checkpoint.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-9-hitl-checkpoint.md"
+      core: true
+      description: "HITL checkpoint message for step 9"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-9-user-rejected-boundaries-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-9-user-rejected-boundaries-warning.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-9-user-rejected-boundaries-warning.md"
+      core: true
+      description: "Warning message when user rejects boundaries in step 9"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-10-file-creation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-10-file-creation-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-10-file-creation-error.md"
+      core: true
+      description: "Error message for file creation failure in step 10"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-10-template-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-10-template-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-10-template-not-found-error.md"
+      core: true
+      description: "Error message when template not found in step 10"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    - name: "step-11-confirmation"
+      path: "src/core/templates/message-templates/user-messages/workflows/project-initialisation/step-11-confirmation.md"
+      destination: ".baton/messages/user-messages/workflows/project-initialisation/step-11-confirmation.md"
+      core: true
+      description: "Confirmation message for step 11"
+      version: "1.0.0"
+      dependent_workflows:
+        - "project-initialisation"
+
+    # Agent Initialisation Workflow Messages
+    - name: "step-2-project-not-initialized-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md"
+      core: true
+      description: "Error message when project is not initialized"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-2-project-not-initialized-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-warning.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-warning.md"
+      core: true
+      description: "Warning message when project is not initialized (baton-agent)"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-3-file-read-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-3-file-read-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-3-file-read-error.md"
+      core: true
+      description: "Error message for file read failure in step 3"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-4-agent-file-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-4-agent-file-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-4-agent-file-not-found-error.md"
+      core: true
+      description: "Error message when agent file not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-4-invalid-agent-file-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-4-invalid-agent-file-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-4-invalid-agent-file-error.md"
+      core: true
+      description: "Error message for invalid agent file"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-5-cognitive-pattern-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-5-cognitive-pattern-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-5-cognitive-pattern-not-found-error.md"
+      core: true
+      description: "Error message when cognitive pattern not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-6-context-file-read-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md"
+      core: true
+      description: "Warning message for context file read failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-6-context-file-creation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md"
+      core: true
+      description: "Error message for context file creation failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-7-project-boundaries-not-found-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-7-project-boundaries-not-found-warning.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-7-project-boundaries-not-found-warning.md"
+      core: true
+      description: "Warning message when project boundaries not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-7-boundaries-file-read-warning"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-7-boundaries-file-read-warning.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-7-boundaries-file-read-warning.md"
+      core: true
+      description: "Warning message for boundaries file read failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-8-confirmation-initialized"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-8-confirmation-initialized.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-8-confirmation-initialized.md"
+      core: true
+      description: "Confirmation message when agent initialized (project already initialized)"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    - name: "step-8-confirmation-not-initialized"
+      path: "src/core/templates/message-templates/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md"
+      destination: ".baton/messages/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md"
+      core: true
+      description: "Confirmation message when agent initialized (project not initialized)"
+      version: "1.0.0"
+      dependent_workflows:
+        - "agent-initialisation"
+
+    # Context Synchronisation Workflow Messages
+    - name: "step-1-insufficient-permission-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md"
+      destination: ".baton/messages/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md"
+      core: true
+      description: "Error message for insufficient permission to sync context"
+      version: "1.0.0"
+      dependent_workflows:
+        - "context-synchronisation"
+
+    - name: "step-5-context-file-read-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md"
+      destination: ".baton/messages/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md"
+      core: true
+      description: "Error message for context file read failure in step 5"
+      version: "1.0.0"
+      dependent_workflows:
+        - "context-synchronisation"
+
+    - name: "step-6-context-file-write-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md"
+      destination: ".baton/messages/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md"
+      core: true
+      description: "Error message for context file write failure in step 6"
+      version: "1.0.0"
+      dependent_workflows:
+        - "context-synchronisation"
+
+    - name: "step-9-confirmation"
+      path: "src/core/templates/message-templates/user-messages/workflows/context-synchronisation/step-9-confirmation.md"
+      destination: ".baton/messages/user-messages/workflows/context-synchronisation/step-9-confirmation.md"
+      core: true
+      description: "Confirmation message for context synchronisation"
+      version: "1.0.0"
+      dependent_workflows:
+        - "context-synchronisation"
+
+    # Manage Boundary Rule Workflow Messages
+    - name: "step-1-invalid-parameters-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md"
+      core: true
+      description: "Error message for invalid parameters"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-2-invalid-agent-name-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md"
+      core: true
+      description: "Error message for invalid agent name"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-3-project-boundaries-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md"
+      core: true
+      description: "Error message when project boundaries not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-3-agent-boundaries-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md"
+      core: true
+      description: "Error message when agent boundaries not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-3-agent-boundaries-creation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md"
+      core: true
+      description: "Error message for agent boundaries creation failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-4-boundaries-file-read-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md"
+      core: true
+      description: "Error message for boundaries file read failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-5-rule-already-exists-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md"
+      core: true
+      description: "Error message when rule already exists"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-5-rule-not-found-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md"
+      core: true
+      description: "Error message when rule not found"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-5-rule-operation-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md"
+      core: true
+      description: "Error message for rule operation failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-5-file-write-error"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md"
+      core: true
+      description: "Error message for file write failure"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "step-6-confirmation"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md"
+      core: true
+      description: "Confirmation message for boundary rule management"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    - name: "show-rules"
+      path: "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/show-rules.md"
+      destination: ".baton/messages/user-messages/workflows/manage-boundary-rule/show-rules.md"
+      core: true
+      description: "Message template for showing rules"
+      version: "1.0.0"
+      dependent_workflows:
+        - "manage-boundary-rule"
+
+    # Start Baton Project Command Messages
+    - name: "step-1-welcome"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-1-welcome.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-1-welcome.md"
+      core: true
+      description: "Welcome message for start-baton-project command"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-3-project-scan-results"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-3-project-scan-results.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-3-project-scan-results.md"
+      core: true
+      description: "Project scan results message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-5-manifest-property-prompt"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md"
+      core: true
+      description: "Manifest property prompt message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-6-config-property-prompt"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-6-config-property-prompt.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-6-config-property-prompt.md"
+      core: true
+      description: "Config property prompt message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-7-agent-suggestions"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-suggestions.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-suggestions.md"
+      core: true
+      description: "Agent suggestions message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-7-agent-selection"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-selection.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-selection.md"
+      core: true
+      description: "Agent selection message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-7-agent-installation-progress"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md"
+      core: true
+      description: "Agent installation progress message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-8-workflow-suggestions"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md"
+      core: true
+      description: "Workflow suggestions message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-8-workflow-selection"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-selection.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-selection.md"
+      core: true
+      description: "Workflow selection message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-8-workflow-installation-progress"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md"
+      core: true
+      description: "Workflow installation progress message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-9-knowledge-suggestions"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md"
+      core: true
+      description: "Knowledge suggestions message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-9-knowledge-selection"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-selection.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-selection.md"
+      core: true
+      description: "Knowledge selection message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-9-knowledge-installation-progress"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md"
+      core: true
+      description: "Knowledge installation progress message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-11-welcome-complete"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-11-welcome-complete.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-11-welcome-complete.md"
+      core: true
+      description: "Welcome complete message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "step-12-command-deleted"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-12-command-deleted.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/step-12-command-deleted.md"
+      core: true
+      description: "Command deleted message"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "error-agent-init-failed"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-agent-init-failed.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/error-agent-init-failed.md"
+      core: true
+      description: "Error message when agent initialization fails"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "error-file-write-failed"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-file-write-failed.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/error-file-write-failed.md"
+      core: true
+      description: "Error message when file write fails"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+    - name: "error-cli-command-failed"
+      path: "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-cli-command-failed.md"
+      destination: ".baton/messages/user-messages/commands/start-baton-project/error-cli-command-failed.md"
+      core: true
+      description: "Error message when CLI command fails"
+      version: "1.0.0"
+      dependent_commands:
+        - "/start-baton-project"
+
+# Platform-Specific Commands
+# Maps commands to workflows and platforms
+platform_commands:
+  cursor:
+    - command: "/project-init"
+      workflow: "project-initialisation"
+      source: "src/core/commands/markdown/baton-agent/project-init.md"
+      destination: ".cursor/commands/baton/project-init.md"
+
+    - command: "/start-baton-project"
+      workflow: null
+      source: "src/core/commands/markdown/baton-agent/start-baton-project.md"
+      destination: ".cursor/commands/baton/start-baton-project.md"
+      description: "Run-once command to initialize Baton Framework (deletes itself after execution)"
+
+    - command: "/init-agent"
+      workflow: "agent-initialisation"
+      source: "src/core/commands/markdown/baton-agent/init-agent.md"
+      destination: ".cursor/commands/baton/init-agent.md"
+
+    - command: "/sync-context"
+      workflow: "context-synchronisation"
+      source: "src/core/commands/markdown/baton-agent/sync-context.md"
+      destination: ".cursor/commands/baton/sync-context.md"
+
+    - command: "/manage-project-rules"
+      workflow: "manage-boundary-rule"
+      source: "src/core/commands/markdown/baton-agent/manage-project-rules.md"
+      destination: ".cursor/commands/baton/manage-project-rules.md"
+
+    - command: "/manage-agent-rules"
+      workflow: "manage-boundary-rule"
+      source: "src/core/commands/markdown/baton-agent/manage-agent-rules.md"
+      destination: ".cursor/commands/baton/manage-agent-rules.md"
+
+  claude:
+    - command: "/project-init"
+      workflow: "project-initialisation"
+      source: "src/core/commands/markdown/baton-agent/project-init.md"
+      destination: ".claude/commands/baton/project-init.md"
+
+    - command: "/start-baton-project"
+      workflow: null
+      source: "src/core/commands/markdown/baton-agent/start-baton-project.md"
+      destination: ".claude/commands/baton/start-baton-project.md"
+      description: "Run-once command to initialize Baton Framework (deletes itself after execution)"
+
+    - command: "/init-agent"
+      workflow: "agent-initialisation"
+      source: "src/core/commands/markdown/baton-agent/init-agent.md"
+      destination: ".claude/commands/baton/init-agent.md"
+
+    - command: "/sync-context"
+      workflow: "context-synchronisation"
+      source: "src/core/commands/markdown/baton-agent/sync-context.md"
+      destination: ".claude/commands/baton/sync-context.md"
+
+    - command: "/manage-project-rules"
+      workflow: "manage-boundary-rule"
+      source: "src/core/commands/markdown/baton-agent/manage-project-rules.md"
+      destination: ".claude/commands/baton/manage-project-rules.md"
+
+    - command: "/manage-agent-rules"
+      workflow: "manage-boundary-rule"
+      source: "src/core/commands/markdown/baton-agent/manage-agent-rules.md"
+      destination: ".claude/commands/baton/manage-agent-rules.md"
+
+  gemini:
+    - command: "/project-init"
+      workflow: "project-initialisation"
+      source: "src/core/commands/toml/baton-agent/project-init.toml"
+      destination: ".gemini/commands/baton/project-init.toml"
+
+    - command: "/start-baton-project"
+      workflow: null
+      source: "src/core/commands/toml/baton-agent/start-baton-project.toml"
+      destination: ".gemini/commands/baton/start-baton-project.toml"
+      description: "Run-once command to initialize Baton Framework (deletes itself after execution)"
+
+    - command: "/init-agent"
+      workflow: "agent-initialisation"
+      source: "src/core/commands/markdown/baton-agent/init-agent.md"
+      destination: ".gemini/commands/baton/init-agent.md"
+
+    - command: "/init-baton-agent"
+      workflow: "agent-initialisation"
+      source: "src/core/commands/toml/baton-agent/init-baton-agent.toml"
+      destination: ".gemini/commands/baton/init-baton-agent.toml"
+
+    - command: "/sync-context"
+      workflow: "context-synchronisation"
+      source: "src/core/commands/toml/baton-agent/sync-context.toml"
+      destination: ".gemini/commands/baton/sync-context.toml"
+
+# Installation Rules
+installation:
+  # Core components that must always be installed
+  mandatory:
+    agents:
+      - "baton-agent"
+    workflows:
+      - "project-initialisation"
+      - "agent-initialisation"
+      - "context-synchronisation"
+      - "manage-boundary-rule"
+    sub_flows:
+      - "sub-flow-validate-workflow-permission"
+      - "sub-flow-load-project-config"
+      - "sub-flow-load-project-manifest"
+      - "sub-flow-load-project-boundaries"
+      - "sub-flow-load-agent-context"
+      - "sub-flow-create-agent-context"
+      - "sub-flow-load-agent-boundaries"
+      - "sub-flow-create-agent-boundaries"
+
+  # Auto-install dependencies when installing a component
+  auto_install_dependencies: true
+
+  # Require user confirmation before auto-installing dependencies
+  confirm_dependencies: true
+
+  # Installation behavior
+  behavior:
+    install_workflow: "install_all_sub_flows"
+    remove_workflow: "check_sub_flow_dependencies"
+    install_agent: "no_auto_dependencies"
+    remove_agent: "check_reverse_dependencies"
+    orphan_prevention: true
+
+# Dependency Rules
+dependency_rules:
+  # When installing a workflow, install all its sub-flows
+  workflow_install: "install_all_sub_flows"
+
+  # When removing a workflow, only remove sub-flows if no other workflows depend on them
+  workflow_remove: "check_sub_flow_dependencies"
+
+  # When installing an agent, check if it has workflow/knowledge dependencies
+  agent_install: "check_dependencies"
+
+  # When removing an agent, check if any workflows depend on it
+  agent_remove: "check_reverse_dependencies"
+
+  # Prevent orphaned components
+  orphan_prevention: true
+
+# Notes
+notes:
+  - This manifest is the single source of truth for all framework components
+  - All agents are available on all platforms (cursor, claude, gemini)
+  - Sub-flows cannot be executed directly - they are only called from workflows
+  - Knowledge files are installed by users via CLI, not part of core framework
+  - Message templates are dependencies of workflows and commands - installed automatically with their dependent components
+  - Core components (core: true) cannot be removed
+  - Dependencies are automatically installed with user confirmation
+  - When removing a component, reverse dependencies are checked to prevent orphaned components
+  - Messages are linked to workflows via dependent_workflows or to commands via dependent_commands

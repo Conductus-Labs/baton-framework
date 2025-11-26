@@ -71,10 +71,10 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Context File Read Error
-          message_template: user-messages/workflows/context-synchronisation/step-3-context-file-read-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md
           action: Stop execution
         - type: Context File Creation Error
-          message_template: user-messages/workflows/context-synchronisation/step-3-context-file-creation-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md
           action: Stop execution
 
   - step: 4
@@ -172,7 +172,7 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Context File Write Error
-          message_template: user-messages/workflows/context-synchronisation/step-8-context-file-write-error.md
+          message_template: user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md
           action: Stop execution
 
   - step: 9
