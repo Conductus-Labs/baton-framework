@@ -1,9 +1,26 @@
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { createInterface } from 'readline';
+import yaml from 'js-yaml';
 
 /**
- * Load mandatory items from core-init.json
+ * Load unified framework manifest
+ */
+export function loadFrameworkManifest(npmPackageRoot: string): any {
+  try {
+    const manifestPath = join(npmPackageRoot, 'src', 'core', 'manifest', 'framework-manifest.yml');
+    if (existsSync(manifestPath)) {
+      const manifestContent = readFileSync(manifestPath, 'utf-8');
+      return yaml.load(manifestContent) as any;
+    }
+  } catch (error) {
+    // Silently fail - will fall back to core-init.json if needed
+  }
+  return null;
+}
+
+/**
+ * Load mandatory items from unified framework manifest (or fallback to core-init.json)
  */
 export function loadMandatoryItems(npmPackageRoot: string): {
   agents: Set<string>;
@@ -16,6 +33,62 @@ export function loadMandatoryItems(npmPackageRoot: string): {
     knowledge: new Set()
   };
 
+  // Try to load from unified manifest first
+  const manifest = loadFrameworkManifest(npmPackageRoot);
+  
+  if (manifest && manifest.components) {
+    // Load from manifest
+    if (manifest.components.agents && Array.isArray(manifest.components.agents)) {
+      for (const agent of manifest.components.agents) {
+        if (agent.core === true) {
+          // Extract agent name from destination path or use name field
+          const agentName = agent.destination 
+            ? agent.destination.replace('.baton/agents/', '').replace('.md', '')
+            : agent.name;
+          if (agentName) mandatory.agents.add(agentName);
+        }
+      }
+    }
+    
+    if (manifest.components.workflows && Array.isArray(manifest.components.workflows)) {
+      for (const workflow of manifest.components.workflows) {
+        if (workflow.core === true) {
+          // Extract workflow name from destination path or use name field
+          const workflowName = workflow.destination
+            ? workflow.destination.replace('.baton/workflows/', '').replace('.yml', '')
+            : workflow.name;
+          if (workflowName) mandatory.workflows.add(workflowName);
+        }
+      }
+    }
+    
+    if (manifest.components.sub_flows && Array.isArray(manifest.components.sub_flows)) {
+      for (const subFlow of manifest.components.sub_flows) {
+        if (subFlow.core === true) {
+          // Extract sub-flow name from destination path or use name field
+          const subFlowName = subFlow.destination
+            ? subFlow.destination.replace('.baton/workflows/sub-flows/', '').replace('.yml', '')
+            : subFlow.name;
+          if (subFlowName) mandatory.workflows.add(subFlowName);
+        }
+      }
+    }
+    
+    if (manifest.components.knowledge && Array.isArray(manifest.components.knowledge)) {
+      for (const knowledge of manifest.components.knowledge) {
+        if (knowledge.core === true) {
+          const knowledgeName = knowledge.destination
+            ? knowledge.destination.replace('.baton/knowledge/', '').replace('.md', '')
+            : knowledge.name;
+          if (knowledgeName) mandatory.knowledge.add(knowledgeName);
+        }
+      }
+    }
+    
+    return mandatory;
+  }
+
+  // Fallback to core-init.json for backward compatibility
   try {
     const coreInitPath = join(npmPackageRoot, 'src', 'config', 'core-init.json');
     if (existsSync(coreInitPath)) {

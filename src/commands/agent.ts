@@ -1,5 +1,6 @@
-import { existsSync, copyFileSync, unlinkSync, mkdirSync } from 'fs';
+import { existsSync, copyFileSync, unlinkSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import { cwd } from 'process';
 import { loadMandatoryItems, listCategoryItems, promptConfirmation, resolveAgentsDir } from '../helpers.js';
 import { getAgentVersion, compareVersions } from '../utils.js';
 
@@ -11,6 +12,85 @@ export function listAgents(npmPackageRoot: string, batonDir: string): void {
   const installedDir = join(batonDir, 'agents');
   const availableDir = resolveAgentsDir(npmPackageRoot);
   listCategoryItems('agent', installedDir, availableDir, '.md', mandatory.agents);
+}
+
+/**
+ * Update project.config.yml to add an agent to the agents.enabled section
+ */
+function updateProjectConfigAddAgent(agentName: string, batonDir: string): void {
+  const projectConfigPath = join(batonDir, 'project.config.yml');
+  
+  if (!existsSync(projectConfigPath)) {
+    // If config doesn't exist, that's okay - it might be created later
+    return;
+  }
+
+  try {
+    let configContent = readFileSync(projectConfigPath, 'utf-8');
+    
+    // Check if agent is already in the config
+    const agentPath = `.baton/agents/${agentName}.md`;
+    if (configContent.includes(`path: "${agentPath}"`) || configContent.includes(`path: '${agentPath}'`)) {
+      // Already in config, no need to update
+      return;
+    }
+
+    // Find the agents.enabled section (handle comments and various quote styles)
+    const agentsMatch = configContent.match(/(# Enabled agents\s*\n)?(agents:\s*\n\s*enabled:\s*\n)((?:\s*-\s*name:\s*["'][^"']+["'][^\n]*\n\s*path:\s*["'][^"']+["'][^\n]*\n?)+)/);
+    
+    if (agentsMatch) {
+      // Add the new agent entry at the end of the list
+      const newEntry = `    - name: "${agentName}"\n      path: "${agentPath}"\n`;
+      const comment = agentsMatch[1] || '';
+      const header = agentsMatch[2];
+      const existingEntries = agentsMatch[3];
+      const updatedSection = comment + header + existingEntries + newEntry;
+      configContent = configContent.replace(agentsMatch[0], updatedSection);
+    } else {
+      // Section doesn't exist or is empty, create it
+      const agentsSection = `# Enabled agents\nagents:\n  enabled:\n    - name: "${agentName}"\n      path: "${agentPath}"\n`;
+      
+      // Try to find where to insert (after gen_ai section or at end of file)
+      const genAiMatch = configContent.match(/(gen_ai:[\s\S]*?primary:\s*(?:true|false))\n/);
+      if (genAiMatch) {
+        configContent = configContent.replace(genAiMatch[0], genAiMatch[0] + '\n' + agentsSection);
+      } else {
+        // Append at end
+        configContent = configContent.trim() + '\n\n' + agentsSection;
+      }
+    }
+
+    writeFileSync(projectConfigPath, configContent, 'utf-8');
+  } catch (error) {
+    // Don't fail the whole operation if config update fails
+    console.error(`\n⚠️  Warning: Could not update project.config.yml: ${error}\n`);
+  }
+}
+
+/**
+ * Update project.config.yml to remove an agent from the agents.enabled section
+ */
+function updateProjectConfigRemoveAgent(agentName: string, batonDir: string): void {
+  const projectConfigPath = join(batonDir, 'project.config.yml');
+  
+  if (!existsSync(projectConfigPath)) {
+    return;
+  }
+
+  try {
+    let configContent = readFileSync(projectConfigPath, 'utf-8');
+    const agentPath = `.baton/agents/${agentName}.md`;
+    
+    // Remove the agent entry (match the entire entry including name, path, and any comments)
+    // Pattern matches: indentation, dash, name field (with quotes and optional comment), newline, path field (with quotes and optional comment)
+    const agentEntryPattern = new RegExp(`\\s*-\\s*name:\\s*["']${agentName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^\n]*\\n\\s*path:\\s*["']${agentPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'][^\n]*\\n?`, 'g');
+    configContent = configContent.replace(agentEntryPattern, '');
+    
+    writeFileSync(projectConfigPath, configContent, 'utf-8');
+  } catch (error) {
+    // Don't fail the whole operation if config update fails
+    console.error(`\n⚠️  Warning: Could not update project.config.yml: ${error}\n`);
+  }
 }
 
 /**
@@ -46,6 +126,10 @@ export function addAgent(agentName: string, npmPackageRoot: string, batonDir: st
   // Copy agent file
   try {
     copyFileSync(sourcePath, destPath);
+    
+    // Update project.config.yml
+    updateProjectConfigAddAgent(agentName, batonDir);
+    
     console.log(`\n✅ Agent '${agentName}' added successfully.\n`);
   } catch (error) {
     console.error(`\n❌ Error: Failed to copy agent file: ${error}\n`);
@@ -75,6 +159,10 @@ export function removeAgent(agentName: string, npmPackageRoot: string, batonDir:
   // Delete agent file
   try {
     unlinkSync(destPath);
+    
+    // Update project.config.yml
+    updateProjectConfigRemoveAgent(agentName, batonDir);
+    
     console.log(`\n✅ Agent '${agentName}' removed successfully.\n`);
   } catch (error) {
     console.error(`\n❌ Error: Failed to remove agent file: ${error}\n`);
