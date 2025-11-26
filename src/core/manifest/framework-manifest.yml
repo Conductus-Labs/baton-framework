@@ -230,6 +230,28 @@ components:
         workflows: []
         knowledge: []
 
+    - name: "knowledge-designer-agent"
+      short_name: "knowledge-designer-agent"
+      path: "src/core/agents/knowledge-designer-agent.md"
+      destination: ".baton/agents/knowledge-designer-agent.md"
+      core: false
+      description: "Baton Framework knowledge file creation and management specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "workflow-designer-agent"
+      short_name: "workflow-designer-agent"
+      path: "src/core/agents/workflow-designer-agent.md"
+      destination: ".baton/agents/workflow-designer-agent.md"
+      core: false
+      description: "Baton Framework workflow design and management specialist"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
   # Workflows: Main workflows that can be executed directly
   workflows:
     - name: "project-initialisation"

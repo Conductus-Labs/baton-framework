@@ -27,6 +27,15 @@
       "path": ".baton/messages/agent-messages"
     },
     {
+      "path": ".baton/messages/agent-messages/a2a"
+    },
+    {
+      "path": ".baton/a2a-comms"
+    },
+    {
+      "path": ".baton/a2a-comms/archived"
+    },
+    {
       "path": ".baton/workflows/sub-flows"
     },
     {
@@ -638,6 +647,36 @@
     {
       "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-cli-command-failed.md",
       "destination": ".baton/messages/user-messages/commands/start-baton-project/error-cli-command-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/a2a-initiate-conversation.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-initiate-conversation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/a2a-read-messages.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-read-messages.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/a2a-respond-to-message.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-respond-to-message.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/a2a-reach-agreement.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-reach-agreement.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/a2a-close-conversation.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-close-conversation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/agent-messages/a2a/README.md",
+      "destination": ".baton/messages/agent-messages/a2a/README.md",
       "type": "exact_copy"
     }
   ]
