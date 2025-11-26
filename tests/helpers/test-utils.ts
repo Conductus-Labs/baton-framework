@@ -8,7 +8,7 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = resolve(__dirname, '../..');
 
 export const TEST_DIR = resolve(PROJECT_ROOT, '.test');
-export const CLI_PATH = resolve(PROJECT_ROOT, 'src/cli/bin/baton.js');
+export const CLI_PATH = resolve(PROJECT_ROOT, 'bin/baton.js');
 
 /**
  * Clean up the test directory

@@ -21,7 +21,7 @@ created: 2025-11-23
 
 # Prerequisites
 prerequisites:
-  - Project manifest file must exist at `.baton/project.manifest`
+  - Project manifest file must exist at `.baton/project.manifest.md`
 
 # Sub-Workflow Steps
 workflow_steps:
@@ -46,7 +46,7 @@ workflow_steps:
     name: Read Project Manifest File
     description: Read the project manifest file (Markdown with YAML frontmatter)
     actions:
-      - Read file: `.baton/project.manifest`
+      - Read file: `.baton/project.manifest.md`
       - Parse YAML frontmatter to extract metadata
       - Read markdown content sections
       - Validate frontmatter syntax
@@ -54,10 +54,10 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Manifest File Read Error
-          message: "❌ Error: Cannot read project manifest file\n\nFile: .baton/project.manifest\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid frontmatter format"
+          message: "❌ Error: Cannot read project manifest file\n\nFile: .baton/project.manifest.md\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid frontmatter format"
           action: Stop execution
         - type: Frontmatter Parse Error
-          message: "❌ Error: Invalid frontmatter syntax in project manifest\n\nFile: .baton/project.manifest\n\nPlease verify frontmatter YAML syntax is correct"
+          message: "❌ Error: Invalid frontmatter syntax in project manifest\n\nFile: .baton/project.manifest.md\n\nPlease verify frontmatter YAML syntax is correct"
           action: Stop execution
 
   - step: 3
@@ -97,7 +97,7 @@ error_handling:
 notes:
   - This sub-workflow is called whenever project manifest is needed
   - Project manifest is the "Project Constitution" - high-level project information
-  - Manifest file location: `.baton/project.manifest`
+  - Manifest file location: `.baton/project.manifest.md`
   - Format: Markdown with YAML frontmatter
   - Contains project context, requirements, features, and success criteria
   - Architectural decisions are stored separately in `knowledge/architecture-decisions.md`

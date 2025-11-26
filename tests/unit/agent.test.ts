@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync, unlinkSync } from 'fs';
 import { join, resolve } from 'path';
 import { cleanupTestDir, setupTestDir, TEST_DIR } from '../helpers/test-utils.js';
-import { listAgents, addAgent, removeAgent, updateAgent } from '../../src/cli/src/commands/agent.js';
-import * as helpers from '../../src/cli/src/helpers.js';
+import { listAgents, addAgent, removeAgent, updateAgent } from '../../src/commands/agent.js';
+import * as helpers from '../../src/helpers.js';
 
 // Mock console methods to capture output
 const consoleSpy = {
@@ -12,7 +12,7 @@ const consoleSpy = {
 };
 
 // Get npm package root (for test environment)
-const npmPackageRoot = resolve(process.cwd(), 'src/cli');
+const npmPackageRoot = process.cwd();
 const BATON_DIR = join(TEST_DIR, '.baton');
 const AGENTS_DIR = join(BATON_DIR, 'agents');
 

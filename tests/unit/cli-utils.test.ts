@@ -6,7 +6,7 @@ import {
   getAgentVersion, 
   getFileVersion, 
   compareVersions 
-} from '../../src/cli/src/utils.js';
+} from '../../src/utils.js';
 import { cleanupTestDir, setupTestDir, TEST_DIR } from '../helpers/test-utils.js';
 
 describe('CLI Utility Functions', () => {

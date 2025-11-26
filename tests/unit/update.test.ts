@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { cleanupTestDir, setupTestDir, TEST_DIR } from '../helpers/test-utils.js';
-import { updateCommand } from '../../src/cli/src/commands/update.js';
+import { updateCommand } from '../../src/commands/update.js';
 
 // Mock console methods to capture output
 const consoleSpy = {
@@ -11,7 +11,7 @@ const consoleSpy = {
 };
 
 // Get npm package root (for test environment)
-const npmPackageRoot = resolve(process.cwd(), 'src/cli');
+const npmPackageRoot = process.cwd();
 const BATON_DIR = join(TEST_DIR, '.baton');
 const packageJson = { name: '@conductus-labs/baton-cli', version: '0.1.0' };
 

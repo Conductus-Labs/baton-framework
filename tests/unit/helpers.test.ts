@@ -7,10 +7,10 @@ import {
   getFilesFromDir, 
   getWorkflowFiles,
   listCategoryItems 
-} from '../../src/cli/src/helpers.js';
+} from '../../src/helpers.js';
 
 // Get npm package root (for test environment)
-const npmPackageRoot = resolve(process.cwd(), 'src/cli');
+const npmPackageRoot = process.cwd();
 
 describe('Helper Functions (Unit Tests)', () => {
   beforeEach(() => {

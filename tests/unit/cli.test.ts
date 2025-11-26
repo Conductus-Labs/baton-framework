@@ -14,13 +14,13 @@ describe('Baton CLI', () => {
     it('should show version with --version flag', () => {
       const result = runCommand(['--version']);
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('0.1.0');
+      expect(result.stdout).toContain('0.1.1');
     });
 
     it('should show version with -v flag', () => {
       const result = runCommand(['-v']);
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('0.1.0');
+      expect(result.stdout).toContain('0.1.1');
     });
 
     it('should show help with --help flag', () => {

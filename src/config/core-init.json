@@ -21,6 +21,9 @@
       "path": ".baton/messages/user-messages/workflows"
     },
     {
+      "path": ".baton/messages/user-messages/commands/start-baton-project"
+    },
+    {
       "path": ".baton/messages/agent-messages"
     },
     {
@@ -103,18 +106,6 @@
       "type": "exact_copy"
     },
     {
-      "source": "src/core/commands/markdown/baton-agent/init-baton-agent.md",
-      "destination": ".cursor/commands/baton/init-baton-agent.md",
-      "type": "exact_copy",
-      "platform": "cursor"
-    },
-    {
-      "source": "src/core/commands/markdown/baton-agent/project-init.md",
-      "destination": ".cursor/commands/baton/project-init.md",
-      "type": "exact_copy",
-      "platform": "cursor"
-    },
-    {
       "source": "src/core/commands/markdown/baton-agent/sync-context.md",
       "destination": ".cursor/commands/baton/sync-context.md",
       "type": "exact_copy",
@@ -133,16 +124,16 @@
       "platform": "cursor"
     },
     {
-      "source": "src/core/commands/markdown/baton-agent/init-baton-agent.md",
-      "destination": ".claude/commands/baton/init-baton-agent.md",
+      "source": "src/core/commands/markdown/baton-agent/start-baton-project.md",
+      "destination": ".cursor/commands/baton/start-baton-project.md",
       "type": "exact_copy",
-      "platform": "claude"
+      "platform": "cursor"
     },
     {
-      "source": "src/core/commands/markdown/baton-agent/project-init.md",
-      "destination": ".claude/commands/baton/project-init.md",
+      "source": "src/core/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".cursor/commands/baton/init-agent.md",
       "type": "exact_copy",
-      "platform": "claude"
+      "platform": "cursor"
     },
     {
       "source": "src/core/commands/markdown/baton-agent/sync-context.md",
@@ -163,8 +154,26 @@
       "platform": "claude"
     },
     {
+      "source": "src/core/commands/markdown/baton-agent/start-baton-project.md",
+      "destination": ".claude/commands/baton/start-baton-project.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "src/core/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".claude/commands/baton/init-agent.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
       "source": "src/core/commands/toml/baton-agent/init-baton-agent.toml",
       "destination": ".gemini/commands/baton/init-baton-agent.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "src/core/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".gemini/commands/baton/init-agent.md",
       "type": "exact_copy",
       "platform": "gemini"
     },
@@ -177,6 +186,12 @@
     {
       "source": "src/core/commands/toml/baton-agent/sync-context.toml",
       "destination": ".gemini/commands/baton/sync-context.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "src/core/commands/toml/baton-agent/start-baton-project.toml",
+      "destination": ".gemini/commands/baton/start-baton-project.toml",
       "type": "exact_copy",
       "platform": "gemini"
     },
@@ -292,7 +307,7 @@
     },
     {
       "source": "src/core/templates/project-file-templates/project-manifest-template.md",
-      "destination": ".baton/project.manifest",
+      "destination": ".baton/project.manifest.md",
       "type": "template"
     },
     {
@@ -533,6 +548,96 @@
     {
       "source": "src/core/templates/message-templates/user-messages/workflows/manage-boundary-rule/show-rules.md",
       "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/show-rules.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-1-welcome.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-1-welcome.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-3-project-scan-results.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-3-project-scan-results.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-6-config-property-prompt.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-6-config-property-prompt.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-11-welcome-complete.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-11-welcome-complete.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/step-12-command-deleted.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-12-command-deleted.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-agent-init-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-agent-init-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-file-write-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-file-write-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "src/core/templates/message-templates/user-messages/commands/start-baton-project/error-cli-command-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-cli-command-failed.md",
       "type": "exact_copy"
     }
   ]

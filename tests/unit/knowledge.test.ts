@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdirSync } from 'fs';
 import { join, resolve } from 'path';
 import { cleanupTestDir, setupTestDir, TEST_DIR } from '../helpers/test-utils.js';
-import { listKnowledge } from '../../src/cli/src/commands/knowledge.js';
+import { listKnowledge } from '../../src/commands/knowledge.js';
 
 // Mock console methods to capture output
 const consoleSpy = {
@@ -10,7 +10,7 @@ const consoleSpy = {
 };
 
 // Get npm package root (for test environment)
-const npmPackageRoot = resolve(process.cwd(), 'src/cli');
+const npmPackageRoot = process.cwd();
 const BATON_DIR = join(TEST_DIR, '.baton');
 
 describe('Knowledge Commands (Unit Tests)', () => {

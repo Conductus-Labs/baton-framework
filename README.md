@@ -122,15 +122,18 @@ baton-framework/
 │   └── workflows/                # Workflow documentation
 │
 ├── src/                          # Source code organization
-│   ├── core/                     # Core framework components
-│   │   ├── cognitive/            # 19 cognitive pattern YAML files
-│   │   └── knowledge/              # Knowledge files and best practices
-│   ├── cli/                       # CLI tooling and IDE extension source
-│   │   ├── agents/                # Pre-defined agent files
-│   │   ├── cli-tool/               # CLI executable source code
-│   │   ├── templates/             # Generation templates
-│   │   └── workflows/             # Workflow files
-│   └── rhythm/                    # RHYTHM Method implementation
+│   ├── cli/                       # CLI npm package (bundles framework)
+│   │   ├── bin/                   # Executable entry point
+│   │   ├── lib/                   # CLI TypeScript source code
+│   │   ├── dist/                  # Compiled JavaScript output
+│   │   ├── core/                  # Core framework components (bundled with CLI)
+│   │   │   ├── agents/            # Pre-defined agent files
+│   │   │   ├── cognitive/        # 19 cognitive pattern YAML files
+│   │   │   ├── workflows/          # Workflow files
+│   │   │   ├── templates/        # Generation templates
+│   │   │   └── knowledge/        # Knowledge files and best practices
+│   │   └── config/                # Framework configuration files
+│   └── rhythm/                    # RHYTHM Method implementation (not bundled)
 │       ├── templates/             # RHYTHM Method templates and samples
 │       └── workflows/             # RHYTHM Method workflows
 │
