@@ -91,7 +91,7 @@ workflow_steps:
       retry: false
       warning_messages:
         - type: Empty Project Detected
-          message: "⚠️ Note: Project appears to be empty or new\n\nMost values will need to be provided by the user during the review checkpoint."
+          message_template: user-messages/workflows/project-initialisation/step-3-empty-project-warning.md
           action: Continue execution
 
   - step: 4
@@ -365,10 +365,6 @@ error_handling:
     max_retries: 0
 
   error_types:
-    - type: Insufficient Scope
-      handling: Stop execution with error message
-      recovery: User must use baton-agent to run this workflow
-
     - type: Project Already Initialized
       handling: Display warning, wait for user confirmation via HITL
       recovery: User can choose to reinitialize or cancel
@@ -413,7 +409,7 @@ notes:
   - HITL checkpoints allow users to review, validate, and complete all values before file creation/update
   - Users can approve, reject, or request modifications at each checkpoint
   - If user rejects boundaries creation, workflow continues without creating boundaries file
-  - Only baton-agent has the project-setup scope required to execute this workflow
+  - Only baton-agent has the required permission to execute this workflow (validated via workflow-permissions.yml)
   - Template files are loaded from baton-framework repository
   - All created/updated files can be edited manually after creation
   - Project initialization can be re-run to update values (future workflows will handle updates)

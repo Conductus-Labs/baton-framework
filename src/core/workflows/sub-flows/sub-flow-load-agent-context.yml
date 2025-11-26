@@ -31,41 +31,26 @@ parameters:
 # Sub-Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
-    actions:
-      - Get agent scope array from parent workflow context (agent executing the parent workflow)
-      - Verify agent's scope array includes required scope: context-management
-    decision_points:
-      - condition: Agent scope includes required scope
-        if_true: Continue to step 2
-        if_false: Stop execution with error message
-    error_handling:
-      retry: false
-      error_messages:
-        - type: Insufficient Scope
-          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-load-agent-context\nRequired scope: context-management\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'context-management' scope."
-          action: Stop execution
-
-  - step: 2
     name: Read Context File
-    description: Read the agent context file
+    description: Read the agent context file (READ-ONLY - does not modify the file)
     actions:
       - Read file: `.baton/context/{agent_short_name}-context.md`
       - Parse YAML frontmatter to extract metadata (version, agent, created, last_updated)
       - Read markdown content sections
+      - **CRITICAL:** Do NOT modify the file - only read and extract information
+      - **CRITICAL:** Do NOT update `created` or `last_updated` fields - preserve original dates
     error_handling:
       retry: false
       error_messages:
         - type: Context File Read Error
-          message: "❌ Error: Cannot read context file\n\nFile: .baton/context/{agent_short_name}-context.md\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid Markdown format"
+          message_template: user-messages/workflows/sub-flows/context-file-read-error.md
           action: Stop execution
 
-  - step: 3
+  - step: 2
     name: Extract Context Information
     description: Extract key information from context file
     dependencies:
-      - step: 2
+      - step: 1
         required: true
     actions:
       - Extract Current Status section
@@ -92,7 +77,10 @@ error_handling:
 # Notes
 notes:
   - This sub-workflow is called when context file already exists
+  - **CRITICAL:** This sub-workflow is READ-ONLY - it does NOT modify the context file
+  - **CRITICAL:** The `created` and `last_updated` dates in the context file are preserved and NOT updated
   - Context file format: Markdown with YAML frontmatter
   - Context file location: `.baton/context/{agent_short_name}-context.md`
   - All context sections are extracted for use by parent workflow
+  - To update context file, use the context-synchronisation workflow which will update `last_updated` field
 

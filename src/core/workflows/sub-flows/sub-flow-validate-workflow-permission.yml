@@ -44,10 +44,10 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Permissions File Not Found
-          message: "❌ Error: Workflow permissions matrix not found\n\nFile: .baton/workflows/workflow-permissions.yml\n\nPlease verify the permissions file exists."
+          message_template: user-messages/workflows/sub-flows/permissions-file-not-found-error.md
           action: Stop execution
         - type: Permissions File Read Error
-          message: "❌ Error: Cannot read workflow permissions matrix\n\nFile: .baton/workflows/workflow-permissions.yml\n\nPlease verify the file exists and has read permissions."
+          message_template: user-messages/workflows/sub-flows/permissions-file-read-error.md
           action: Stop execution
 
   - step: 2
@@ -66,7 +66,7 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Agent Short Name Not Found
-          message: "❌ Error: Cannot determine agent short name\n\nPlease verify agent definition exists or provide agent_short_name parameter."
+          message_template: user-messages/workflows/sub-flows/agent-short-name-not-found-error.md
           action: Stop execution
 
   - step: 3

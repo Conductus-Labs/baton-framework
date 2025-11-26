@@ -1,0 +1,153 @@
+# Sub-Workflow: Load All Boundaries
+# Format: Pure YAML (no frontmatter)
+# Purpose: Load both project boundaries and agent boundaries to refresh agent context before workflow execution
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-load-all-boundaries
+purpose: Load both project boundaries and agent boundaries to refresh agent context before workflow execution
+created: 2025-11-26
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - Parent workflow must provide agent_short_name parameter
+  - Project boundaries file should exist at `.baton/boundaries/project-boundaries.md` (optional, non-critical if missing)
+  - Agent boundaries file should exist at `.baton/boundaries/{agent_short_name}-boundaries.md` (optional, non-critical if missing)
+
+# Sub-Workflow Parameters
+parameters:
+  agent_short_name: {Required - Agent short-name for agent boundaries file}
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Load Project Boundaries
+    description: Load project boundaries file (if it exists)
+    actions:
+      - Check if project boundaries file exists: `.baton/boundaries/project-boundaries.md`
+      - If file exists:
+          - Read file: `.baton/boundaries/project-boundaries.md`
+          - Parse YAML frontmatter to extract metadata (version, boundary_type, scope, created)
+          - Read markdown content sections
+          - Extract "Always Do" section (mandatory actions)
+          - Extract "Ask First" section (actions requiring approval)
+          - Extract "Never Do" section (prohibited actions)
+          - Extract Scope Definitions section
+          - Extract Examples section (if present)
+      - If file does not exist:
+          - Continue without project boundaries (non-critical)
+    decision_points:
+      - condition: Project boundaries file exists
+        if_true: Load and extract project boundaries
+        if_false: Continue without project boundaries (non-critical)
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Project Boundaries File Not Found
+          message_template: user-messages/workflows/sub-flows/boundaries-file-read-warning.md
+          action: Continue execution (non-critical)
+      error_messages:
+        - type: Project Boundaries File Read Error
+          message_template: user-messages/workflows/sub-flows/boundaries-file-read-warning.md
+          action: Continue execution (non-critical)
+
+  - step: 2
+    name: Load Agent Boundaries
+    description: Load agent-specific boundaries file (if it exists)
+    dependencies:
+      - step: 1
+        required: false
+    actions:
+      - Check if agent boundaries file exists: `.baton/boundaries/{agent_short_name}-boundaries.md`
+      - If file exists:
+          - Read file: `.baton/boundaries/{agent_short_name}-boundaries.md`
+          - Parse YAML frontmatter to extract metadata (version, boundary_type, scope, created)
+          - Read markdown content sections
+          - Extract "Always Do" section (mandatory actions - overrides project boundaries)
+          - Extract "Ask First" section (actions requiring approval - overrides project boundaries)
+          - Extract "Never Do" section (prohibited actions - overrides project boundaries)
+          - Extract Scope Definitions section
+          - Extract Examples section (if present)
+          - Note: Agent boundaries override project boundaries where they conflict
+      - If file does not exist:
+          - Continue without agent boundaries (non-critical, agent boundaries are optional)
+    decision_points:
+      - condition: Agent boundaries file exists
+        if_true: Load and extract agent boundaries
+        if_false: Continue without agent boundaries (non-critical)
+    error_handling:
+      retry: false
+      warning_messages:
+        - type: Agent Boundaries File Not Found
+          message_template: user-messages/workflows/sub-flows/boundaries-file-read-warning.md
+          action: Continue execution (non-critical)
+      error_messages:
+        - type: Agent Boundaries File Read Error
+          message_template: user-messages/workflows/sub-flows/boundaries-file-read-warning.md
+          action: Continue execution (non-critical)
+
+  - step: 3
+    name: Merge Boundaries Information
+    description: Merge project and agent boundaries, with agent boundaries taking precedence
+    dependencies:
+      - step: 2
+        required: false
+    actions:
+      - Combine project boundaries (from step 1) and agent boundaries (from step 2)
+      - Apply precedence rules:
+          - Agent boundaries override project boundaries where they conflict
+          - If agent boundary exists for a category, use agent boundary
+          - If only project boundary exists, use project boundary
+      - Merge "Always Do" sections (agent overrides project)
+      - Merge "Ask First" sections (agent overrides project)
+      - Merge "Never Do" sections (agent overrides project)
+      - Merge Scope Definitions (agent overrides project)
+      - Make merged boundaries available to parent workflow for agent context refresh
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Project Boundaries File Not Found
+      handling: Continue execution with warning (non-critical)
+      recovery: Parent workflow continues without project boundaries
+
+    - type: Project Boundaries File Read Error
+      handling: Continue execution with warning (non-critical)
+      recovery: Parent workflow continues without project boundaries
+
+    - type: Agent Boundaries File Not Found
+      handling: Continue execution silently (non-critical, agent boundaries are optional)
+      recovery: Parent workflow continues without agent boundaries
+
+    - type: Agent Boundaries File Read Error
+      handling: Continue execution with warning (non-critical)
+      recovery: Parent workflow continues without agent boundaries
+
+# Notes
+notes:
+  - This sub-workflow is called before workflow execution to refresh agent context with boundary information
+  - Loads both project boundaries (base rules for all agents) and agent boundaries (agent-specific overrides)
+  - Agent boundaries override project boundaries where they conflict
+  - Both boundaries files are optional - workflow continues even if files don't exist
+  - Boundaries file format: Markdown with YAML frontmatter
+  - Project boundaries location: `.baton/boundaries/project-boundaries.md`
+  - Agent boundaries location: `.baton/boundaries/{agent_short_name}-boundaries.md`
+  - Three-tier system: Always Do / Ask First / Never Do
+  - Merged boundaries should be made available to parent workflow for agent context refresh
+  - DO NOT assign this sub-flow to any workflows yet (pending user approval)
+

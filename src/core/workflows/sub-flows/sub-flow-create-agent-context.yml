@@ -34,41 +34,24 @@ parameters:
 # Sub-Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
-    actions:
-      - Get agent scope array from parent workflow context (agent executing the parent workflow)
-      - Verify agent's scope array includes required scope: context-management
-    decision_points:
-      - condition: Agent scope includes required scope
-        if_true: Continue to step 2
-        if_false: Stop execution with error message
-    error_handling:
-      retry: false
-      error_messages:
-        - type: Insufficient Scope
-          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-create-agent-context\nRequired scope: context-management\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'context-management' scope."
-          action: Stop execution
-
-  - step: 2
     name: Get Current Date
     description: Get current date from system for context file creation
     actions:
-      - "Execute system command: date +%Y-%m-%d (Unix/Git Bash) or equivalent Windows command"
-      - "Store date as {current_date} for use in context file"
+      - "Execute system command: date -u +\"%Y-%m-%dT%H:%M:%SZ\" (Unix/Git Bash) or equivalent Windows command for ISO 8601 format"
+      - "Store date as {current_date} in ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ) for use in context file"
       - "Never use hardcoded dates - always get from system"
     error_handling:
       retry: false
       error_messages:
         - type: Date Command Error
-          message: "❌ Error: Cannot get current date from system\n\nPlease verify system date command is available"
+          message_template: user-messages/workflows/sub-flows/date-command-error.md
           action: Stop execution
 
-  - step: 3
+  - step: 2
     name: Load Context Template
     description: Load context template file
     dependencies:
-      - step: 2
+      - step: 1
         required: true
     actions:
       - "Read context template: src/core/templates/context-templates/context-template.md"
@@ -77,14 +60,14 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Template File Not Found
-          message: "❌ Error: Context template file not found\n\nPlease verify template exists at: src/core/templates/context-templates/context-template.md"
+          message_template: user-messages/workflows/sub-flows/template-file-not-found-error.md
           action: Stop execution
 
-  - step: 4
+  - step: 3
     name: Create Context File
     description: Create new context file from template with agent-specific values
     dependencies:
-      - step: 3
+      - step: 2
         required: true
     actions:
       - "Replace template placeholders: {agent-name} → {agent_name}, {YYYY-MM-DD} → {current_date} (from step 1)"
@@ -100,7 +83,7 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Context File Creation Error
-          message: "❌ Error: Cannot create context file\n\nFile: .baton/context/{agent_short_name}-context.md\n\nPlease verify:\n- Write permissions to .baton/context/ directory\n- Directory exists\n- Disk space available"
+          message_template: user-messages/workflows/sub-flows/context-file-creation-error.md
           action: Stop execution
 
 # Error Handling

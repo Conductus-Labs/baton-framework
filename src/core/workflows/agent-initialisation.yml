@@ -56,7 +56,7 @@ workflow_steps:
       - step: 1
         required: true
     actions:
-      - Check project initialization status from step 2
+      - Check project initialization status from step 1
       - If project IS initialized:
           - Execute sub-flow: sub-flow-load-project-config.yml
           - Execute sub-flow: sub-flow-load-project-manifest.yml
@@ -124,16 +124,31 @@ workflow_steps:
 
   - step: 5
     name: Check Agent Context File
-    description: Check if agent context file exists, load if found, create if not found
+    description: |
+      Check if agent context file exists, load if found, create if not found.
+      
+      File path format: `.baton/context/{agent_short_name}-context.md`
+      Example: If agent_short_name is 'baton-agent', file path is `.baton/context/baton-agent-context.md`
+      The file name format is: {agent_short_name}-context.md (with hyphen, not underscore)
+      CRITICAL: Verify agent_short_name value matches exactly (case-sensitive, no extra spaces)
     dependencies:
       - step: 4
         required: true
     actions:
-      - Check if `.baton/context/{agent_short_name}-context.md` exists
+      - "Explicitly check if file exists using file system operation: `.baton/context/{agent_short_name}-context.md`"
+      - "Use file system check command: test -f `.baton/context/{agent_short_name}-context.md` (Unix/Git Bash) or equivalent Windows command"
+      - "Alternative: Use file system API to check if file exists at path (not a directory, file is readable)"
+      - "Store file existence result as boolean variable: {context_file_exists} = true if file exists, false if file does not exist"
+      - "CRITICAL: Verify the exact file path matches: `.baton/context/{agent_short_name}-context.md` where {agent_short_name} is the actual agent short name (e.g., 'baton-agent' → 'baton-agent-context.md')"
+      - **CRITICAL:** If context file exists, only LOAD it (read-only) - do NOT update `created` or `last_updated` dates
+      - **CRITICAL:** Only CREATE new context file if it does not exist
     decision_points:
-      - condition: Context file exists
-        if_true: Load context file (step 5.1)
-        if_false: Create default context file (step 5.2)
+      - condition: {context_file_exists} is true AND file is readable (file exists and can be read)
+        if_true: Load context file (execute Load Existing Context sub-flow)
+        if_false: Create default context file (execute Create Default Context sub-flow)
+      - condition: File check failed (error accessing file system)
+        if_true: Display error and stop execution
+        if_false: Continue with file existence check result
     sub_flows:
       - name: Load Existing Context
         file: sub-flows/sub-flow-load-agent-context.yml
@@ -151,7 +166,8 @@ workflow_steps:
       error_messages:
         - type: Context File Read Error
           message_template: user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md
-          action: Create default context file
+          action: Stop execution
+          note: "This error should only occur if file exists but cannot be read (permissions, corruption, etc.). File not found is handled by decision point, not error handling."
         - type: Context File Creation Error
           message_template: user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md
           action: Stop execution
@@ -272,10 +288,12 @@ notes:
       - Loading boundaries (if project is initialized)
       - Confirming initialization (with different message if project not initialized)
   - If project is not initialized, agent will insist user run /project-init before showing capabilities
+  - **CRITICAL:** When loading existing context file, the `created` and `last_updated` dates are preserved and NOT modified
+  - **CRITICAL:** Only the context-synchronisation workflow updates the `last_updated` field when syncing context
   - Sub-workflows used:
       - sub-flow-load-project-config.yml (step 2 - loads project.config.yml)
       - sub-flow-load-project-manifest.yml (step 2 - loads project.manifest)
-      - sub-flow-load-agent-context.yml (step 5 - when context file exists)
+      - sub-flow-load-agent-context.yml (step 5 - when context file exists, READ-ONLY)
       - sub-flow-create-agent-context.yml (step 5 - when context file does not exist)
       - sub-flow-load-project-boundaries.yml (step 6 - when project boundaries exist)
       - sub-flow-load-agent-boundaries.yml (step 6 - when agent boundaries exist)

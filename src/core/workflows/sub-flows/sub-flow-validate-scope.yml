@@ -1,0 +1,134 @@
+# Sub-Workflow: Validate Agent Scope
+# Format: Pure YAML (no frontmatter)
+# Purpose: Validate that the agent executing a workflow has the required scope
+#
+# CRITICAL REQUIREMENT: This sub-workflow MUST be called from within another workflow.
+# Sub-workflows are NOT standalone - they are modular components designed to be
+# executed as part of a larger workflow process.
+#
+# IMPORTANT: Sub-workflows do NOT have associated command files and CANNOT be executed
+# directly by users or agents. They can ONLY be called from within parent workflows.
+# Only main workflows have associated commands and can be executed directly.
+
+version: 1.0.0
+workflow_name: sub-flow-validate-scope
+purpose: Validate that the agent executing a workflow has the required scope
+created: 2025-11-26
+
+# CRITICAL: This sub-workflow MUST be called from within another workflow
+# Do NOT execute this sub-workflow directly. It is a reusable component
+# designed to be invoked by parent workflows.
+
+# Prerequisites
+prerequisites:
+  - Parent workflow must provide required_scope and agent_short_name parameters
+  - Agent definition file must exist for the agent being validated
+
+# Sub-Workflow Parameters
+parameters:
+  required_scope: { Required - Scope value that the agent must have }
+  agent_short_name: { Required - Short name of the agent executing the workflow }
+
+# Sub-Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Get Agent Short Name
+    description: Get the short name of the agent executing this workflow
+    actions:
+      - If agent_short_name parameter is provided: Use provided value
+      - If agent_short_name parameter is NOT provided:
+          - Load agent definition file: `.baton/agents/{agent_short_name}.md`
+          - Extract agent_short_name from frontmatter
+      - Store agent_short_name for scope check
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Agent Short Name Not Found
+          message_template: user-messages/workflows/sub-flows/agent-short-name-not-found-error.md
+          action: Stop execution
+
+  - step: 2
+    name: Load Agent Definition
+    description: Load agent definition to get agent's scope array
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - Read agent definition file: `.baton/agents/{agent_short_name}.md`
+      - Parse YAML frontmatter
+      - Extract scope array from frontmatter
+      - Store agent scope array for validation
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Agent Definition Not Found
+          message_template: user-messages/workflows/sub-flows/agent-definition-not-found-warning.md
+          action: Stop execution
+        - type: Agent Definition Read Error
+          message_template: user-messages/workflows/sub-flows/agent-definition-read-error.md
+          action: Stop execution
+
+  - step: 3
+    name: Validate Scope
+    description: Check if agent's scope array includes the required scope
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Get agent's scope array from step 2
+      - Check if {required_scope} is in the agent's scope array
+      - If scope is in array: Scope validation passes
+      - If scope is NOT in array: Scope validation fails
+    decision_points:
+      - condition: Agent's scope array includes required_scope
+        if_true: Scope validation passes - Continue to step 4
+        if_false: Scope validation fails - Stop execution with error
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Insufficient Scope
+          message_template: user-messages/workflows/sub-flows/insufficient-scope-error.md
+          action: Stop execution
+
+  - step: 4
+    name: Scope Validation Passed
+    description: Scope check passed, workflow can continue
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - Scope validation successful
+      - Agent has required scope to execute workflow
+      - Return success to parent workflow
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Agent Short Name Not Found
+      handling: Stop execution with error message
+      recovery: Verify agent definition exists or provide agent_short_name parameter
+
+    - type: Agent Definition Not Found
+      handling: Stop execution with error message
+      recovery: Verify agent definition file exists at `.baton/agents/{agent_short_name}.md`
+
+    - type: Agent Definition Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+
+    - type: Insufficient Scope
+      handling: Stop execution with error message
+      recovery: Add required scope to agent's scope array in agent definition, or use a different agent
+
+# Notes
+notes:
+  - This sub-workflow checks if an agent has a specific scope in their scope array
+  - Agent scope is defined in the agent definition file frontmatter as a scope array
+  - Required scope must match exactly (case-sensitive)
+  - Parent workflow should call this sub-flow in Step 1 if scope validation is required
+  - This is separate from permission validation (workflow-permissions.yml)
+

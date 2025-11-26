@@ -26,23 +26,6 @@ prerequisites:
 # Sub-Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
-    actions:
-      - Get agent scope array from parent workflow context (agent executing the parent workflow)
-      - Verify agent's scope array includes required scope: project-config
-    decision_points:
-      - condition: Agent scope includes required scope
-        if_true: Continue to step 2
-        if_false: Stop execution with error message
-    error_handling:
-      retry: false
-      error_messages:
-        - type: Insufficient Scope
-          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-load-project-manifest\nRequired scope: project-config\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'project-config' scope."
-          action: Stop execution
-
-  - step: 2
     name: Read Project Manifest File
     description: Read the project manifest file (Markdown with YAML frontmatter)
     actions:
@@ -54,17 +37,17 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Manifest File Read Error
-          message: "❌ Error: Cannot read project manifest file\n\nFile: .baton/project.manifest.md\n\nPlease verify:\n- File exists\n- Read permissions available\n- File is valid frontmatter format"
+          message_template: user-messages/workflows/sub-flows/manifest-file-read-error.md
           action: Stop execution
         - type: Frontmatter Parse Error
-          message: "❌ Error: Invalid frontmatter syntax in project manifest\n\nFile: .baton/project.manifest.md\n\nPlease verify frontmatter YAML syntax is correct"
+          message_template: user-messages/workflows/sub-flows/frontmatter-parse-error.md
           action: Stop execution
 
-  - step: 3
+  - step: 2
     name: Extract Manifest Information
     description: Extract key information from project manifest
     dependencies:
-      - step: 2
+      - step: 1
         required: true
     actions:
       - Extract frontmatter metadata (version, project_name, created, last_updated)

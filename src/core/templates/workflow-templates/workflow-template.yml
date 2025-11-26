@@ -11,12 +11,14 @@ version: 1.0.0
 workflow_name: {workflow-name}
 purpose: {Brief description of workflow purpose}
 associate_command: {/{command-name}} # 1-to-1 match with command file (use parameter if workflow supports multiple agents/contexts)
-requires_permission_check: {true/false}  # true = permission check required, false = all agents can execute (e.g., agent-initialisation)
-created: {YYYY-MM-DD}
+requires_permission_check: {true/false}  # true = permission check required, false = all agents can execute
+requires_scope_validation: {true/false}  # true = scope validation required, false = no scope check needed
+created: {YYYY-MM-DD} # Use ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ
 
 # Prerequisites
 prerequisites:
   - {Permission check required (if requires_permission_check: true) - validated in Step 1}
+  - {Scope validation required (if requires_scope_validation: true) - validated in Step 1}
   - {Requirement 1 - e.g., "Agent must be initialized"}
   - {Requirement 2 - e.g., "Required tools must be available"}
   - {Requirement 3 - e.g., "Context file must exist"}
@@ -27,8 +29,10 @@ parameters:
 
 # Workflow Steps
 workflow_steps:
-  # Step 1: Permission Check (ONLY if requires_permission_check: true)
-  # If requires_permission_check: false, start with your first workflow step as step 1
+  # Step 1: Validation (ONLY if requires_permission_check: true OR requires_scope_validation: true)
+  # If both are false, start with your first workflow step as step 1
+  
+  # Option A: Permission Check (if requires_permission_check: true)
   - step: 1
     name: Validate Workflow Permission
     description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has permission
@@ -51,6 +55,30 @@ workflow_steps:
         - type: Insufficient Permission
           message_template: user-messages/workflows/{workflow-name}/step-1-insufficient-permission-error.md
           action: Stop execution
+
+  # Option B: Scope Validation (if requires_scope_validation: true)
+  # - step: 1
+  #   name: Validate Agent Scope
+  #   description: CRITICAL PREREQUISITE - Validate that the agent executing this workflow has the required scope
+  #   actions:
+  #     - Execute scope validation sub-flow to validate agent has required scope
+  #   sub_flows:
+  #     - name: Validate Agent Scope
+  #       file: sub-flows/sub-flow-validate-scope.yml
+  #       when: Always execute (scope validation is required)
+  #       parameters:
+  #         required_scope: {scope-name} # e.g., "project-setup", "context-management"
+  #         agent_short_name: { Extract from agent definition or context }
+  #   decision_points:
+  #     - condition: Scope validation passes
+  #       if_true: Continue to step 2
+  #       if_false: Stop execution with error message
+  #   error_handling:
+  #     retry: false
+  #     error_messages:
+  #       - type: Insufficient Scope
+  #         message_template: user-messages/workflows/{workflow-name}/step-1-insufficient-scope-error.md
+  #         action: Stop execution
 
   - step: 2
     name: {Step Name}
@@ -79,7 +107,7 @@ workflow_steps:
           action: {Continue execution/Stop execution}
       error_messages:
         - type: {Error Type}
-          message: "{Error message}"
+          message_template: user-messages/workflows/{workflow-name}/{error-template-name}.md
           action: {Stop execution/Continue execution}
 
   - step: 3
@@ -130,7 +158,10 @@ examples:
 
 # Notes
 notes:
-  - {Important note 1}
-  - {Important note 2}
-  - {Important note 3}
+  - Always use message_template: for user-facing error messages (not inline message:)
+  - Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ) for date/time values
+  - If workflow needs scope validation, set requires_scope_validation: true and call sub-flow-validate-scope.yml in Step 1
+  - If workflow needs permission validation, set requires_permission_check: true and call sub-flow-validate-workflow-permission.yml in Step 1
+  - Currently, only project-initialisation requires validation (uses permission validation)
+  - All other workflows can be run by any agent (no validation required)
 

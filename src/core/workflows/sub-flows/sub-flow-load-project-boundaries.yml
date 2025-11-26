@@ -26,23 +26,6 @@ prerequisites:
 # Sub-Workflow Steps
 workflow_steps:
   - step: 1
-    name: Validate Agent Scope
-    description: CRITICAL PREREQUISITE - Validate that the agent executing the parent workflow has the required scope to call this sub-flow
-    actions:
-      - Get agent scope array from parent workflow context (agent executing the parent workflow)
-      - Verify agent's scope array includes required scope: boundaries
-    decision_points:
-      - condition: Agent scope includes required scope
-        if_true: Continue to step 2
-        if_false: Stop execution with error message
-    error_handling:
-      retry: false
-      error_messages:
-        - type: Insufficient Scope
-          message: "❌ Error: Insufficient scope to execute this sub-flow\n\nSub-flow: sub-flow-load-project-boundaries\nRequired scope: boundaries\nAgent: {agent_name}\nAgent scopes: {agent_scopes_list}\n\nThis agent does not have the required scope to execute this sub-flow.\nThe parent workflow cannot call this sub-flow because the agent lacks the 'boundaries' scope."
-          action: Stop execution
-
-  - step: 2
     name: Read Project Boundaries File
     description: Read the project boundaries file
     actions:
@@ -53,14 +36,14 @@ workflow_steps:
       retry: false
       error_messages:
         - type: Boundaries File Read Error
-          message: "⚠️ Warning: Cannot read project boundaries file\n\nFile: .baton/boundaries/project-boundaries.md\n\nContinuing without project boundaries..."
+          message_template: user-messages/workflows/sub-flows/boundaries-file-read-warning.md
           action: Continue execution (non-critical)
 
-  - step: 3
+  - step: 2
     name: Extract Boundaries Information
     description: Extract three-tier boundary system from file
     dependencies:
-      - step: 2
+      - step: 1
         required: true
     actions:
       - Extract "Always Do" section (mandatory actions)
