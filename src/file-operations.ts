@@ -2,6 +2,8 @@ import { readFileSync, copyFileSync, writeFileSync, mkdirSync, existsSync } from
 import { join, dirname } from 'path';
 import { cwd } from 'process';
 import { getFileVersion, compareVersions } from './utils.js';
+import yaml from 'js-yaml';
+import inquirer from 'inquirer';
 
 /**
  * Copy files from core-init.json based on configuration
@@ -151,6 +153,106 @@ export async function copyInitFiles(config: any, npmPackageRoot: string, project
 }
 
 /**
+ * Check if a value is a placeholder pattern
+ */
+function isPlaceholder(value: any): boolean {
+  if (typeof value !== 'string') return false;
+  return /^\{[^}]+\}$/.test(value.trim()) || value.trim() === '';
+}
+
+/**
+ * Find new sections in template compared to existing file
+ */
+function findNewSections(templateObj: any, existingObj: any, path: string = ''): string[] {
+  const newSections: string[] = [];
+  
+  for (const key in templateObj) {
+    const currentPath = path ? `${path}.${key}` : key;
+    const templateValue = templateObj[key];
+    const existingValue = existingObj[key];
+    
+    if (existingValue === undefined) {
+      // New section found
+      newSections.push(currentPath);
+    } else if (typeof templateValue === 'object' && templateValue !== null && !Array.isArray(templateValue)) {
+      // Recursively check nested objects
+      if (typeof existingValue === 'object' && existingValue !== null && !Array.isArray(existingValue)) {
+        newSections.push(...findNewSections(templateValue, existingValue, currentPath));
+      }
+    }
+  }
+  
+  return newSections;
+}
+
+/**
+ * Deep merge two objects, preserving existing values
+ */
+function deepMerge(existing: any, template: any): any {
+  const merged = { ...existing };
+  
+  for (const key in template) {
+    if (template[key] === undefined) continue;
+    
+    if (Array.isArray(template[key])) {
+      // For arrays, preserve existing array if it exists and has values
+      if (Array.isArray(merged[key]) && merged[key].length > 0) {
+        // Keep existing array
+        continue;
+      } else {
+        // Use template array (or empty array if template has empty array)
+        merged[key] = [...template[key]];
+      }
+    } else if (typeof template[key] === 'object' && template[key] !== null) {
+      // Recursively merge nested objects
+      if (typeof merged[key] === 'object' && merged[key] !== null && !Array.isArray(merged[key])) {
+        merged[key] = deepMerge(merged[key], template[key]);
+      } else {
+        // Existing value is not an object, preserve it unless it's a placeholder
+        if (merged[key] === undefined || isPlaceholder(merged[key])) {
+          merged[key] = template[key];
+        }
+      }
+    } else {
+      // For non-object values, only replace if existing is a placeholder or undefined
+      if (merged[key] === undefined || isPlaceholder(merged[key])) {
+        merged[key] = template[key];
+      }
+      // Otherwise keep existing value
+    }
+  }
+  
+  return merged;
+}
+
+/**
+ * Prompt for new section values (simplified - just returns template values for now)
+ * TODO: Implement full wizard similar to baton init
+ */
+async function promptForNewSections(newSections: string[], templateObj: any, existingObj: any): Promise<any> {
+  const values: any = {};
+  
+  // For now, use template values (full wizard implementation would go here)
+  // This is a placeholder - in a full implementation, we'd prompt for each new section
+  for (const sectionPath of newSections) {
+    const keys = sectionPath.split('.');
+    let value = templateObj;
+    for (const key of keys) {
+      value = value?.[key];
+    }
+    // Set the value in the nested structure
+    let target = values;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!target[keys[i]]) target[keys[i]] = {};
+      target = target[keys[i]];
+    }
+    target[keys[keys.length - 1]] = value;
+  }
+  
+  return values;
+}
+
+/**
  * Merge special files (project.manifest and project.config.yml)
  */
 export async function mergeSpecialFile(file: any, npmPackageRoot: string, projectRoot: string, updatedFiles: string[], devforce: boolean = false): Promise<void> {
@@ -158,7 +260,6 @@ export async function mergeSpecialFile(file: any, npmPackageRoot: string, projec
   const sourcePath = join(npmPackageRoot, file.source);
   
   const destPath = join(projectRoot, file.destination);
-  const sourceContent = readFileSync(sourcePath, 'utf-8');
   
   if (!existsSync(destPath)) {
     // File doesn't exist, create it from template
@@ -176,46 +277,132 @@ export async function mergeSpecialFile(file: any, npmPackageRoot: string, projec
     return;
   }
   
-  // File exists, need to merge - always create backup and new template (NEVER overwrite)
-  const destContent = readFileSync(destPath, 'utf-8');
+  // File exists - check versions
+  const sourceVersion = getFileVersion(sourcePath, file.destination);
+  const destVersion = getFileVersion(destPath, file.destination);
   
-  // Get versions to check if update is needed (unless devforce)
-  if (!devforce) {
-    const sourceVersion = getFileVersion(sourcePath, file.destination);
-    const destVersion = getFileVersion(destPath, file.destination);
+  if (!sourceVersion || !destVersion) {
+    // Can't compare versions
+    if (devforce) {
+      console.log(`   ⚠️  ${file.destination}: Cannot determine versions, but proceeding in devforce mode...`);
+    } else {
+      console.log(`   ℹ️  Skipped ${file.destination}: Cannot determine versions for comparison.`);
+      return;
+    }
+  } else {
+    const versionComparison = compareVersions(sourceVersion, destVersion);
     
-    if (sourceVersion && destVersion) {
-      const versionComparison = compareVersions(sourceVersion, destVersion);
-      if (versionComparison <= 0) {
-        // Source is not newer, skip
-        console.log(`   ℹ️  Skipped ${file.destination}: Source version (${sourceVersion}) is not newer than installed (${destVersion}).`);
+    // EDGE CASE: Template is older than installed version
+    if (versionComparison < 0) {
+      console.error(`\n❌ Error: Template version (${sourceVersion}) is older than installed version (${destVersion})`);
+      console.error(`   This should not happen. Please check for corruption or manual version changes.\n`);
+      return;
+    }
+    
+    // Versions match - nothing to do (unless devforce)
+    if (versionComparison === 0) {
+      if (devforce) {
+        console.log(`   🔄 ${file.destination}: Versions match, but proceeding in devforce mode...`);
+      } else {
+        console.log(`   ✓ ${file.destination} is up to date (version ${destVersion})`);
         return;
       }
+    } else {
+      // Template is newer - proceed with merge
+      console.log(`\n🔄 Updating ${file.destination} (${destVersion} → ${sourceVersion})...`);
     }
   }
   
-  // For special files, we need to preserve user data
-  // Save backup and new template for manual review (NEVER overwrite the original)
-  console.log(`\n⚠️  ${file.destination} needs manual merge`);
-  console.log('   This file contains user data that must be preserved.\n');
-  
+  // Create backup (just in case)
+  const backupPath = `${destPath}.bak`;
   try {
-    // Save backup of current file
-    const backupPath = `${destPath}.bak`;
     copyFileSync(destPath, backupPath);
     console.log(`   📦 Backup saved: ${backupPath}`);
-    
-    // Save new template for reference
-    const newPath = `${destPath}.new`;
-    writeFileSync(newPath, sourceContent, 'utf-8');
-    console.log(`   📄 New template saved: ${newPath}`);
-    console.log(`   ⚠️  Please manually merge ${file.destination} with ${newPath}`);
-    console.log(`   Original file backed up to ${backupPath}\n`);
-    
-    // Don't mark as updated since we're not actually merging automatically
-    // User needs to manually merge - original file is preserved and NOT overwritten
   } catch (error) {
-    console.error(`   ✗ Error preparing merge for ${file.destination}: ${error}\n`);
+    console.error(`   ⚠️  Warning: Could not create backup: ${error}`);
+  }
+  
+  // Read both files
+  const sourceContent = readFileSync(sourcePath, 'utf-8');
+  const destContent = readFileSync(destPath, 'utf-8');
+  
+  // Parse based on file type
+  let templateObj: any;
+  let existingObj: any;
+  let isYaml = false;
+  
+  try {
+    if (file.destination.endsWith('.yml') || file.destination.endsWith('.yaml')) {
+      // YAML file (project.config.yml)
+      isYaml = true;
+      templateObj = yaml.load(sourceContent) as any;
+      existingObj = yaml.load(destContent) as any;
+    } else if (file.destination.endsWith('.md')) {
+      // Markdown with frontmatter (project.manifest.md)
+      const sourceFrontmatter = sourceContent.match(/^---\s*\n([\s\S]*?)\n---/);
+      const destFrontmatter = destContent.match(/^---\s*\n([\s\S]*?)\n---/);
+      
+      if (sourceFrontmatter && destFrontmatter) {
+        templateObj = yaml.load(sourceFrontmatter[1]) as any;
+        existingObj = yaml.load(destFrontmatter[1]) as any;
+      } else {
+        throw new Error('Invalid frontmatter format');
+      }
+    } else {
+      throw new Error('Unsupported file type');
+    }
+  } catch (error) {
+    console.error(`   ✗ Error parsing files: ${error}`);
+    console.error(`   ⚠️  Manual merge required. Backup saved to ${backupPath}\n`);
+    return;
+  }
+  
+  // Find new sections in template
+  const newSections = findNewSections(templateObj, existingObj);
+  
+  // Merge existing sections (preserve user values)
+  let mergedObj = deepMerge(existingObj, templateObj);
+  
+  // If there are new sections, prompt for values (simplified for now)
+  if (newSections.length > 0) {
+    console.log(`   📝 New sections detected: ${newSections.join(', ')}`);
+    console.log(`   ℹ️  Using template defaults. Full wizard implementation coming soon.`);
+    // TODO: Implement full wizard for new sections
+    const newValues = await promptForNewSections(newSections, templateObj, existingObj);
+    // Merge new values
+    mergedObj = { ...mergedObj, ...newValues };
+  }
+  
+  // Write merged content
+  try {
+    let mergedContent: string;
+    if (isYaml) {
+      mergedContent = yaml.dump(mergedObj, { 
+        lineWidth: -1,
+        noRefs: true,
+        sortKeys: false
+      });
+    } else {
+      // Markdown with frontmatter
+      const frontmatter = yaml.dump(mergedObj, { 
+        lineWidth: -1,
+        noRefs: true,
+        sortKeys: false
+      });
+      const markdownContent = destContent.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '');
+      mergedContent = `---\n${frontmatter}---\n${markdownContent}`;
+    }
+    
+    writeFileSync(destPath, mergedContent, 'utf-8');
+    updatedFiles.push(file.destination);
+    console.log(`   ✓ Successfully merged ${file.destination}`);
+    if (newSections.length > 0) {
+      console.log(`   ⚠️  Please review new sections: ${newSections.join(', ')}`);
+    }
+    console.log('');
+  } catch (error) {
+    console.error(`   ✗ Error writing merged file: ${error}`);
+    console.error(`   ⚠️  Manual merge required. Backup saved to ${backupPath}\n`);
   }
 }
 
