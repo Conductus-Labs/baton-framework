@@ -468,20 +468,37 @@ components:
         workflows: []
         knowledge: []
 
-  # Knowledge: Framework knowledge files (currently empty - users install via CLI)
-  knowledge: []
-    # Knowledge files are installed by users via `baton install knowledge <name>`
-    # They are not part of the core framework installation
-    # Examples:
-    #   - name: "github-cli"
-    #     path: "src/core/knowledge/tools/github-cli.md"
-    #     destination: ".baton/knowledge/github-cli.md"
-    #     core: false
-    #     description: "GitHub CLI tool documentation"
-    #     version: "1.0.0"
-    #     dependencies:
-    #       workflows: []
-    #       knowledge: []
+  # Knowledge: Framework knowledge files
+  knowledge:
+    - name: "github-cli"
+      path: "src/core/knowledge/github/github-cli.md"
+      destination: ".baton/knowledge/github/github-cli.md"
+      core: false
+      description: "GitHub CLI (gh) tool documentation for command-line GitHub operations"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "github-api"
+      path: "src/core/knowledge/github/github-api.md"
+      destination: ".baton/knowledge/github/github-api.md"
+      core: false
+      description: "GitHub REST API documentation for programmatic GitHub access"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
+
+    - name: "git-cli"
+      path: "src/core/knowledge/git-cli.md"
+      destination: ".baton/knowledge/git-cli.md"
+      core: false
+      description: "Git CLI tool documentation for distributed version control operations"
+      version: "1.0.0"
+      dependencies:
+        workflows: []
+        knowledge: []
 
   # Messages: User-facing message templates for workflows and commands
   messages:
