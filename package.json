@@ -9,10 +9,10 @@
   ],
   "scripts": {
     "build": "npm run build:ordered",
-    "build:ordered": "npm run build --workspace=packages/core && npm run build --workspace=packages/agents && npm run build --workspace=packages/cognitive-patterns && npm run build --workspace=packages/knowledge && npm run build --workspace=packages/workflows",
+    "build:ordered": "npm run build --workspace=packages/core && npm run build --workspace=packages/cognitive-patterns && npm run build --workspace=packages/agents && npm run build --workspace=packages/knowledge && npm run build --workspace=packages/workflows && npm run build --workspace=packages/claude-commands && npm run build --workspace=packages/cursor-commands-core",
     "test": "npm run test:root && npm run test:workspaces",
     "test:root": "vitest run",
-    "test:workspaces": "npm run test --workspaces",
+    "test:workspaces": "npm run test --workspaces --if-present",
     "test:watch": "vitest",
     "test:coverage": "npm run test:coverage:root && npm run test:coverage --workspaces",
     "test:coverage:root": "vitest run --coverage",
