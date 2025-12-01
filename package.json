@@ -35,12 +35,15 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "@vitest/coverage-v8": "^1.6.1",
+    "eslint": "^8.57.0",
     "typescript": "^5.3.3",
     "vitest": "^1.6.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Conductus-Labs/baton-framework.git"
-  }
+  },
 }
