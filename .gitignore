@@ -15,7 +15,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
+# package-lock.json - Keep this committed for CI/CD (npm ci requires it)
 yarn.lock
 .pnpm-debug.log*
 
