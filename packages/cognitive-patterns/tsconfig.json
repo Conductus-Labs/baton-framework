@@ -3,7 +3,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@conductus-labs/baton-core": ["../core/src"],
+      "@conductus-labs/baton-core/*": ["../core/src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"],

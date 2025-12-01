@@ -3,7 +3,8 @@
     "target": "ES2022",
     "module": "ESNext",
     "lib": ["ES2022"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -13,7 +14,23 @@
     "sourceMap": true,
     "composite": true,
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@conductus-labs/baton-core": ["./packages/core/src"],
+      "@conductus-labs/baton-core/*": ["./packages/core/src/*"],
+      "@conductus-labs/baton-agents": ["./packages/agents/src"],
+      "@conductus-labs/baton-agents/*": ["./packages/agents/src/*"],
+      "@conductus-labs/baton-cognitive-patterns": [
+        "./packages/cognitive-patterns/src"
+      ],
+      "@conductus-labs/baton-cognitive-patterns/*": [
+        "./packages/cognitive-patterns/src/*"
+      ],
+      "@conductus-labs/baton-knowledge": ["./packages/knowledge/src"],
+      "@conductus-labs/baton-knowledge/*": ["./packages/knowledge/src/*"],
+      "@conductus-labs/baton-workflows": ["./packages/workflows/src"],
+      "@conductus-labs/baton-workflows/*": ["./packages/workflows/src/*"]
+    }
   },
   "files": [],
   "references": [

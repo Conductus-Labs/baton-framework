@@ -8,8 +8,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build:ordered",
-    "build:ordered": "npm run build --workspace=packages/core && npm run build --workspace=packages/cognitive-patterns && npm run build --workspace=packages/agents && npm run build --workspace=packages/knowledge && npm run build --workspace=packages/workflows && npm run build --workspace=packages/claude-commands && npm run build --workspace=packages/cursor-commands-core",
+    "build": "node scripts/build.js",
     "test": "npm run test:root && npm run test:workspaces",
     "test:root": "vitest run",
     "test:workspaces": "npm run test --workspaces --if-present",
@@ -23,7 +22,7 @@
     "lint:eslint:workspaces": "npm run lint --workspaces --if-present",
     "lint:markdown": "markdownlint . -c .markdownlint.json --ignore node_modules --ignore dist --ignore .archive --ignore .baton --ignore baton --ignore coverage",
     "lint:yaml": "node scripts/lint-yaml.js",
-    "clean": "npm run clean --workspaces",
+    "clean": "npm run clean --workspaces && node -e \"const fs=require('fs'),path=require('path');function r(p){const d=fs.readdirSync(p);d.forEach(f=>{const fp=path.join(p,f);if(fs.statSync(fp).isDirectory())r(fp);else if(f.endsWith('.tsbuildinfo'))fs.unlinkSync(fp);});}['packages','.'].forEach(d=>{if(fs.existsSync(d))r(d);});\"",
     "publish:all": "npm run publish --workspaces --if-present"
   },
   "keywords": [
