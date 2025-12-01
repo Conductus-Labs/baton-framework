@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "test:coverage": "npm run test:coverage:root && npm run test:coverage --workspaces",
     "test:coverage:root": "vitest run --coverage",
-    "lint": "npm run lint --workspaces",
+    "lint": "npm run lint --workspaces --if-present",
     "clean": "npm run clean --workspaces",
     "publish:all": "npm run publish --workspaces --if-present"
   },
