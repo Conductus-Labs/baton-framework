@@ -1,0 +1,170 @@
+# Publish to GitHub Packages Workflow
+#
+# Purpose: Automatically publish all packages to GitHub Packages when code is merged to dev branch
+# This provides internal testing packages before public npm release.
+#
+# Publishing Strategy:
+# - dev branch → GitHub Packages (with -dev-{timestamp} suffix)
+# - main branch tags → npm registry (public release)
+#
+# Version Format: {base-version}-dev-{timestamp}
+# Example: 1.0.0-dev-20251201173237
+#
+# Authentication: Uses GITHUB_TOKEN (automatically available, no secret needed)
+# Registry: https://npm.pkg.github.com
+# Scope: @conductus-labs
+
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish-all:
+    name: Publish All Packages to GitHub Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@conductus-labs"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Generate dev version suffix
+        id: version-suffix
+        run: |
+          # Generate timestamp in format: YYYYMMDDHHMMSS
+          TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
+          echo "dev-suffix=-dev-$TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "✅ Dev version suffix: -dev-$TIMESTAMP"
+
+      - name: Publish @conductus-labs/baton-core
+        id: publish-core
+        continue-on-error: true
+        run: |
+          cd packages/core
+          # Get current version and append dev suffix
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${CURRENT_VERSION}${{ steps.version-suffix.outputs.dev-suffix }}"
+
+          # Temporarily update package.json version
+          npm version "$DEV_VERSION" --no-git-tag-version
+
+          # Publish to GitHub Packages
+          npm publish
+
+          echo "✅ Published @conductus-labs/baton-core@$DEV_VERSION to GitHub Packages"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @conductus-labs/baton-agents
+        id: publish-agents
+        continue-on-error: true
+        run: |
+          cd packages/agents
+          # Get current version and append dev suffix
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${CURRENT_VERSION}${{ steps.version-suffix.outputs.dev-suffix }}"
+
+          # Temporarily update package.json version
+          npm version "$DEV_VERSION" --no-git-tag-version
+
+          # Publish to GitHub Packages
+          npm publish
+
+          echo "✅ Published @conductus-labs/baton-agents@$DEV_VERSION to GitHub Packages"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @conductus-labs/baton-cognitive-patterns
+        id: publish-cognitive-patterns
+        continue-on-error: true
+        run: |
+          cd packages/cognitive-patterns
+          # Get current version and append dev suffix
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${CURRENT_VERSION}${{ steps.version-suffix.outputs.dev-suffix }}"
+
+          # Temporarily update package.json version
+          npm version "$DEV_VERSION" --no-git-tag-version
+
+          # Publish to GitHub Packages
+          npm publish
+
+          echo "✅ Published @conductus-labs/baton-cognitive-patterns@$DEV_VERSION to GitHub Packages"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @conductus-labs/baton-knowledge
+        id: publish-knowledge
+        continue-on-error: true
+        run: |
+          cd packages/knowledge
+          # Get current version and append dev suffix
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${CURRENT_VERSION}${{ steps.version-suffix.outputs.dev-suffix }}"
+
+          # Temporarily update package.json version
+          npm version "$DEV_VERSION" --no-git-tag-version
+
+          # Publish to GitHub Packages
+          npm publish
+
+          echo "✅ Published @conductus-labs/baton-knowledge@$DEV_VERSION to GitHub Packages"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish @conductus-labs/baton-workflows
+        id: publish-workflows
+        continue-on-error: true
+        run: |
+          cd packages/workflows
+          # Get current version and append dev suffix
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${CURRENT_VERSION}${{ steps.version-suffix.outputs.dev-suffix }}"
+
+          # Temporarily update package.json version
+          npm version "$DEV_VERSION" --no-git-tag-version
+
+          # Publish to GitHub Packages
+          npm publish
+
+          echo "✅ Published @conductus-labs/baton-workflows@$DEV_VERSION to GitHub Packages"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Summary
+        if: always()
+        run: |
+          echo "## 📦 GitHub Packages Publishing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| @conductus-labs/baton-core | ${{ steps.publish-core.outcome == 'success' && '✅ Published' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| @conductus-labs/baton-agents | ${{ steps.publish-agents.outcome == 'success' && '✅ Published' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| @conductus-labs/baton-cognitive-patterns | ${{ steps.publish-cognitive-patterns.outcome == 'success' && '✅ Published' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| @conductus-labs/baton-knowledge | ${{ steps.publish-knowledge.outcome == 'success' && '✅ Published' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| @conductus-labs/baton-workflows | ${{ steps.publish-workflows.outcome == 'success' && '✅ Published' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Dev Version Suffix:** ${{ steps.version-suffix.outputs.dev-suffix }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Packages are available at: https://github.com/orgs/Conductus-Labs/packages" >> $GITHUB_STEP_SUMMARY

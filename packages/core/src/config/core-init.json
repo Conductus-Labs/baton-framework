@@ -1,0 +1,678 @@
+{
+  "version": "1.0.0",
+  "description": "Files to install during baton init",
+  "directories": [
+    {
+      "path": ".baton/agents"
+    },
+    {
+      "path": ".baton/boundaries"
+    },
+    {
+      "path": ".baton/cognitive"
+    },
+    {
+      "path": ".baton/context"
+    },
+    {
+      "path": ".baton/knowledge"
+    },
+    {
+      "path": ".baton/messages/user-messages/workflows"
+    },
+    {
+      "path": ".baton/messages/user-messages/commands/start-baton-project"
+    },
+    {
+      "path": ".baton/messages/agent-messages"
+    },
+    {
+      "path": ".baton/messages/agent-messages/a2a"
+    },
+    {
+      "path": ".baton/a2a-comms"
+    },
+    {
+      "path": ".baton/a2a-comms/archived"
+    },
+    {
+      "path": ".baton/workflows/sub-flows"
+    },
+    {
+      "path": ".cursor/commands/baton"
+    },
+    {
+      "path": ".claude/commands/baton"
+    },
+    {
+      "path": ".gemini/commands/baton"
+    }
+  ],
+  "files": [
+    {
+      "source": "baton/agents/baton-agent.md",
+      "destination": ".baton/agents/baton-agent.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/agent-initialisation.yml",
+      "destination": ".baton/workflows/agent-initialisation.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/project-initialisation.yml",
+      "destination": ".baton/workflows/project-initialisation.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/context-synchronisation.yml",
+      "destination": ".baton/workflows/context-synchronisation.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/manage-boundary-rule.yml",
+      "destination": ".baton/workflows/manage-boundary-rule.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-create-agent-context.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-create-agent-context.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-load-agent-boundaries.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-load-agent-boundaries.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-load-agent-context.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-load-agent-context.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-load-project-boundaries.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-load-project-boundaries.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-load-project-config.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-load-project-config.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-load-project-manifest.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-load-project-manifest.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-create-agent-boundaries.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-create-agent-boundaries.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/workflows/sub-flows/sub-flow-validate-workflow-permission.yml",
+      "destination": ".baton/workflows/sub-flows/sub-flow-validate-workflow-permission.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/sync-context.md",
+      "destination": ".cursor/commands/baton/sync-context.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/manage-project-rules.md",
+      "destination": ".cursor/commands/baton/manage-project-rules.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/manage-agent-rules.md",
+      "destination": ".cursor/commands/baton/manage-agent-rules.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/start-baton-project.md",
+      "destination": ".cursor/commands/baton/start-baton-project.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".cursor/commands/baton/init-agent.md",
+      "type": "exact_copy",
+      "platform": "cursor"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/sync-context.md",
+      "destination": ".claude/commands/baton/sync-context.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/manage-project-rules.md",
+      "destination": ".claude/commands/baton/manage-project-rules.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/manage-agent-rules.md",
+      "destination": ".claude/commands/baton/manage-agent-rules.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/start-baton-project.md",
+      "destination": ".claude/commands/baton/start-baton-project.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".claude/commands/baton/init-agent.md",
+      "type": "exact_copy",
+      "platform": "claude"
+    },
+    {
+      "source": "baton/commands/toml/baton-agent/init-baton-agent.toml",
+      "destination": ".gemini/commands/baton/init-baton-agent.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "baton/commands/markdown/baton-agent/init-agent.md",
+      "destination": ".gemini/commands/baton/init-agent.md",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "baton/commands/toml/baton-agent/project-init.toml",
+      "destination": ".gemini/commands/baton/project-init.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "baton/commands/toml/baton-agent/sync-context.toml",
+      "destination": ".gemini/commands/baton/sync-context.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "baton/commands/toml/baton-agent/start-baton-project.toml",
+      "destination": ".gemini/commands/baton/start-baton-project.toml",
+      "type": "exact_copy",
+      "platform": "gemini"
+    },
+    {
+      "source": "baton/cognitive/adaptive-thinking.yml",
+      "destination": ".baton/cognitive/adaptive-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/agile-thinking.yml",
+      "destination": ".baton/cognitive/agile-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/analytical-thinking.yml",
+      "destination": ".baton/cognitive/analytical-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/collaborative-thinking.yml",
+      "destination": ".baton/cognitive/collaborative-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/computational-thinking.yml",
+      "destination": ".baton/cognitive/computational-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/creative-problem-solving.yml",
+      "destination": ".baton/cognitive/creative-problem-solving.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/critical-thinking.yml",
+      "destination": ".baton/cognitive/critical-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/design-thinking.yml",
+      "destination": ".baton/cognitive/design-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/empathetic-thinking.yml",
+      "destination": ".baton/cognitive/empathetic-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/ethical-thinking.yml",
+      "destination": ".baton/cognitive/ethical-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/experimental-thinking.yml",
+      "destination": ".baton/cognitive/experimental-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/growth-mindset.yml",
+      "destination": ".baton/cognitive/growth-mindset.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/lateral-thinking.yml",
+      "destination": ".baton/cognitive/lateral-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/lean-thinking.yml",
+      "destination": ".baton/cognitive/lean-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/meta-cognitive.yml",
+      "destination": ".baton/cognitive/meta-cognitive.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/resilience-thinking.yml",
+      "destination": ".baton/cognitive/resilience-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/strategic-thinking.yml",
+      "destination": ".baton/cognitive/strategic-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/systematic-approach.yml",
+      "destination": ".baton/cognitive/systematic-approach.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/cognitive/systems-thinking.yml",
+      "destination": ".baton/cognitive/systems-thinking.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/project-file-templates/project.config-template.yml",
+      "destination": ".baton/project.config.yml",
+      "type": "template"
+    },
+    {
+      "source": "baton/core/permissions/workflow-permissions.yml",
+      "destination": ".baton/workflows/workflow-permissions.yml",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/project-file-templates/project-manifest-template.md",
+      "destination": ".baton/project.manifest.md",
+      "type": "template"
+    },
+    {
+      "source": "baton/templates/boundaries-templates/project-boundaries-template.md",
+      "destination": ".baton/boundaries/project-boundaries.md",
+      "type": "template"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-1-insufficient-permission-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-2-project-already-initialized-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-2-project-already-initialized-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-3-empty-project-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-3-empty-project-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-4-hitl-checkpoint.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-4-hitl-checkpoint.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-4-user-rejected-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-4-user-rejected-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-4-required-fields-missing-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-4-required-fields-missing-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-5-file-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-5-file-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-5-template-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-5-template-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-5-required-fields-still-missing-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-5-required-fields-still-missing-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-6-empty-project-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-6-empty-project-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-7-hitl-checkpoint.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-7-hitl-checkpoint.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-7-user-rejected-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-7-user-rejected-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-8-file-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-8-file-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-8-template-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-8-template-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-9-hitl-checkpoint.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-9-hitl-checkpoint.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-9-user-rejected-boundaries-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-9-user-rejected-boundaries-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-10-file-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-10-file-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-10-template-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-10-template-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/project-initialisation/step-11-confirmation.md",
+      "destination": ".baton/messages/user-messages/workflows/project-initialisation/step-11-confirmation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-2-project-not-initialized-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-3-file-read-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-3-file-read-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-4-agent-file-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-4-agent-file-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-4-invalid-agent-file-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-4-invalid-agent-file-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-5-cognitive-pattern-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-5-cognitive-pattern-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-6-context-file-read-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-6-context-file-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-7-project-boundaries-not-found-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-7-project-boundaries-not-found-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-7-boundaries-file-read-warning.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-7-boundaries-file-read-warning.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-8-confirmation-initialized.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-8-confirmation-initialized.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md",
+      "destination": ".baton/messages/user-messages/workflows/agent-initialisation/step-8-confirmation-not-initialized.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-1-insufficient-permission-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-5-context-file-read-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
+      "destination": ".baton/messages/user-messages/workflows/context-synchronisation/step-9-confirmation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-1-invalid-parameters-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-2-invalid-agent-name-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-project-boundaries-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-3-agent-boundaries-creation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-4-boundaries-file-read-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-already-exists-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-not-found-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-rule-operation-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-5-file-write-error.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/step-6-confirmation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/workflows/manage-boundary-rule/show-rules.md",
+      "destination": ".baton/messages/user-messages/workflows/manage-boundary-rule/show-rules.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-1-welcome.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-1-welcome.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-3-project-scan-results.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-3-project-scan-results.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-5-manifest-property-prompt.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-6-config-property-prompt.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-6-config-property-prompt.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-7-agent-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-8-workflow-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-suggestions.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-selection.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-selection.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-9-knowledge-installation-progress.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-11-welcome-complete.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-11-welcome-complete.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/step-12-command-deleted.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/step-12-command-deleted.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/error-agent-init-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-agent-init-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/error-file-write-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-file-write-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/user-messages/commands/start-baton-project/error-cli-command-failed.md",
+      "destination": ".baton/messages/user-messages/commands/start-baton-project/error-cli-command-failed.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/a2a-initiate-conversation.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-initiate-conversation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/a2a-read-messages.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-read-messages.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/a2a-respond-to-message.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-respond-to-message.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/a2a-reach-agreement.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-reach-agreement.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/a2a-close-conversation.md",
+      "destination": ".baton/messages/agent-messages/a2a/a2a-close-conversation.md",
+      "type": "exact_copy"
+    },
+    {
+      "source": "baton/templates/message-templates/agent-messages/a2a/README.md",
+      "destination": ".baton/messages/agent-messages/a2a/README.md",
+      "type": "exact_copy"
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 # Baton workspace files
 .baton/
 .test/
+.test-manual/
+baton/
+
+# Archive folder (old CLI files)
+.archive/
 
 # Cursor IDE files
 .cursor/
@@ -17,6 +22,9 @@ yarn.lock
 # TypeScript
 *.tsbuildinfo
 dist/
+
+# Package build outputs
+packages/*/dist/
 
 # Vite / Vitest
 .vite/

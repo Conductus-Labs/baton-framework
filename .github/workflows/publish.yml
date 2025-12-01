@@ -1,0 +1,206 @@
+# Publish to npm Workflow
+#
+# Purpose: Publish packages to public npm registry for production releases
+#
+# Publishing Strategy:
+# - dev branch → GitHub Packages (see publish-github-packages.yml)
+# - main branch tags → npm registry (this workflow, public release)
+#
+# Security: Only tags on main branch are allowed to publish to npm
+# This prevents accidental public releases from dev or feature branches.
+#
+# Authentication: Requires NPM_TOKEN secret in repository settings
+# Registry: https://registry.npmjs.org (public npm registry)
+
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "@conductus-labs/baton-core@*"
+      - "@conductus-labs/baton-agents@*"
+      - "@conductus-labs/baton-cognitive-patterns@*"
+      - "@conductus-labs/baton-knowledge@*"
+      - "@conductus-labs/baton-workflows@*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  verify-branch:
+    name: Verify Tag is on Main Branch
+    runs-on: ubuntu-latest
+    outputs:
+      is-main: ${{ steps.check.outputs.is-main }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if tag is on main branch
+        id: check
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          echo "🔍 Checking if tag $TAG_NAME is on main branch..."
+
+          # Get the commit SHA the tag points to
+          TAG_COMMIT=$(git rev-list -n 1 "$TAG_NAME" 2>/dev/null)
+
+          if [ -z "$TAG_COMMIT" ]; then
+            echo "❌ Error: Could not find commit for tag $TAG_NAME"
+            exit 1
+          fi
+
+          echo "📌 Tag $TAG_NAME points to commit: $TAG_COMMIT"
+
+          # Fetch main branch
+          git fetch origin main:main 2>/dev/null || git fetch origin main
+
+          # Check if this commit is on main branch
+          if git branch -r --contains "$TAG_COMMIT" | grep -q "origin/main"; then
+            echo "is-main=true" >> $GITHUB_OUTPUT
+            echo "✅ Tag $TAG_NAME is on main branch - npm publishing allowed"
+          else
+            echo "is-main=false" >> $GITHUB_OUTPUT
+            echo "❌ Tag $TAG_NAME is NOT on main branch"
+            echo ""
+            echo "⚠️  npm publishing is restricted to tags on the main branch only."
+            echo "   This tag appears to be on a different branch."
+            echo ""
+            echo "   If you need to publish from dev branch, use GitHub Packages instead:"
+            echo "   - GitHub Packages publishing happens automatically on dev branch merges"
+            echo "   - See: .github/workflows/publish-github-packages.yml"
+            exit 1
+          fi
+
+  detect-package:
+    name: Detect Package from Tag
+    runs-on: ubuntu-latest
+    outputs:
+      package-name: ${{ steps.extract.outputs.package-name }}
+      package-version: ${{ steps.extract.outputs.package-version }}
+      package-path: ${{ steps.extract.outputs.package-path }}
+    steps:
+      - name: Extract package info from tag
+        id: extract
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          echo "Tag: $TAG_NAME"
+
+          # Extract package name and version from tag format: @conductus-labs/baton-{package}@{version}
+          if [[ $TAG_NAME =~ @conductus-labs/baton-(.+)@(.+) ]]; then
+            PACKAGE_SUFFIX="${BASH_REMATCH[1]}"
+            VERSION="${BASH_REMATCH[2]}"
+            
+            # Map package suffix to package directory
+            case "$PACKAGE_SUFFIX" in
+              core)
+                PACKAGE_NAME="@conductus-labs/baton-core"
+                PACKAGE_PATH="packages/core"
+                ;;
+              agents)
+                PACKAGE_NAME="@conductus-labs/baton-agents"
+                PACKAGE_PATH="packages/agents"
+                ;;
+              cognitive-patterns)
+                PACKAGE_NAME="@conductus-labs/baton-cognitive-patterns"
+                PACKAGE_PATH="packages/cognitive-patterns"
+                ;;
+              knowledge)
+                PACKAGE_NAME="@conductus-labs/baton-knowledge"
+                PACKAGE_PATH="packages/knowledge"
+                ;;
+              workflows)
+                PACKAGE_NAME="@conductus-labs/baton-workflows"
+                PACKAGE_PATH="packages/workflows"
+                ;;
+              *)
+                echo "❌ Unknown package: $PACKAGE_SUFFIX"
+                exit 1
+                ;;
+            esac
+            
+            echo "package-name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+            echo "package-version=$VERSION" >> $GITHUB_OUTPUT
+            echo "package-path=$PACKAGE_PATH" >> $GITHUB_OUTPUT
+            
+            echo "✅ Detected package: $PACKAGE_NAME@$VERSION"
+            echo "📦 Package path: $PACKAGE_PATH"
+          else
+            echo "❌ Invalid tag format: $TAG_NAME"
+            echo "Expected format: @conductus-labs/baton-{package}@{version}"
+            exit 1
+          fi
+
+  publish:
+    name: Publish ${{ needs.detect-package.outputs.package-name }}@${{ needs.detect-package.outputs.package-version }}
+    needs: [detect-package, verify-branch]
+    if: needs.verify-branch.outputs.is-main == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: |
+          cd ${{ needs.detect-package.outputs.package-path }}
+          npm run build
+
+      - name: Verify package.json version matches tag
+        run: |
+          cd ${{ needs.detect-package.outputs.package-path }}
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${{ needs.detect-package.outputs.package-version }}"
+
+          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
+            echo "❌ Version mismatch!"
+            echo "package.json version: $PACKAGE_VERSION"
+            echo "Tag version: $TAG_VERSION"
+            exit 1
+          fi
+
+          echo "✅ Version matches: $PACKAGE_VERSION"
+
+      - name: Publish to npm
+        run: |
+          cd ${{ needs.detect-package.outputs.package-path }}
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ needs.detect-package.outputs.package-name }}@${{ needs.detect-package.outputs.package-version }}
+          body: |
+            ## ${{ needs.detect-package.outputs.package-name }}@${{ needs.detect-package.outputs.package-version }}
+
+            Published to npm registry.
+
+            ### Installation
+
+            ```bash
+            npm install ${{ needs.detect-package.outputs.package-name }}@${{ needs.detect-package.outputs.package-version }}
+            ```
+
+            ### Package
+
+            - **Name:** ${{ needs.detect-package.outputs.package-name }}
+            - **Version:** ${{ needs.detect-package.outputs.package-version }}
+            - **Path:** ${{ needs.detect-package.outputs.package-path }}
+          draft: false
+          prerelease: false
+        continue-on-error: true

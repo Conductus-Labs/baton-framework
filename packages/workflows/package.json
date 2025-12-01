@@ -1,0 +1,49 @@
+{
+  "name": "@conductus-labs/baton-workflows",
+  "version": "1.0.0",
+  "description": "Baton Framework workflow definitions",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src",
+    "clean": "rm -rf dist",
+    "postinstall": "node scripts/setup-baton-folder.js",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@conductus-labs/baton-core": "file:../core",
+    "@conductus-labs/baton-agents": "file:../agents"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.1",
+    "@vitest/coverage-v8": "^1.6.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "baton",
+    "framework",
+    "ai",
+    "workflows",
+    "workflow-definitions"
+  ],
+  "author": "Conductus Labs Ltd",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Conductus-Labs/baton-framework.git",
+    "directory": "packages/workflows"
+  }
+}

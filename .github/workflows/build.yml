@@ -1,0 +1,59 @@
+name: Build
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  build:
+    name: Build All Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Verify build artifacts
+        run: |
+          echo "Checking build artifacts..."
+          for package in packages/*/; do
+            package_name=$(basename "$package")
+            if [ -d "$package/dist" ]; then
+              echo "✅ $package_name: dist/ directory exists"
+              if [ -f "$package/dist/index.js" ]; then
+                echo "✅ $package_name: dist/index.js exists"
+              else
+                echo "⚠️  $package_name: dist/index.js not found"
+              fi
+              if [ -f "$package/dist/index.d.ts" ]; then
+                echo "✅ $package_name: dist/index.d.ts exists"
+              else
+                echo "⚠️  $package_name: dist/index.d.ts not found"
+              fi
+            else
+              echo "❌ $package_name: dist/ directory not found"
+              exit 1
+            fi
+          done
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            packages/*/dist/
+          retention-days: 7
+          if-no-files-found: warn

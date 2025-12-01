@@ -1,49 +1,45 @@
 {
-  "name": "@conductus-labs/baton-cli",
-  "version": "0.1.1",
-  "description": "CLI tool for initializing and managing Baton Framework projects",
+  "name": "baton-framework",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Baton Framework - Core component library for AI agent orchestration",
   "type": "module",
-  "main": "dist/index.js",
-  "bin": {
-    "baton": "./bin/baton.js"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "npm link && tsc --watch",
-    "prepublishOnly": "npm run build",
-    "test": "vitest run",
+    "build": "npm run build --workspaces",
+    "test": "npm run test:root && npm run test:workspaces",
+    "test:root": "vitest run",
+    "test:workspaces": "npm run test --workspaces",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "npm run test:coverage:root && npm run test:coverage --workspaces",
+    "test:coverage:root": "vitest run --coverage",
+    "lint": "npm run lint --workspaces",
+    "clean": "npm run clean --workspaces",
+    "publish:all": "npm run publish --workspaces --if-present"
   },
   "keywords": [
     "baton",
-    "cli",
+    "framework",
     "ai",
     "agent",
-    "framework"
+    "cognitive-patterns",
+    "workflows"
   ],
   "author": "Conductus Labs Ltd",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
-  "dependencies": {
-    "commander": "^11.1.0",
-    "inquirer": "^9.2.15",
-    "js-yaml": "^4.1.1"
-  },
   "devDependencies": {
-    "@types/inquirer": "^9.0.7",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.0",
     "@vitest/coverage-v8": "^1.6.1",
     "typescript": "^5.3.3",
     "vitest": "^1.6.1"
   },
-  "files": [
-    "bin",
-    "dist",
-    "src/config",
-    "src/core"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Conductus-Labs/baton-framework.git"
+  }
 }

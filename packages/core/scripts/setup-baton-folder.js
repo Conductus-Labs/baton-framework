@@ -1,0 +1,173 @@
+#!/usr/bin/env node
+
+/**
+ * Post-install script for @conductus-labs/baton-core
+ * Copies core framework files to baton/core/ folder in project root
+ */
+
+import {
+  existsSync,
+  mkdirSync,
+  copyFileSync,
+  readdirSync,
+  statSync,
+  readFileSync,
+} from "fs";
+import { join, dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/**
+ * Find project root by walking up from a starting path
+ * Skips node_modules directories to find the actual project root
+ */
+function findProjectRoot(startPath) {
+  let current = resolve(startPath);
+  while (current !== dirname(current)) {
+    // Skip if we're in node_modules
+    if (current.includes("node_modules")) {
+      current = dirname(current);
+      continue;
+    }
+
+    if (existsSync(join(current, "package.json"))) {
+      // Check if this is a workspace root (has workspaces field) or a regular project
+      try {
+        const pkgJson = JSON.parse(
+          readFileSync(join(current, "package.json"), "utf-8")
+        );
+        // If it's a workspace root or doesn't have workspaces, it's a valid project root
+        // Also accept if it's not in node_modules
+        if (!current.includes("node_modules")) {
+          return current;
+        }
+      } catch {
+        // If we can't read package.json, continue
+      }
+    }
+    current = dirname(current);
+  }
+  return null;
+}
+
+/**
+ * Copy directory recursively
+ */
+function copyDir(src, dest) {
+  if (!existsSync(dest)) {
+    mkdirSync(dest, { recursive: true });
+  }
+
+  const entries = readdirSync(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = join(src, entry.name);
+    const destPath = join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      // Only copy if file doesn't exist (preserve user customizations)
+      if (!existsSync(destPath)) {
+        copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+}
+
+/**
+ * Main setup function
+ */
+function setupBatonFolder() {
+  try {
+    // Find project root
+    // When installed via file: protocol, the package might be symlinked
+    // npm sets INIT_CWD to the directory where npm install was run
+    const packageDir = resolve(__dirname, "..");
+    let projectRoot = null;
+
+    // Strategy 1: Use INIT_CWD if available (set by npm during install)
+    // This works for both normal installs and file: protocol installs
+    if (process.env.INIT_CWD) {
+      projectRoot = findProjectRoot(process.env.INIT_CWD);
+    }
+
+    // Strategy 2: Walk up from node_modules location (for normal installs)
+    // This handles cases where INIT_CWD might not be set
+    if (!projectRoot) {
+      // Check if we're in node_modules (normal install)
+      if (__dirname.includes("node_modules")) {
+        // Walk up from node_modules to find project root
+        const nodeModulesIndex = __dirname.indexOf("node_modules");
+        const nodeModulesPath = __dirname.substring(0, nodeModulesIndex);
+        projectRoot = findProjectRoot(nodeModulesPath);
+      } else {
+        // We're in a file: protocol install, try walking up from package directory
+        // Skip the package directory itself and its parent (packages/)
+        const packageParent = resolve(packageDir, "..", "..");
+        projectRoot = findProjectRoot(packageParent);
+      }
+    }
+
+    if (!projectRoot) {
+      console.warn(
+        "Could not find project root. Skipping baton/ folder setup."
+      );
+      return;
+    }
+
+    const batonDir = join(projectRoot, "baton");
+    const batonCoreDir = join(batonDir, "core");
+
+    // Create baton/core directory if it doesn't exist
+    if (!existsSync(batonCoreDir)) {
+      mkdirSync(batonCoreDir, { recursive: true });
+    }
+
+    // Copy core files
+    const srcManifest = join(packageDir, "src", "manifest");
+    const srcConfig = join(packageDir, "src", "config");
+    const srcPermissions = join(packageDir, "src", "permissions");
+    const srcTemplates = join(packageDir, "src", "templates");
+    const srcCommands = join(packageDir, "src", "commands");
+
+    const destManifest = join(batonCoreDir, "manifest");
+    const destConfig = join(batonCoreDir, "config");
+    const destPermissions = join(batonCoreDir, "permissions");
+    const destTemplates = join(batonDir, "templates");
+    const destCommands = join(batonDir, "commands");
+
+    // Copy manifest files
+    if (existsSync(srcManifest)) {
+      copyDir(srcManifest, destManifest);
+    }
+
+    // Copy config files
+    if (existsSync(srcConfig)) {
+      copyDir(srcConfig, destConfig);
+    }
+
+    // Copy permissions files
+    if (existsSync(srcPermissions)) {
+      copyDir(srcPermissions, destPermissions);
+    }
+
+    // Copy templates files
+    if (existsSync(srcTemplates)) {
+      copyDir(srcTemplates, destTemplates);
+    }
+
+    // Copy commands files
+    if (existsSync(srcCommands)) {
+      copyDir(srcCommands, destCommands);
+    }
+
+    console.log("✓ baton-core: Framework files copied to baton/core/");
+  } catch (error) {
+    console.warn("Error setting up baton-core folder:", error.message);
+    // Don't fail installation if setup fails
+  }
+}
+
+setupBatonFolder();

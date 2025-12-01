@@ -1,0 +1,260 @@
+# Context Synchronisation Workflow
+# Format: Pure YAML (no frontmatter)
+# Purpose: Synchronize agent context with current session information
+
+version: 1.0.0
+workflow_name: context-synchronisation
+purpose: Synchronize agent context with current session information
+associate_command: /sync-context
+requires_permission_check: false  # All agents can synchronize their context
+created: 2025-11-24
+
+# Prerequisites
+prerequisites:
+  - Agent short-name parameter must be provided (passed from command or context)
+  - Write access to `.baton/context/` directory
+
+# Workflow Parameters
+parameters:
+  agent_short_name: { Required - Agent short-name for context file }
+
+# Workflow Steps
+workflow_steps:
+  - step: 1
+    name: Validate Parameters
+    description: Validate that required parameters are provided
+    actions:
+      - Verify agent_short_name parameter is provided (from command parameters or context)
+      - If agent_short_name is not provided and cannot be extracted from context:
+          - Display error message and stop execution
+      - Store agent_short_name for use in subsequent steps
+    decision_points:
+      - condition: agent_short_name is provided or can be extracted from context
+        if_true: Continue to step 2
+        if_false: Stop execution with error message
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Missing Required Parameter
+          message_template: user-messages/workflows/context-synchronisation/step-1-missing-parameter-error.md
+          action: Stop execution
+
+  - step: 2
+    name: Get Agent Information
+    description: Extract agent short name from command or context and load agent definition
+    dependencies:
+      - step: 1
+        required: true
+    actions:
+      - Extract agent_short_name from validated parameter (from step 1)
+      - If agent_name is needed, load agent definition file to get agent_name
+      - Store agent_short_name and agent_name for use in subsequent steps
+
+  - step: 3
+    name: Check Context File
+    description: Determine if context file exists
+    dependencies:
+      - step: 2
+        required: true
+    actions:
+      - Check if `.baton/context/{agent_short_name}-context.md` exists
+      - Store context file existence status for use in step 4
+
+  - step: 4
+    name: Load or Create Context
+    description: Load existing context file or create new one using sub-flows
+    dependencies:
+      - step: 3
+        required: true
+    actions:
+      - Check context file existence status from step 3
+      - If context file exists:
+          - Execute sub-flow: sub-flow-load-agent-context.yml
+      - If context file does NOT exist:
+          - Execute sub-flow: sub-flow-create-agent-context.yml
+    decision_points:
+      - condition: Context file exists
+        if_true: Load context file (step 3.1)
+        if_false: Create context file (step 3.2)
+    sub_flows:
+      - name: Load Existing Context
+        file: sub-flows/sub-flow-load-agent-context.yml
+        when: Context file exists
+        parameters:
+          agent_short_name: { agent_short_name }
+      - name: Create Default Context
+        file: sub-flows/sub-flow-create-agent-context.yml
+        when: Context file does not exist
+        parameters:
+          agent_short_name: { agent_short_name }
+          agent_name: { from step 2 }
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Context File Read Error
+          message_template: user-messages/workflows/context-synchronisation/step-4-context-file-read-error.md
+          action: Stop execution
+        - type: Context File Creation Error
+          message_template: user-messages/workflows/context-synchronisation/step-4-context-file-creation-error.md
+          action: Stop execution
+
+  - step: 5
+    name: Collect Session Information
+    description: Gather current session data for context update
+    dependencies:
+      - step: 4
+        required: true
+    actions:
+      - Review all tasks completed or in progress during current session
+      - Identify all files that were created, modified, or deleted
+      - Note important decisions made with rationale
+      - Capture key discussions or insights
+      - Identify follow-up items or next steps
+      - Note any errors encountered and how they were resolved
+      - Identify ongoing projects and their status
+      - Identify future priorities
+      - Compile session summary with:
+          - Summary of work accomplished
+          - Key actions taken
+          - Decisions made with rationale
+          - Learnings and insights
+          - Ongoing projects (if applicable)
+          - Future priorities (if applicable)
+
+  - step: 6
+    name: Get Current Date and Time
+    description: Get current date and time from system for context file update
+    dependencies:
+      - step: 5
+        required: true
+    actions:
+      - "Execute system command: date -u +\"%Y-%m-%dT%H:%M:%SZ\" (Unix/Git Bash) or equivalent Windows command for ISO 8601 format"
+      - "Store date/time as {current_datetime} in ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ) for use in context file"
+      - "Never use hardcoded dates - always get from system"
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Date Command Error
+          message_template: user-messages/workflows/context-synchronisation/step-6-date-command-error.md
+          action: Stop execution
+
+  - step: 7
+    name: Update Context File
+    description: Append new session entry to context file following template structure
+    dependencies:
+      - step: 6
+        required: true
+    actions:
+      - Read existing context file content (from step 4)
+      - Parse all existing sections (Current Status, Recent Work, Key Learnings, Ongoing Projects, Future Priorities)
+      - Create new session entry in "Recent Work" section following template format:
+          - Format: `### Session: {YYYY-MM-DDTHH:MM:SSZ}` (using ISO 8601 date/time from step 6)
+          - Include Summary section with session summary
+          - Include Key Actions section with list of actions
+          - Include Decisions Made section with decisions and rationale
+          - Include Learnings section with key learnings
+      - Update "Current Status" section if significant status change occurred
+      - Append to "Key Learnings" section if new learnings identified
+      - Update "Ongoing Projects" section if projects were modified or new projects started
+      - Update "Future Priorities" section if priorities changed
+      - Preserve ALL existing content - never delete, only append or update
+      - Maintain chronological order in "Recent Work" section (newest first)
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Context File Write Error
+          message_template: user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md
+          action: Stop execution
+
+  - step: 8
+    name: Update Frontmatter
+    description: Update last_updated timestamp in context file frontmatter
+    dependencies:
+      - step: 7
+        required: true
+    actions:
+      - Update `last_updated` field in YAML frontmatter to {current_datetime} from step 6 (ISO 8601 format)
+      - Preserve all other frontmatter fields (version, agent, created)
+      - Ensure frontmatter format is valid YAML
+
+  - step: 9
+    name: Write Updated Context File
+    description: Write updated context file to disk
+    dependencies:
+      - step: 8
+        required: true
+    actions:
+      - Write updated context content to `.baton/context/{agent_short_name}-context.md`
+      - Preserve file permissions
+      - Maintain YAML frontmatter format
+      - Ensure valid markdown syntax
+      - Verify file was written successfully
+    error_handling:
+      retry: false
+      error_messages:
+        - type: Context File Write Error
+          message_template: user-messages/workflows/context-synchronisation/step-6-context-file-write-error.md
+          action: Stop execution
+
+  - step: 10
+    name: Confirm Completion
+    description: Display success confirmation message to user
+    dependencies:
+      - step: 9
+        required: true
+    actions:
+      - Load confirmation message template
+      - Replace placeholders: {agent_short_name}, {date_time}
+      - Display formatted confirmation to user
+    confirmation_template: user-messages/workflows/context-synchronisation/step-9-confirmation.md
+
+# Error Handling
+error_handling:
+  global_retry:
+    enabled: false
+    max_retries: 0
+
+  error_types:
+    - type: Context File Read Error
+      handling: Stop execution with error message
+      recovery: Verify file exists and has read permissions
+
+    - type: Context File Creation Error
+      handling: Stop execution with error message
+      recovery: Check file permissions and directory access
+
+    - type: Context File Write Error
+      handling: Stop execution with error message
+      recovery: Check file permissions, directory access, and disk space
+
+    - type: Missing Required Parameter
+      handling: Stop execution with error message
+      recovery: Provide agent_short_name parameter or ensure agent context is available
+
+    - type: Date Command Error
+      handling: Stop execution with error message
+      recovery: Verify system date command is available
+
+# Command References
+command_references:
+  - command: /sync-context
+    description: Synchronize agent context with current session (calls this workflow)
+    when_to_use: After completing work in a session to save context for future sessions
+    example: "/sync-context"
+
+# Notes
+notes:
+  - The workflow will handle:
+      - Loading or creating context file using sub-flows
+      - Collecting session information
+      - Updating context file with new session entry
+      - Preserving all existing context content
+  - Sub-workflows used:
+      - sub-flow-load-agent-context.yml (when context file exists)
+      - sub-flow-create-agent-context.yml (when context file does not exist)
+  - Context file format follows structure from baton/templates/context-templates/context-template.md
+  - Session entries are added to "Recent Work" section following template format
+  - All dates/times are obtained from system commands, never hardcoded
+  - All user-facing messages come from message templates for consistency
+  - Context file location: `.baton/context/{agent_short_name}-context.md`
+
