@@ -8,7 +8,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build:ordered",
+    "build:ordered": "npm run build --workspace=packages/core && npm run build --workspace=packages/agents && npm run build --workspace=packages/cognitive-patterns && npm run build --workspace=packages/knowledge && npm run build --workspace=packages/workflows",
     "test": "npm run test:root && npm run test:workspaces",
     "test:root": "vitest run",
     "test:workspaces": "npm run test --workspaces",
