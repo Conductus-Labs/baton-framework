@@ -1,0 +1,8 @@
+{
+  "name": "test-package",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@conductus-labs/baton-core": "file:C:\\Coding\\Repos\\ConductusLabs\\baton-framework\\packages\\core"
+  }
+}
