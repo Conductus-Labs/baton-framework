@@ -35,9 +35,11 @@
   "files": [],
   "references": [
     { "path": "./packages/core" },
-    { "path": "./packages/agents" },
     { "path": "./packages/cognitive-patterns" },
+    { "path": "./packages/agents" },
     { "path": "./packages/knowledge" },
-    { "path": "./packages/workflows" }
+    { "path": "./packages/workflows" },
+    { "path": "./packages/claude-commands" },
+    { "path": "./packages/cursor-commands-core" }
   ]
 }
