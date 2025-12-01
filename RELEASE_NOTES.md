@@ -147,7 +147,7 @@ if (pattern) {
 
 ### Package Dependencies
 
-```
+```text
 @conductus-labs/baton-core (no dependencies)
   ├── @conductus-labs/baton-agents
   ├── @conductus-labs/baton-cognitive-patterns

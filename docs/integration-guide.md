@@ -20,7 +20,7 @@ This guide explains how to integrate Baton Framework npm packages into your appl
 
 ### Package Dependencies
 
-```
+```text
 @conductus-labs/baton-core (no dependencies)
   ├── @conductus-labs/baton-agents
   ├── @conductus-labs/baton-cognitive-patterns
@@ -57,7 +57,7 @@ npm install @conductus-labs/baton-core @conductus-labs/baton-workflows
 
 After installation, packages automatically create a `baton/` folder in your project root containing framework files:
 
-```
+```text
 your-project/
 ├── baton/                    # Framework files (created by postinstall)
 │   ├── agents/              # Agent definitions

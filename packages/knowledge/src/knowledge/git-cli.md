@@ -86,37 +86,38 @@ git diff HEAD                # Working directory vs last commit
 
 ### Quick Lookup
 
-| Task | Command/Pattern |
-|------|----------------|
-| Initialize repo | `git init` |
-| Clone repo | `git clone <url>` |
-| Check status | `git status` |
-| Stage file | `git add <file>` |
-| Commit | `git commit -m "message"` |
-| View log | `git log` |
-| Create branch | `git checkout -b <branch>` |
-| Switch branch | `git checkout <branch>` |
-| Merge branch | `git merge <branch>` |
-| Rebase branch | `git rebase <branch>` |
-| Push | `git push origin <branch>` |
-| Pull | `git pull origin <branch>` |
-| Fetch | `git fetch origin` |
-| Discard changes | `git restore <file>` |
-| View diff | `git diff` |
-| Stash changes | `git stash` |
-| Apply stash | `git stash pop` |
-| Create tag | `git tag v1.0.0` |
-| Cherry-pick | `git cherry-pick <commit>` |
-| Show commit | `git show <commit>` |
-| Blame file | `git blame <file>` |
-| Config user | `git config --global user.name "Name"` |
-| Add submodule | `git submodule add <url>` |
+| Task            | Command/Pattern                        |
+| --------------- | -------------------------------------- |
+| Initialize repo | `git init`                             |
+| Clone repo      | `git clone <url>`                      |
+| Check status    | `git status`                           |
+| Stage file      | `git add <file>`                       |
+| Commit          | `git commit -m "message"`              |
+| View log        | `git log`                              |
+| Create branch   | `git checkout -b <branch>`             |
+| Switch branch   | `git checkout <branch>`                |
+| Merge branch    | `git merge <branch>`                   |
+| Rebase branch   | `git rebase <branch>`                  |
+| Push            | `git push origin <branch>`             |
+| Pull            | `git pull origin <branch>`             |
+| Fetch           | `git fetch origin`                     |
+| Discard changes | `git restore <file>`                   |
+| View diff       | `git diff`                             |
+| Stash changes   | `git stash`                            |
+| Apply stash     | `git stash pop`                        |
+| Create tag      | `git tag v1.0.0`                       |
+| Cherry-pick     | `git cherry-pick <commit>`             |
+| Show commit     | `git show <commit>`                    |
+| Blame file      | `git blame <file>`                     |
+| Config user     | `git config --global user.name "Name"` |
+| Add submodule   | `git submodule add <url>`              |
 
 ## Detailed Usage
 
 ### Repository Setup
 
 **Initialize Repository:**
+
 ```bash
 git init [directory-name]
 ```
@@ -124,10 +125,12 @@ git init [directory-name]
 **Description:** Creates a new Git repository in the current directory or specified directory.
 
 **Options:**
+
 - `--bare`: Create a bare repository (no working directory)
 - `--template=<template-directory>`: Use template directory
 
 **Examples:**
+
 ```bash
 # Initialize in current directory
 git init
@@ -140,6 +143,7 @@ git init --bare my-repo.git
 ```
 
 **Clone Repository:**
+
 ```bash
 git clone <repository-url> [directory-name]
 ```
@@ -147,11 +151,13 @@ git clone <repository-url> [directory-name]
 **Description:** Clones a remote repository to local machine.
 
 **Options:**
+
 - `--branch <branch>`: Clone specific branch
 - `--depth <depth>`: Shallow clone (limited history)
 - `--recursive`: Clone submodules recursively
 
 **Examples:**
+
 ```bash
 # Clone repository
 git clone https://github.com/owner/repo.git
@@ -169,6 +175,7 @@ git clone --depth 10 https://github.com/owner/repo.git
 ### Basic Workflow
 
 **Check Status:**
+
 ```bash
 git status
 ```
@@ -176,11 +183,13 @@ git status
 **Description:** Shows the state of the working directory and staging area.
 
 **Options:**
+
 - `--short`: Short format output
 - `--branch`: Show branch information
 - `--porcelain`: Machine-readable output
 
 **Add Files:**
+
 ```bash
 git add <file>
 git add <directory>
@@ -190,12 +199,14 @@ git add .
 **Description:** Stages files for commit.
 
 **Options:**
+
 - `-A` or `--all`: Stage all changes
 - `-u` or `--update`: Stage only tracked files
 - `-p` or `--patch`: Interactive staging
 - `--dry-run`: Show what would be staged
 
 **Examples:**
+
 ```bash
 # Stage specific file
 git add README.md
@@ -211,6 +222,7 @@ git add -p
 ```
 
 **Commit Changes:**
+
 ```bash
 git commit -m "Commit message"
 ```
@@ -218,12 +230,14 @@ git commit -m "Commit message"
 **Description:** Records changes to the repository.
 
 **Options:**
+
 - `-m <message>`: Commit message
 - `-a` or `--all`: Commit all tracked files (skip staging)
 - `--amend`: Amend previous commit
 - `--no-verify`: Skip hooks
 
 **Examples:**
+
 ```bash
 # Basic commit
 git commit -m "Add new feature"
@@ -241,6 +255,7 @@ git commit -m "Title" -m "Detailed description"
 ### Branching and Merging
 
 **Create Branch:**
+
 ```bash
 git branch <branch-name>
 git checkout -b <branch-name>
@@ -250,6 +265,7 @@ git switch -c <branch-name>
 **Description:** Creates a new branch.
 
 **Examples:**
+
 ```bash
 # Create branch
 git branch feature/new-feature
@@ -262,6 +278,7 @@ git switch -c feature/new-feature
 ```
 
 **Switch Branches:**
+
 ```bash
 git checkout <branch-name>
 git switch <branch-name>
@@ -270,6 +287,7 @@ git switch <branch-name>
 **Description:** Switches to a different branch.
 
 **Examples:**
+
 ```bash
 # Switch branch
 git checkout main
@@ -282,6 +300,7 @@ git switch -c new-branch
 ```
 
 **List Branches:**
+
 ```bash
 git branch
 git branch -a  # All branches (including remote)
@@ -289,6 +308,7 @@ git branch -r  # Remote branches only
 ```
 
 **Merge Branches:**
+
 ```bash
 git merge <branch-name>
 ```
@@ -296,11 +316,13 @@ git merge <branch-name>
 **Description:** Merges changes from another branch into current branch.
 
 **Options:**
+
 - `--no-ff`: Create merge commit even if fast-forward possible
 - `--squash`: Squash commits into single commit
 - `--abort`: Abort merge in progress
 
 **Examples:**
+
 ```bash
 # Merge branch
 git merge feature/new-feature
@@ -315,6 +337,7 @@ git merge --squash feature/new-feature
 ### Remote Operations
 
 **Add Remote:**
+
 ```bash
 git remote add <name> <url>
 ```
@@ -322,6 +345,7 @@ git remote add <name> <url>
 **Description:** Adds a remote repository.
 
 **Examples:**
+
 ```bash
 # Add remote
 git remote add origin https://github.com/owner/repo.git
@@ -331,6 +355,7 @@ git remote add upstream https://github.com/original/repo.git
 ```
 
 **Push to Remote:**
+
 ```bash
 git push <remote> <branch>
 ```
@@ -338,11 +363,13 @@ git push <remote> <branch>
 **Description:** Pushes commits to remote repository.
 
 **Options:**
+
 - `-u` or `--set-upstream`: Set upstream tracking
 - `--force` or `--force-with-lease`: Force push (use with caution)
 - `--tags`: Push tags
 
 **Examples:**
+
 ```bash
 # Push to remote
 git push origin main
@@ -358,6 +385,7 @@ git push --tags origin
 ```
 
 **Pull from Remote:**
+
 ```bash
 git pull <remote> <branch>
 ```
@@ -365,10 +393,12 @@ git pull <remote> <branch>
 **Description:** Fetches and merges changes from remote.
 
 **Options:**
+
 - `--rebase`: Rebase instead of merge
 - `--ff-only`: Only fast-forward
 
 **Examples:**
+
 ```bash
 # Pull from remote
 git pull origin main
@@ -378,6 +408,7 @@ git pull --rebase origin main
 ```
 
 **Fetch from Remote:**
+
 ```bash
 git fetch <remote>
 ```
@@ -385,6 +416,7 @@ git fetch <remote>
 **Description:** Downloads changes from remote without merging.
 
 **Examples:**
+
 ```bash
 # Fetch all remotes
 git fetch
@@ -399,11 +431,13 @@ git fetch origin main
 ### Viewing History and Changes
 
 **View Commit History:**
+
 ```bash
 git log
 ```
 
 **Options:**
+
 - `--oneline`: One line per commit
 - `--graph`: Show branch graph
 - `--all`: Show all branches
@@ -413,6 +447,7 @@ git log
 - `--author=<name>`: Filter by author
 
 **Examples:**
+
 ```bash
 # Basic log
 git log
@@ -431,6 +466,7 @@ git log --since="2024-01-01"
 ```
 
 **View Differences:**
+
 ```bash
 git diff
 ```
@@ -438,12 +474,14 @@ git diff
 **Description:** Shows differences between working directory, staging area, and commits.
 
 **Options:**
+
 - `--staged` or `--cached`: Show staged changes
 - `HEAD`: Compare with last commit
 - `<commit1> <commit2>`: Compare two commits
 - `--stat`: Show statistics
 
 **Examples:**
+
 ```bash
 # Working directory vs staging
 git diff
@@ -464,6 +502,7 @@ git diff --stat
 ### Undoing Changes
 
 **Discard Working Directory Changes:**
+
 ```bash
 git restore <file>
 ```
@@ -471,6 +510,7 @@ git restore <file>
 **Description:** Restores file to last committed state.
 
 **Examples:**
+
 ```bash
 # Discard changes to file
 git restore README.md
@@ -483,6 +523,7 @@ git restore --staged <file>
 ```
 
 **Reset Commits:**
+
 ```bash
 git reset [mode] [commit]
 ```
@@ -490,11 +531,13 @@ git reset [mode] [commit]
 **Description:** Moves HEAD and optionally index and working directory.
 
 **Modes:**
+
 - `--soft`: Keep changes staged
 - `--mixed` (default): Keep changes in working directory
 - `--hard`: Discard all changes
 
 **Examples:**
+
 ```bash
 # Undo last commit (keep changes)
 git reset HEAD~1
@@ -507,6 +550,7 @@ git reset --hard <commit-hash>
 ```
 
 **Revert Commit:**
+
 ```bash
 git revert <commit>
 ```
@@ -514,6 +558,7 @@ git revert <commit>
 **Description:** Creates a new commit that undoes changes from specified commit.
 
 **Examples:**
+
 ```bash
 # Revert last commit
 git revert HEAD
@@ -525,6 +570,7 @@ git revert <commit-hash>
 ### Advanced Operations
 
 **Rebase:**
+
 ```bash
 git rebase <branch>
 git rebase -i <commit>
@@ -533,12 +579,14 @@ git rebase -i <commit>
 **Description:** Reapplies commits on top of another base tip, creating a linear history.
 
 **Options:**
+
 - `-i` or `--interactive`: Interactive rebase (edit, reorder, squash commits)
 - `--abort`: Abort rebase in progress
 - `--continue`: Continue rebase after resolving conflicts
 - `--skip`: Skip current commit
 
 **Examples:**
+
 ```bash
 # Rebase current branch onto main
 git rebase main
@@ -554,6 +602,7 @@ git rebase --continue
 ```
 
 **Stash:**
+
 ```bash
 git stash
 git stash list
@@ -564,6 +613,7 @@ git stash apply
 **Description:** Temporarily saves uncommitted changes.
 
 **Options:**
+
 - `save <message>`: Save with message
 - `list`: List all stashes
 - `pop`: Apply and remove most recent stash
@@ -572,6 +622,7 @@ git stash apply
 - `clear`: Delete all stashes
 
 **Examples:**
+
 ```bash
 # Save current changes
 git stash
@@ -593,6 +644,7 @@ git stash apply stash@{1}
 ```
 
 **Tags:**
+
 ```bash
 git tag <name>
 git tag -a <name> -m "Message"
@@ -602,12 +654,14 @@ git push --tags
 **Description:** Creates tags to mark specific points in history (typically releases).
 
 **Options:**
+
 - `-a`: Create annotated tag
 - `-m <message>`: Tag message
 - `-d <name>`: Delete tag
 - `-l <pattern>`: List tags matching pattern
 
 **Examples:**
+
 ```bash
 # Create lightweight tag
 git tag v1.0.0
@@ -626,6 +680,7 @@ git tag -d v1.0.0
 ```
 
 **Cherry-pick:**
+
 ```bash
 git cherry-pick <commit>
 ```
@@ -633,11 +688,13 @@ git cherry-pick <commit>
 **Description:** Applies changes from specific commit(s) to current branch.
 
 **Options:**
+
 - `-n` or `--no-commit`: Apply changes without committing
 - `-x`: Append commit message with original commit hash
 - `--abort`: Abort cherry-pick
 
 **Examples:**
+
 ```bash
 # Cherry-pick single commit
 git cherry-pick <commit-hash>
@@ -650,6 +707,7 @@ git cherry-pick -n <commit-hash>
 ```
 
 **Show:**
+
 ```bash
 git show <commit>
 ```
@@ -657,11 +715,13 @@ git show <commit>
 **Description:** Shows commit details including changes.
 
 **Options:**
+
 - `<commit>`: Commit hash, branch, or tag
 - `--stat`: Show statistics
 - `--name-only`: Show only file names
 
 **Examples:**
+
 ```bash
 # Show last commit
 git show
@@ -674,6 +734,7 @@ git show --stat <commit-hash>
 ```
 
 **Blame:**
+
 ```bash
 git blame <file>
 ```
@@ -681,11 +742,13 @@ git blame <file>
 **Description:** Shows who last modified each line of a file.
 
 **Options:**
+
 - `-L <start>,<end>`: Show specific line range
 - `-w`: Ignore whitespace changes
 - `-M`: Detect moved lines
 
 **Examples:**
+
 ```bash
 # Blame entire file
 git blame README.md
@@ -695,6 +758,7 @@ git blame -L 10,20 README.md
 ```
 
 **Configuration:**
+
 ```bash
 git config --global user.name "Name"
 git config --global user.email "email@example.com"
@@ -704,6 +768,7 @@ git config --list
 **Description:** Configure Git settings.
 
 **Options:**
+
 - `--global`: Set for current user (all repositories)
 - `--local`: Set for current repository (default)
 - `--system`: Set for all users
@@ -712,6 +777,7 @@ git config --list
 - `--unset <key>`: Remove setting
 
 **Examples:**
+
 ```bash
 # Set user name and email
 git config --global user.name "John Doe"
@@ -732,6 +798,7 @@ git config --global alias.co checkout
 ```
 
 **Submodules:**
+
 ```bash
 git submodule add <url> <path>
 git submodule update
@@ -741,12 +808,14 @@ git submodule init
 **Description:** Include one Git repository as a subdirectory of another.
 
 **Options:**
+
 - `add <url> <path>`: Add submodule
 - `init`: Initialize submodules
 - `update`: Update submodules
 - `sync`: Synchronize submodule URLs
 
 **Examples:**
+
 ```bash
 # Add submodule
 git submodule add https://github.com/owner/repo.git libs/repo
@@ -769,11 +838,13 @@ git submodule update --remote
 **Minimum Git Version:** 2.23.0
 
 **Version-Specific Features:**
+
 - `git restore` and `git switch`: Git 2.23.0+
 - `git switch -c`: Git 2.23.0+
 - Older versions use `git checkout` for both switching and creating branches
 
 **Checking Version:**
+
 ```bash
 git --version
 ```
@@ -785,6 +856,7 @@ git --version
 ### Common Errors and Solutions
 
 **Merge Conflicts:**
+
 ```bash
 # Check status to see conflicted files
 git status
@@ -798,6 +870,7 @@ git merge --abort
 ```
 
 **Detached HEAD:**
+
 ```bash
 # Create branch from detached HEAD
 git checkout -b new-branch
@@ -807,6 +880,7 @@ git checkout main
 ```
 
 **Push Rejected:**
+
 ```bash
 # Remote has changes you don't have
 git pull origin main
@@ -815,6 +889,7 @@ git push origin main
 ```
 
 **Accidentally Committed to Wrong Branch:**
+
 ```bash
 # Move last commit to correct branch
 git reset HEAD~1
@@ -823,6 +898,7 @@ git cherry-pick <commit-hash>
 ```
 
 **Lost Commit:**
+
 ```bash
 # Use reflog to find lost commit
 git reflog
@@ -832,6 +908,7 @@ git checkout -b recovered-branch
 ```
 
 **Large File in History:**
+
 ```bash
 # Remove file from history (use with caution)
 git filter-branch --force --index-filter \
@@ -882,6 +959,7 @@ git filter-branch --force --index-filter \
 ### Anti-Patterns to Avoid
 
 **❌ Don't:**
+
 ```bash
 # Committing everything without review
 git add .
@@ -903,6 +981,7 @@ git checkout main
 ```
 
 **✅ Do:**
+
 ```bash
 # Review changes before committing
 git status
@@ -948,4 +1027,3 @@ git push -u origin feature/user-auth
 - Always verify you're on the correct branch before committing
 - Use `git reflog` to recover "lost" commits
 - `git restore` requires Git 2.23.0+ (use `git checkout` on older versions)
-

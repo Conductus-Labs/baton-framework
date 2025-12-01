@@ -59,7 +59,7 @@ Sub-flows are reusable workflow components that can be called from main workflow
 
 After installation, workflow files are available in the `baton/workflows/` folder:
 
-```
+```text
 your-project/
 └── baton/
     └── workflows/
@@ -234,7 +234,7 @@ Workflow definition files are included in the package and available at:
 
 ## Package Structure
 
-```
+```text
 packages/workflows/
 ├── src/
 │   ├── workflows/           # Workflow definition files

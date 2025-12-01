@@ -1,9 +1,6 @@
 import { readFileSync, existsSync } from "fs";
 import { parseYamlFrontmatter } from "./file-parser.js";
-import {
-  validateAgent,
-  isAgentDefinition,
-} from "../validation/agent-validator.js";
+import { validateAgent } from "../validation/agent-validator.js";
 import { getFrameworkFilePath } from "./path-resolver.js";
 import type { AgentDefinition } from "../types/agent.js";
 

@@ -64,7 +64,7 @@ Set temperature and other parameters for each pattern:
 Temperature controls the creativity vs. precision balance:
 
 | Pattern Type | Temperature Range | Use Case |
-|-------------|-------------------|----------|
+| ----------- | ----------------- | -------- |
 | Analytical | 0.3 | Precise, logical, evidence-based |
 | Critical | 0.4 | Objective, skeptical, evaluative |
 | Strategic | 0.5 | Balanced, comprehensive, long-term |

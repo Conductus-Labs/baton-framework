@@ -53,12 +53,14 @@ Structure pattern hierarchy:
 **Use Case:** Complex technical problems requiring systematic analysis
 
 **Configuration:**
+
 - Analytical (0.3): Problem decomposition
 - Systematic (0.4): Structured approach
 - Computational (0.3): Algorithmic thinking
 - Critical (0.4): Quality validation
 
 **Workflow:**
+
 1. Analytical: Decompose problem
 2. Computational: Design algorithmic solution
 3. Systematic: Implement structured approach
@@ -73,12 +75,14 @@ Structure pattern hierarchy:
 **Use Case:** Long-term strategic planning with system-wide considerations
 
 **Configuration:**
+
 - Strategic (0.5): Long-term planning
 - Systems Thinking (0.55): Holistic understanding
 - Meta-Cognitive (0.65): Process reflection
 - Adaptive (0.6): Flexibility and adjustment
 
 **Workflow:**
+
 1. Systems Thinking: Map system and interconnections
 2. Strategic: Develop long-term strategy
 3. Meta-Cognitive: Reflect on planning process
@@ -93,12 +97,14 @@ Structure pattern hierarchy:
 **Use Case:** Innovative design and creative problem-solving
 
 **Configuration:**
+
 - Creative Problem Solving (0.9): Ideation
 - Design Thinking (0.8): User-centered design
 - Lateral (0.85): Perspective shifts
 - Experimental (0.7): Prototyping and testing
 
 **Workflow:**
+
 1. Lateral: Explore unconventional approaches
 2. Creative: Generate multiple ideas
 3. Design Thinking: Develop user-centered solutions
@@ -113,12 +119,14 @@ Structure pattern hierarchy:
 **Use Case:** Comprehensive quality assurance and testing
 
 **Configuration:**
+
 - Critical (0.4): Evidence-based evaluation
 - Analytical (0.3): Systematic analysis
 - Systematic (0.4): Methodical testing
 - Resilience (0.5): Handle edge cases
 
 **Workflow:**
+
 1. Analytical: Analyze requirements and code
 2. Systematic: Create comprehensive test plan
 3. Critical: Evaluate quality and identify issues
@@ -133,12 +141,14 @@ Structure pattern hierarchy:
 **Use Case:** Team management and stakeholder coordination
 
 **Configuration:**
+
 - Collaborative (0.7): Team coordination
 - Empathetic (0.7): Understanding team needs
 - Strategic (0.5): Long-term team planning
 - Adaptive (0.6): Respond to team changes
 
 **Workflow:**
+
 1. Empathetic: Understand team members' needs
 2. Collaborative: Build consensus and alignment
 3. Strategic: Plan team development
@@ -153,12 +163,14 @@ Structure pattern hierarchy:
 **Use Case:** Research, investigation, and knowledge discovery
 
 **Configuration:**
+
 - Analytical (0.3): Systematic analysis
 - Experimental (0.6): Hypothesis testing
 - Critical (0.4): Evidence evaluation
 - Meta-Cognitive (0.65): Reflect on research process
 
 **Workflow:**
+
 1. Analytical: Gather and analyze data
 2. Experimental: Formulate and test hypotheses
 3. Critical: Evaluate evidence and conclusions
@@ -292,4 +304,3 @@ Layer patterns for depth:
 **Previous:** [2. Using Patterns](2-using-patterns.md) - How to select and configure patterns
 
 ---
-

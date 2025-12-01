@@ -5,14 +5,7 @@
  * Copies core framework files to baton/core/ folder in project root
  */
 
-import {
-  existsSync,
-  mkdirSync,
-  copyFileSync,
-  readdirSync,
-  statSync,
-  readFileSync,
-} from "fs";
+import { existsSync, mkdirSync, copyFileSync, readdirSync } from "fs";
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -33,18 +26,9 @@ function findProjectRoot(startPath) {
     }
 
     if (existsSync(join(current, "package.json"))) {
-      // Check if this is a workspace root (has workspaces field) or a regular project
-      try {
-        const pkgJson = JSON.parse(
-          readFileSync(join(current, "package.json"), "utf-8")
-        );
-        // If it's a workspace root or doesn't have workspaces, it's a valid project root
-        // Also accept if it's not in node_modules
-        if (!current.includes("node_modules")) {
-          return current;
-        }
-      } catch {
-        // If we can't read package.json, continue
+      // Accept if it's not in node_modules
+      if (!current.includes("node_modules")) {
+        return current;
       }
     }
     current = dirname(current);

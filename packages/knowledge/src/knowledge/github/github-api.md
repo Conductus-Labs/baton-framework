@@ -103,6 +103,7 @@ GET /search/issues?q=repo:owner/repo+state:open+label:bug
    ```
 
 3. **GitHub App Installation Token**
+
    ```bash
    Authorization: Bearer <installation-token>
    ```
@@ -433,7 +434,7 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 
 **Link Header:**
 
-```
+```text
 Link: <https://api.github.com/resource?page=2>; rel="next",
       <https://api.github.com/resource?page=5>; rel="last"
 ```
@@ -459,22 +460,26 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 **Description:** GitHub's GraphQL API for flexible, efficient queries
 
 **Endpoint:**
+
 ```bash
 POST https://api.github.com/graphql
 ```
 
 **Authentication:**
+
 ```bash
 Authorization: Bearer <token>
 ```
 
 **When to Use:**
+
 - Complex queries requiring multiple related resources
 - Need to fetch only specific fields (reduces payload size)
 - Want to combine multiple REST API calls into one request
 - Need to query nested relationships efficiently
 
 **Basic Query:**
+
 ```json
 {
   "query": "query { viewer { login } }"
@@ -512,6 +517,7 @@ curl -X POST \
 ```
 
 **GraphQL vs REST:**
+
 - **Use GraphQL when:** You need specific fields, complex nested queries, or want to reduce API calls
 - **Use REST when:** Simple operations, following standard REST patterns, or using existing REST libraries
 
@@ -520,11 +526,13 @@ curl -X POST \
 **Description:** Receive real-time notifications about repository events
 
 **Creating Webhooks:**
+
 ```bash
 POST /repos/{owner}/{repo}/hooks
 ```
 
 **Body:**
+
 ```json
 {
   "name": "web",
@@ -539,6 +547,7 @@ POST /repos/{owner}/{repo}/hooks
 ```
 
 **Webhook Events:**
+
 - `push`: Code pushed to repository
 - `pull_request`: Pull request opened, closed, or synchronized
 - `issues`: Issue opened, closed, or edited
@@ -546,6 +555,7 @@ POST /repos/{owner}/{repo}/hooks
 - `workflow_run`: GitHub Actions workflow run completed
 
 **Payload Structure:**
+
 ```json
 {
   "action": "opened",
@@ -556,6 +566,7 @@ POST /repos/{owner}/{repo}/hooks
 ```
 
 **Security:**
+
 - Always verify webhook signatures using `X-Hub-Signature-256` header
 - Use HTTPS for webhook URLs
 - Validate webhook payloads before processing
@@ -588,11 +599,13 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 **Description:** Check and handle API rate limits
 
 **Check Rate Limit:**
+
 ```bash
 GET /rate_limit
 ```
 
 **Response:**
+
 ```json
 {
   "resources": {
@@ -606,6 +619,7 @@ GET /rate_limit
 ```
 
 **Exponential Backoff Implementation:**
+
 ```bash
 #!/bin/bash
 # Example rate limit handling with exponential backoff
@@ -614,10 +628,10 @@ make_request() {
   response=$(curl -s -w "\n%{http_code}" \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
     "$1")
-  
+
   http_code=$(echo "$response" | tail -n1)
   body=$(echo "$response" | sed '$d')
-  
+
   if [ "$http_code" = "403" ]; then
     # Check if rate limited
     remaining=$(echo "$body" | jq -r '.rate.remaining // empty')
@@ -634,7 +648,7 @@ make_request() {
       fi
     fi
   fi
-  
+
   # Exponential backoff for 5xx errors
   if [ "$http_code" -ge 500 ]; then
     retry_count=${2:-0}
@@ -646,7 +660,7 @@ make_request() {
       return
     fi
   fi
-  
+
   echo "$body"
 }
 ```
@@ -656,6 +670,7 @@ make_request() {
 **Description:** Use ETags and Last-Modified headers for efficient caching
 
 **ETag Usage:**
+
 ```bash
 # First request
 response=$(curl -s -i \
@@ -675,6 +690,7 @@ response=$(curl -s -i \
 ```
 
 **Last-Modified Usage:**
+
 ```bash
 # First request
 response=$(curl -s -i \
@@ -695,6 +711,7 @@ response=$(curl -s -i \
 **Description:** Understanding API error responses
 
 **Error Response Structure:**
+
 ```json
 {
   "message": "Validation Failed",
@@ -710,6 +727,7 @@ response=$(curl -s -i \
 ```
 
 **Common HTTP Status Codes:**
+
 - `200-299`: Success
 - `400`: Bad Request (invalid parameters)
 - `401`: Unauthorized (authentication required)
@@ -719,6 +737,7 @@ response=$(curl -s -i \
 - `500-599`: Server errors (retry with backoff)
 
 **Error Handling Example:**
+
 ```bash
 response=$(curl -s -w "\n%{http_code}" \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -730,14 +749,14 @@ body=$(echo "$response" | sed '$d')
 if [ "$http_code" -ge 400 ]; then
   error_message=$(echo "$body" | jq -r '.message // "Unknown error"')
   echo "Error $http_code: $error_message"
-  
+
   # Check for detailed errors
   errors=$(echo "$body" | jq -r '.errors[]? | "\(.field): \(.code)"')
   if [ -n "$errors" ]; then
     echo "Details:"
     echo "$errors"
   fi
-  
+
   exit 1
 fi
 ```
@@ -747,11 +766,13 @@ fi
 **API Version:** 2022-11-28 (current as of 2025-11-26)
 
 **Version Header:**
+
 ```bash
 X-GitHub-Api-Version: 2022-11-28
 ```
 
 **Versioning:**
+
 - GitHub API uses date-based versioning (YYYY-MM-DD format)
 - Always specify API version header for stability
 - Breaking changes are announced in advance
@@ -764,6 +785,7 @@ X-GitHub-Api-Version: 2022-11-28
 ### Common Errors and Solutions
 
 **401 Unauthorized:**
+
 ```bash
 # Check token is valid
 curl -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -774,6 +796,7 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 ```
 
 **403 Forbidden (Rate Limited):**
+
 ```bash
 # Check rate limit status
 curl -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -784,6 +807,7 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 ```
 
 **404 Not Found:**
+
 ```bash
 # Verify repository exists
 curl -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -794,6 +818,7 @@ curl -H "Authorization: Bearer $GITHUB_TOKEN" \
 ```
 
 **422 Unprocessable Entity:**
+
 ```bash
 # Check error details in response
 # Common causes:
@@ -812,6 +837,7 @@ echo "$response" | jq '.errors'
 ```
 
 **500-599 Server Errors:**
+
 ```bash
 # Implement retry logic with exponential backoff
 # Check GitHub Status: https://www.githubstatus.com/
@@ -819,6 +845,7 @@ echo "$response" | jq '.errors'
 ```
 
 **Pagination Issues:**
+
 ```bash
 # Verify you're handling Link header correctly
 # Check per_page doesn't exceed 100

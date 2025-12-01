@@ -1,9 +1,6 @@
 import { existsSync } from "fs";
 import { loadYamlFile } from "./file-parser.js";
-import {
-  validatePattern,
-  isCognitivePattern,
-} from "../validation/pattern-validator.js";
+import { validatePattern } from "../validation/pattern-validator.js";
 import { getFrameworkFilePath } from "./path-resolver.js";
 import type { CognitivePattern } from "../types/cognitive-pattern.js";
 

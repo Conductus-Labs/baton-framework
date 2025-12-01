@@ -29,7 +29,7 @@ import /* Claude command exports */ "@conductus-labs/baton-claude-commands";
 
 ## Package Structure
 
-```
+```text
 packages/claude-commands/
 ├── src/
 │   └── index.ts          # Main exports

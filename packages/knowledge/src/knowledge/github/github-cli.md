@@ -74,26 +74,25 @@ gh api repos/owner/repo/issues --method POST --field title="Title" --field body=
 
 ### Quick Lookup
 
-| Task            | Command/Pattern                                 |
-| --------------- | ----------------------------------------------- |
-| Authenticate    | `gh auth login`                                 |
-| Clone repo      | `gh repo clone owner/repo`                      |
-| Create issue    | `gh issue create --title "Title" --body "Body"` |
-| List issues     | `gh issue list`                                 |
-| Create PR       | `gh pr create --title "Title" --body "Body"`    |
-| List PRs        | `gh pr list`                                    |
-| Checkout PR     | `gh pr checkout <number>`                       |
-| View PR         | `gh pr view <number>`                           |
-| Create repo     | `gh repo create <name> --public/--private`      |
-| List repos      | `gh repo list`                                  |
-| Create release  | `gh release create <tag> --title "Title"`        |
-| View in browser | `gh browse`                                      |
-| Run API call    | `gh api <endpoint> --method <method>`           |
-| Create gist     | `gh gist create <file> --public`                |
-| List gists      | `gh gist list`                                  |
-| Install extension | `gh extension install <extension>`            |
-| Set alias       | `gh alias set <alias> <command>`                |
-| List notifications | `gh notification list`                        |
+|Task|Command/Pattern|
+|Authenticate|`gh auth login`|
+|Clone repo|`gh repo clone owner/repo`|
+|Create issue|`gh issue create --title "Title" --body "Body"`|
+|List issues|`gh issue list`|
+|Create PR|`gh pr create --title "Title" --body "Body"`|
+|List PRs|`gh pr list`|
+|Checkout PR|`gh pr checkout <number>`|
+|View PR|`gh pr view <number>`|
+|Create repo|`gh repo create <name> --public/--private`|
+|List repos|`gh repo list`|
+|Create release|`gh release create <tag> --title "Title"`|
+|View in browser|`gh browse`|
+|Run API call|`gh api <endpoint> --method <method>`|
+|Create gist|`gh gist create <file> --public`|
+|List gists|`gh gist list`|
+|Install extension|`gh extension install <extension>`|
+|Set alias|`gh alias set <alias> <command>`|
+|List notifications|`gh notification list`|
 
 ## Detailed Usage
 
@@ -586,12 +585,14 @@ gh notification mark --read
 **Minimum GitHub CLI Version:** 2.0.0
 
 **Version-Specific Features:**
+
 - Extensions: Available in all versions
 - `gh browse`: Available in all versions
 - `gh api`: Available in all versions
 - Some newer commands may require CLI 2.20.0+
 
 **Checking Version:**
+
 ```bash
 gh --version
 ```
@@ -603,6 +604,7 @@ gh --version
 ### Common Errors and Solutions
 
 **Authentication Errors:**
+
 ```bash
 # Check authentication status
 gh auth status
@@ -615,6 +617,7 @@ export GITHUB_TOKEN="your-token"
 ```
 
 **Rate Limit Exceeded:**
+
 ```bash
 # Check rate limit
 gh api /rate_limit
@@ -624,6 +627,7 @@ gh auth login
 ```
 
 **Command Not Found:**
+
 ```bash
 # Verify GitHub CLI is installed
 gh --version
@@ -633,6 +637,7 @@ gh extension list
 ```
 
 **Repository Not Found:**
+
 ```bash
 # Verify repository exists and you have access
 gh repo view owner/repo
@@ -642,6 +647,7 @@ gh auth status
 ```
 
 **Permission Denied:**
+
 ```bash
 # Verify you have required permissions
 gh auth status

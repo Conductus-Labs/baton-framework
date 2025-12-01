@@ -53,7 +53,7 @@ export function cleanupTestProject(testDir: string): void {
         maxRetries: 3,
         retryDelay: 100,
       });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors on Windows (file locks)
       // Tests will use unique directories anyway
     }

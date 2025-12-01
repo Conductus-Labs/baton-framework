@@ -31,28 +31,28 @@ This project adheres to a code of conduct. By participating, you are expected to
 
 1. **Fork and clone the repository:**
 
-```bash
-git clone https://github.com/your-username/baton-framework.git
-cd baton-framework
-```
+   ```bash
+   git clone https://github.com/your-username/baton-framework.git
+   cd baton-framework
+   ```
 
 2. **Install dependencies:**
 
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. **Build all packages:**
 
-```bash
-npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 4. **Run tests:**
 
-```bash
-npm run test
-```
+   ```bash
+   npm run test
+   ```
 
 ## Package Structure
 
@@ -92,7 +92,7 @@ Each package is located in `packages/{package-name}/` and has its own:
 
 Use conventional commit format:
 
-```
+```text
 type(scope): description
 
 [optional body]
@@ -112,7 +112,7 @@ type(scope): description
 
 **Examples:**
 
-```
+```text
 feat(agents): add new marketing-expert-agent
 fix(core): fix validation bug in agent-validator
 docs(readme): update installation instructions
@@ -124,34 +124,34 @@ docs(readme): update installation instructions
 
 1. **Create agent definition file:**
 
-```bash
-# Location: packages/agents/src/agents/{agent-name}-agent.md
-```
+   ```bash
+   # Location: packages/agents/src/agents/{agent-name}-agent.md
+   ```
 
 2. **Follow agent template structure:**
 
-```yaml
----
-version: 1.0.0
-agent_name: {agent-name}-agent
-agent_short_name: {agent-short-name}
-agent_type: {agent-type}
-created: {YYYY-MM-DD}
-last_updated: {YYYY-MM-DD}
-cognitive_patterns:
-  primary:
-    - name: {pattern-name}
-      path: .baton/cognitive/{pattern-name}.yml
-  secondary:
-    - name: {pattern-name}
-      path: .baton/cognitive/{pattern-name}.yml
----
+   ```yaml
+   ---
+   version: 1.0.0
+   agent_name: {agent-name}-agent
+   agent_short_name: {agent-short-name}
+   agent_type: {agent-type}
+   created: {YYYY-MM-DD}
+   last_updated: {YYYY-MM-DD}
+   cognitive_patterns:
+     primary:
+       - name: {pattern-name}
+         path: .baton/cognitive/{pattern-name}.yml
+     secondary:
+       - name: {pattern-name}
+         path: .baton/cognitive/{pattern-name}.yml
+   ---
 
-# Agent Name
+   # Agent Name
 
-## Agent Identity & Purpose
-...
-```
+   ## Agent Identity & Purpose
+   ...
+   ```
 
 3. **Update package version** (minor bump for new agent)
 
@@ -163,39 +163,39 @@ cognitive_patterns:
 
 1. **Create pattern file:**
 
-```bash
-# Location: packages/cognitive-patterns/src/patterns/{pattern-name}.yml
-```
+   ```bash
+   # Location: packages/cognitive-patterns/src/patterns/{pattern-name}.yml
+   ```
 
 2. **Follow pattern template structure:**
 
-```yaml
-version: 1.0.0
-pattern_type: cognitive_thinking_pattern
-created: "YYYY-MM-DD"
-description: "Pattern description"
+   ```yaml
+   version: 1.0.0
+   pattern_type: cognitive_thinking_pattern
+   created: "YYYY-MM-DD"
+   description: "Pattern description"
 
-model_parameters:
-  temperature: 0.5
-  top_p: 0.8
-  repeat_penalty: 1.1
+   model_parameters:
+     temperature: 0.5
+     top_p: 0.8
+     repeat_penalty: 1.1
 
-pattern_metadata:
-  reasoning_depth: moderate
-  context_window: standard
-  response_style: balanced
+   pattern_metadata:
+     reasoning_depth: moderate
+     context_window: standard
+     response_style: balanced
 
-cognitive_identity:
-  thinking_pattern: Pattern Name
-  approach_methodology: Step → Step → Step
-  reasoning_style: Style description
-  problem_solving_approach: "Approach description"
+   cognitive_identity:
+     thinking_pattern: Pattern Name
+     approach_methodology: Step → Step → Step
+     reasoning_style: Style description
+     problem_solving_approach: "Approach description"
 
-thinking_workflow:
-  phase_name:
-    - Action 1
-    - Action 2
-```
+   thinking_workflow:
+     phase_name:
+       - Action 1
+       - Action 2
+   ```
 
 3. **Update package version** (minor bump for new pattern)
 
@@ -207,34 +207,34 @@ thinking_workflow:
 
 1. **Create workflow file:**
 
-```bash
-# Location: packages/workflows/src/workflows/{workflow-name}.yml
-# Or for sub-flows: packages/workflows/src/workflows/sub-flows/sub-flow-{name}.yml
-```
+   ```bash
+   # Location: packages/workflows/src/workflows/{workflow-name}.yml
+   # Or for sub-flows: packages/workflows/src/workflows/sub-flows/sub-flow-{name}.yml
+   ```
 
 2. **Follow workflow template structure:**
 
-```yaml
-version: 1.0.0
-workflow_name: { workflow-name }
-purpose: Workflow purpose description
-created: YYYY-MM-DD
+   ```yaml
+   version: 1.0.0
+   workflow_name: { workflow-name }
+   purpose: Workflow purpose description
+   created: YYYY-MM-DD
 
-prerequisites:
-  - Prerequisite 1
-  - Prerequisite 2
+   prerequisites:
+     - Prerequisite 1
+     - Prerequisite 2
 
-parameters:
-  param_name: { Description }
+   parameters:
+     param_name: { Description }
 
-workflow_steps:
-  - step: 1
-    name: Step Name
-    description: Step description
-    actions:
-      - Action 1
-      - Action 2
-```
+   workflow_steps:
+     - step: 1
+       name: Step Name
+       description: Step description
+       actions:
+         - Action 1
+         - Action 2
+   ```
 
 3. **Update package version** (minor bump for new workflow)
 
@@ -246,29 +246,29 @@ workflow_steps:
 
 1. **Create knowledge file:**
 
-```bash
-# Location: packages/knowledge/src/knowledge/{category}/{file-name}.md
-```
+   ```bash
+   # Location: packages/knowledge/src/knowledge/{category}/{file-name}.md
+   ```
 
 2. **Follow knowledge file structure:**
 
-```markdown
----
-version: 1.0.0
-name: { knowledge-name }
-category: { category }
-description: Knowledge description
-created: YYYY-MM-DD
-last_updated: YYYY-MM-DD
-tags:
-  - tag1
-  - tag2
----
+   ```markdown
+   ---
+   version: 1.0.0
+   name: { knowledge-name }
+   category: { category }
+   description: Knowledge description
+   created: YYYY-MM-DD
+   last_updated: YYYY-MM-DD
+   tags:
+     - tag1
+     - tag2
+   ---
 
-# Knowledge Title
+   # Knowledge Title
 
-[Knowledge content...]
-```
+   [Knowledge content...]
+   ```
 
 3. **Update package version** (minor bump for new knowledge file)
 

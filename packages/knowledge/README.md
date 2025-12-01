@@ -38,7 +38,7 @@ npm install @conductus-labs/baton-core @conductus-labs/baton-agents @conductus-l
 
 After installation, knowledge files are available in the `baton/knowledge/` folder:
 
-```
+```text
 your-project/
 └── baton/
     └── knowledge/
@@ -154,7 +154,7 @@ Knowledge files are included in the package and available at:
 
 ## Package Structure
 
-```
+```text
 packages/knowledge/
 ├── src/
 │   ├── knowledge/           # Knowledge files

@@ -74,7 +74,7 @@ npm install @conductus-labs/baton-core @conductus-labs/baton-cognitive-patterns
 
 After installation, pattern files are available in the `baton/cognitive/` folder:
 
-```
+```text
 your-project/
 └── baton/
     └── cognitive/
@@ -240,7 +240,7 @@ Pattern definition files are included in the package and available at:
 
 ## Package Structure
 
-```
+```text
 packages/cognitive-patterns/
 ├── src/
 │   ├── patterns/            # 19 cognitive pattern files

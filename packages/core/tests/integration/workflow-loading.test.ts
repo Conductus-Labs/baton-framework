@@ -12,6 +12,7 @@ import {
 } from "./helpers.js";
 import { join } from "path";
 import { tmpdir } from "os";
+import { writeFileSync } from "fs";
 
 describe("Workflow Loading Integration", () => {
   const testDir = join(tmpdir(), `baton-test-${Date.now()}`);
@@ -107,7 +108,7 @@ describe("Workflow Loading Integration", () => {
       "sub-flows",
       "sub-flow-test.yml"
     );
-    require("fs").writeFileSync(subFlowPath, subFlowContent);
+    writeFileSync(subFlowPath, subFlowContent);
 
     const subFlow = loadSubFlow("sub-flow-test", projectRoot);
 

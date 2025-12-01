@@ -9,9 +9,7 @@ import {
   loadAgent,
   loadPattern,
   loadWorkflow,
-  loadKnowledge,
   getBatonFolderPath,
-  findProjectRoot,
   type AgentDefinition,
   type CognitivePattern,
   type WorkflowDefinition,
@@ -118,7 +116,7 @@ export class BatonFrameworkManager {
   /**
    * Execute workflow
    */
-  executeWorkflow(workflowName: string, context: any): boolean {
+  executeWorkflow(workflowName: string, _context: unknown): boolean {
     const workflow = this.getWorkflow(workflowName);
     if (!workflow) {
       console.error(`Workflow not found: ${workflowName}`);
@@ -138,7 +136,8 @@ export class BatonFrameworkManager {
 
       // Handle sub-flows if present
       if (step.sub_flows) {
-        for (const subFlow of step.sub_flows) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        for (const _subFlow of step.sub_flows) {
           // Load and execute sub-flow
           // ...
         }

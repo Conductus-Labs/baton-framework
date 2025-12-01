@@ -5,7 +5,7 @@
  * Copies knowledge files to baton/knowledge/ folder in project root
  */
 
-import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from "fs";
+import { existsSync, mkdirSync, copyFileSync, readdirSync } from "fs";
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 

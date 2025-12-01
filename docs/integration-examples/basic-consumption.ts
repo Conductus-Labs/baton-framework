@@ -11,7 +11,6 @@ import {
   loadKnowledge,
   loadWorkflow,
   type AgentDefinition,
-  type CognitivePattern,
 } from "@conductus-labs/baton-core";
 
 /**
@@ -96,7 +95,7 @@ function exampleLoadWorkflow() {
 /**
  * Example: Type-safe agent processing
  */
-function exampleTypeSafeProcessing(agent: AgentDefinition) {
+export function exampleTypeSafeProcessing(agent: AgentDefinition) {
   // TypeScript knows the structure
   console.log(agent.agent_name);
   console.log(agent.cognitive_patterns.primary);
@@ -106,7 +105,7 @@ function exampleTypeSafeProcessing(agent: AgentDefinition) {
 /**
  * Example: Error handling
  */
-function exampleErrorHandling() {
+export function exampleErrorHandling() {
   try {
     // Use strict loading for required components
     const agent = loadAgent("baton-agent");

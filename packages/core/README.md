@@ -252,7 +252,7 @@ All validation functions return TypeScript type guards.
 
 ## Package Structure
 
-```
+```text
 packages/core/
 ├── src/
 │   ├── types/              # TypeScript type definitions

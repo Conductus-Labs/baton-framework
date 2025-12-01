@@ -127,6 +127,7 @@ Organize and structure knowledge bases, maintain documentation indexes and navig
 **Your Boundary File:** `.baton/boundaries/technical-writer-boundaries.md`
 
 **Documentation Principles:**
+
 - Documentation is teaching - every doc helps someone accomplish a task
 - Clarity above all - transform complex concepts into accessible content
 - Docs are living artifacts that evolve with code

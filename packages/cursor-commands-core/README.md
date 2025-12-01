@@ -29,7 +29,7 @@ import /* Cursor command exports */ "@conductus-labs/baton-cursor-commands-core"
 
 ## Package Structure
 
-```
+```text
 packages/cursor-commands-core/
 ├── src/
 │   └── index.ts          # Main exports

@@ -120,10 +120,10 @@ Update workflows based on feedback and requirements changes, refactor workflows 
 **Your Boundary File:** `.baton/boundaries/workflow-designer-boundaries.md`
 
 **Design Principles:**
+
 - Every workflow should solve a real problem with clear value
 - Workflows must integrate seamlessly with framework systems
 - Design for maintainability and future extensibility
 - Validate thoroughly before deployment
 - Document comprehensively for users and maintainers
 - Treat workflow design as both art and engineering - creative problem-solving with systematic precision
-

@@ -1,9 +1,6 @@
 import { existsSync } from "fs";
 import { loadYamlFile } from "./file-parser.js";
-import {
-  validateWorkflow,
-  isWorkflowDefinition,
-} from "../validation/workflow-validator.js";
+import { validateWorkflow } from "../validation/workflow-validator.js";
 import { getFrameworkFilePath, getBatonFolderPath } from "./path-resolver.js";
 import { join } from "path";
 import type { WorkflowDefinition } from "../types/workflow.js";

@@ -13,9 +13,11 @@ The Baton Framework uses a **scope-based authorization system** to control which
 ### Agent → Command/Workflow Matching
 
 An agent can execute a command or workflow **if and only if**:
+
 - The agent's `scope` array includes the command/workflow's required `scope` value
 
 **Example:**
+
 ```yaml
 # Agent definition
 scope:
@@ -32,12 +34,14 @@ scope: agent-initialisation
 ### Workflow → Sub-Flow Matching
 
 A workflow can call a sub-flow **if and only if**:
+
 - The **agent executing the workflow** has the sub-flow's required `scope` in their scope array
 - OR the sub-flow has no scope requirement (universal sub-flow)
 
 **Note:** Workflows inherit the agent's scopes when executed. The workflow checks the agent's scopes (not the workflow's own scope) to determine if it can call a sub-flow.
 
 **Example:**
+
 ```yaml
 # Agent definition
 scope:
@@ -146,7 +150,8 @@ When an agent attempts to execute a command:
 5. **If no match**: Display error message
 
 **Error Message:**
-```
+
+```text
 ❌ Error: Insufficient scope
 
 Agent: {agent_name}
@@ -167,7 +172,8 @@ When a workflow attempts to call a sub-flow:
 5. **If no match**: Display error message and skip sub-flow
 
 **Error Message:**
-```
+
+```text
 ⚠️ Warning: Sub-flow scope mismatch
 
 Workflow: {workflow_name}
@@ -191,6 +197,7 @@ Cannot execute sub-flow - workflow does not have required scope.
 The scope system replaces the earlier tag-based system:
 
 **Old (Tags):**
+
 ```yaml
 agent_tags: [] # Empty array means ALL agents can run this workflow
 tags:
@@ -200,6 +207,7 @@ tags:
 ```
 
 **New (Scope):**
+
 ```yaml
 scope: agent-initialisation # Explicit scope requirement
 scope:
@@ -215,4 +223,3 @@ scope:
 3. **Document Scopes** - Document what each scope allows in framework documentation
 4. **Validate Early** - Check scope matches before executing commands/workflows
 5. **Clear Errors** - Provide clear error messages when scope mismatches occur
-

@@ -78,7 +78,7 @@ npm install @conductus-labs/baton-core @conductus-labs/baton-cognitive-patterns 
 
 After installation, agent files are available in the `baton/agents/` folder:
 
-```
+```text
 your-project/
 └── baton/
     └── agents/
@@ -219,7 +219,7 @@ Agent definition files are included in the package and available at:
 
 ## Package Structure
 
-```
+```text
 packages/agents/
 ├── src/
 │   ├── agents/              # 25 agent definition files

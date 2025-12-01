@@ -27,12 +27,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Flexible, responsive, learning-oriented approach that adapts to changing conditions.
 
 **Key Characteristics:**
+
 - Responds dynamically to new information
 - Adjusts strategies based on feedback
 - Learns from experience and adapts approaches
 - Handles uncertainty and ambiguity
 
 **Best For:**
+
 - Rapidly changing environments
 - Situations requiring flexibility
 - Learning and improvement tasks
@@ -49,12 +51,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Iterative, incremental, responsive to change - inspired by Agile software development.
 
 **Key Characteristics:**
+
 - Iterative approach to problem-solving
 - Incremental progress and delivery
 - Responsive to feedback and change
 - Focus on working solutions over perfect plans
 
 **Best For:**
+
 - Software development workflows
 - Iterative project management
 - Rapid prototyping
@@ -71,12 +75,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Systematic problem decomposition and logical reasoning.
 
 **Key Characteristics:**
+
 - Breaks down complex problems into components
 - Evidence-based reasoning
 - Methodical, structured approach
 - Logical consistency and validation
 
 **Best For:**
+
 - Complex problem analysis
 - Research and investigation
 - Data analysis and interpretation
@@ -93,12 +99,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Team-oriented, consensus-building, human-centered approach.
 
 **Key Characteristics:**
+
 - Emphasizes teamwork and collaboration
 - Builds consensus and alignment
 - Human-centered decision making
 - Communication and relationship building
 
 **Best For:**
+
 - Team coordination tasks
 - Stakeholder management
 - Consensus building
@@ -115,12 +123,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Algorithmic, data-driven, optimization-focused thinking.
 
 **Key Characteristics:**
+
 - Algorithmic problem decomposition
 - Data-driven decision making
 - Optimization and efficiency focus
 - Systematic computation and analysis
 
 **Best For:**
+
 - Algorithm design and optimization
 - Data processing and analysis
 - Performance optimization
@@ -137,12 +147,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Innovative, divergent, solution-oriented thinking.
 
 **Key Characteristics:**
+
 - Generates novel ideas and solutions
 - Divergent thinking approaches
 - Explores multiple possibilities
 - Innovative problem-solving
 
 **Best For:**
+
 - Brainstorming and ideation
 - Creative design tasks
 - Innovation challenges
@@ -159,12 +171,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Evidence-based evaluation, logical reasoning, assumption challenging.
 
 **Key Characteristics:**
+
 - Questions assumptions and biases
 - Evidence-based evaluation
 - Logical reasoning and analysis
 - Objective, skeptical approach
 
 **Best For:**
+
 - Quality assurance and review
 - Challenging unrealistic ideas
 - Evidence-based decision making
@@ -181,12 +195,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** User-centered, empathetic, iterative problem-solving.
 
 **Key Characteristics:**
+
 - User-centered approach
 - Empathetic understanding of needs
 - Iterative prototyping and testing
 - Human-focused solutions
 
 **Best For:**
+
 - User experience design
 - Product design
 - Human-centered problem-solving
@@ -203,12 +219,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Human-focused, understanding-driven, relationship-oriented.
 
 **Key Characteristics:**
+
 - Understands human emotions and needs
 - Relationship and connection focused
 - Compassionate decision making
 - Human-centered approach
 
 **Best For:**
+
 - User support and assistance
 - Human interaction tasks
 - Relationship building
@@ -225,12 +243,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Values-based, responsible, impact-conscious decision making.
 
 **Key Characteristics:**
+
 - Considers ethical implications
 - Values-based decision making
 - Responsible and accountable
 - Impact-conscious approach
 
 **Best For:**
+
 - Ethical decision making
 - Responsible AI development
 - Impact assessment
@@ -247,12 +267,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Hypothesis-driven, test-oriented, learning-focused.
 
 **Key Characteristics:**
+
 - Formulates and tests hypotheses
 - Experimentation and validation
 - Learning from results
 - Scientific method approach
 
 **Best For:**
+
 - Research and experimentation
 - Hypothesis testing
 - Learning and discovery
@@ -269,12 +291,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Learning-oriented, resilience-focused, improvement-driven.
 
 **Key Characteristics:**
+
 - Embraces challenges and learning
 - Resilience and persistence
 - Continuous improvement focus
 - Growth and development oriented
 
 **Best For:**
+
 - Learning and development tasks
 - Overcoming challenges
 - Continuous improvement
@@ -291,12 +315,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Non-linear, creative, perspective-shifting problem-solving.
 
 **Key Characteristics:**
+
 - Non-linear thinking approaches
 - Creative perspective shifts
 - Unconventional solutions
 - Breaks traditional patterns
 
 **Best For:**
+
 - Creative problem-solving
 - Innovation challenges
 - Breaking out of ruts
@@ -313,12 +339,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Efficiency-focused, waste-elimination, value-optimization.
 
 **Key Characteristics:**
+
 - Eliminates waste and inefficiency
 - Focuses on value delivery
 - Optimizes processes
 - Streamlined approaches
 
 **Best For:**
+
 - Process optimization
 - Efficiency improvements
 - Waste reduction
@@ -335,12 +363,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Self-aware, reflective, learning-about-learning.
 
 **Key Characteristics:**
+
 - Self-awareness and reflection
 - Monitors own thinking processes
 - Learns about learning
 - Evaluates effectiveness
 
 **Best For:**
+
 - Self-improvement and learning
 - Process optimization
 - Effectiveness evaluation
@@ -357,12 +387,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Adaptability-focused, recovery-oriented, stress-management.
 
 **Key Characteristics:**
+
 - Handles stress and adversity
 - Recovers from setbacks
 - Adapts to challenges
 - Maintains effectiveness under pressure
 
 **Best For:**
+
 - Handling difficult situations
 - Recovery from failures
 - Stress management
@@ -379,12 +411,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Long-term planning and systems-oriented decision making.
 
 **Key Characteristics:**
+
 - Long-term perspective
 - Systems-oriented approach
 - Strategic planning and vision
 - Comprehensive strategy development
 
 **Best For:**
+
 - Strategic planning
 - Long-term decision making
 - Business strategy
@@ -401,12 +435,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Methodical, structured, process-oriented thinking.
 
 **Key Characteristics:**
+
 - Methodical and structured
 - Process-oriented approach
 - Systematic execution
 - Organized and disciplined
 
 **Best For:**
+
 - Structured problem-solving
 - Process execution
 - Methodical tasks
@@ -423,12 +459,14 @@ Patterns are organized by thinking style, though many patterns span multiple cat
 **Description:** Holistic, interconnected, feedback-loop-aware reasoning.
 
 **Key Characteristics:**
+
 - Views problems as interconnected systems
 - Considers ripple effects and feedback loops
 - Holistic understanding
 - Systems dynamics awareness
 
 **Best For:**
+
 - Complex system analysis
 - Understanding interconnections
 - System-wide problem-solving
@@ -460,4 +498,3 @@ See [Using Patterns](2-using-patterns.md) for detailed guidance on pattern selec
 **Next:** [2. Using Patterns](2-using-patterns.md) - How to select and configure patterns
 
 ---
-

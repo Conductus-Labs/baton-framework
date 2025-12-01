@@ -289,7 +289,7 @@ import type { WorkflowDefinition } from "@conductus-labs/baton-workflows";
 
 ## Repository Structure
 
-```
+```text
 baton-framework/
 ├── packages/                    # npm packages (monorepo)
 │   ├── core/                    # @conductus-labs/baton-core
@@ -335,7 +335,7 @@ baton-framework/
 
 When you install Baton Framework packages in your project:
 
-```
+```text
 your-project/
 ├── baton/                        # Framework files (from npm packages)
 │   ├── agents/                   # Agent definition files
