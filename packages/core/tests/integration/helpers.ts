@@ -68,7 +68,9 @@ export function createTestAgent(
   agentName: string,
   content: string
 ): void {
-  const agentPath = join(batonPath, "agents", `${agentName}.md`);
+  const agentsDir = join(batonPath, "agents");
+  mkdirSync(agentsDir, { recursive: true });
+  const agentPath = join(agentsDir, `${agentName}.md`);
   writeFileSync(agentPath, content);
 }
 
@@ -80,7 +82,9 @@ export function createTestPattern(
   patternName: string,
   content: string
 ): void {
-  const patternPath = join(batonPath, "cognitive", `${patternName}.yml`);
+  const cognitiveDir = join(batonPath, "cognitive");
+  mkdirSync(cognitiveDir, { recursive: true });
+  const patternPath = join(cognitiveDir, `${patternName}.yml`);
   writeFileSync(patternPath, content);
 }
 
@@ -92,7 +96,9 @@ export function createTestKnowledge(
   knowledgeName: string,
   content: string
 ): void {
-  const knowledgePath = join(batonPath, "knowledge", `${knowledgeName}.md`);
+  const knowledgeDir = join(batonPath, "knowledge");
+  mkdirSync(knowledgeDir, { recursive: true });
+  const knowledgePath = join(knowledgeDir, `${knowledgeName}.md`);
   writeFileSync(knowledgePath, content);
 }
 
@@ -104,7 +110,9 @@ export function createTestWorkflow(
   workflowName: string,
   content: string
 ): void {
-  const workflowPath = join(batonPath, "workflows", `${workflowName}.yml`);
+  const workflowsDir = join(batonPath, "workflows");
+  mkdirSync(workflowsDir, { recursive: true });
+  const workflowPath = join(workflowsDir, `${workflowName}.yml`);
   writeFileSync(workflowPath, content);
 }
 
