@@ -20,7 +20,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@conductus-labs/baton-core": "file:../core"
+    "@conductus-labs/baton-core": "file:../core",
+    "@conductus-labs/baton-agents": "file:../agents"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

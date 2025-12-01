@@ -21,10 +21,10 @@
 npm install @conductus-labs/baton-agents
 ```
 
-**Note:** This package depends on `@conductus-labs/baton-core`. Install it first:
+**Note:** This package depends on `@conductus-labs/baton-core` and `@conductus-labs/baton-cognitive-patterns`. Install them first:
 
 ```bash
-npm install @conductus-labs/baton-core @conductus-labs/baton-agents
+npm install @conductus-labs/baton-core @conductus-labs/baton-cognitive-patterns @conductus-labs/baton-agents
 ```
 
 ## Available Agents

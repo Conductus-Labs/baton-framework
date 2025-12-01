@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "npx tsc",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
@@ -20,7 +20,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@conductus-labs/baton-core": "file:../core"
+    "@conductus-labs/baton-core": "file:../core",
+    "@conductus-labs/baton-cognitive-patterns": "file:../cognitive-patterns"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

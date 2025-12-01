@@ -15,10 +15,10 @@
 npm install @conductus-labs/baton-knowledge
 ```
 
-**Note:** This package depends on `@conductus-labs/baton-core`. Install it first:
+**Note:** This package depends on `@conductus-labs/baton-core` and `@conductus-labs/baton-agents`. Install them first:
 
 ```bash
-npm install @conductus-labs/baton-core @conductus-labs/baton-knowledge
+npm install @conductus-labs/baton-core @conductus-labs/baton-agents @conductus-labs/baton-knowledge
 ```
 
 ## Available Knowledge Files

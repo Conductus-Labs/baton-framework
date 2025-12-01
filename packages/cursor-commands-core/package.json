@@ -1,7 +1,7 @@
 {
-  "name": "@conductus-labs/baton-cognitive-patterns",
+  "name": "@conductus-labs/baton-cursor-commands-core",
   "version": "1.0.0",
-  "description": "Baton Framework cognitive thinking patterns",
+  "description": "Baton Framework Cursor-specific command implementations",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "npx tsc",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src",
@@ -20,7 +20,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@conductus-labs/baton-core": "file:../core"
+    "@conductus-labs/baton-agents": "file:../agents"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
@@ -35,14 +35,15 @@
     "baton",
     "framework",
     "ai",
-    "cognitive-patterns",
-    "thinking-patterns"
+    "cursor",
+    "commands",
+    "cursor-commands"
   ],
   "author": "Conductus Labs Ltd",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Conductus-Labs/baton-framework.git",
-    "directory": "packages/cognitive-patterns"
+    "directory": "packages/cursor-commands-core"
   }
 }
