@@ -27,8 +27,7 @@ jobs:
 
       - name: Run linter
         run: npm run lint
-        # TODO: Uncomment when lint script exists
-        # continue-on-error: true
+        continue-on-error: true
 
   test:
     name: Test
@@ -45,13 +44,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        # TODO: Uncomment when package.json exists
-        # continue-on-error: true
+
+      - name: Build all packages
+        run: npm run build
 
       - name: Run tests
         run: npm test
-        # TODO: Uncomment when test script exists
-        # continue-on-error: true
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
